@@ -49,6 +49,24 @@ document.querySelectorAll('.halo-card').forEach(card => {
   });
 });
 
+/* ── NAV AUTO COLLAPSE ON SCROLL (mobile) ── */
+(() => {
+  const navEl = document.getElementById('nav');
+  if (!navEl) return;
+  const mq = window.matchMedia('(max-width: 900px)');
+  let lastY = window.scrollY;
+  const update = () => {
+    if (!mq.matches) { navEl.classList.remove('nav-collapsed'); return; }
+    const y = window.scrollY;
+    if (y < 40) navEl.classList.remove('nav-collapsed');
+    else if (y > lastY + 4) navEl.classList.add('nav-collapsed');
+    else if (y < lastY - 4) navEl.classList.remove('nav-collapsed');
+    lastY = y;
+  };
+  window.addEventListener('scroll', update, { passive: true });
+  mq.addEventListener('change', update);
+})();
+
 /* ── HERO HALO ── */
 const hero = document.getElementById('hero');
 if (hero) {

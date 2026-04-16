@@ -347,23 +347,30 @@ nav {
 
 .hero-scroll-hint {
   position: absolute;
-  bottom: 32px;
-  right: 40px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 11px;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
   color: var(--text-3);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   opacity: 0;
   animation: fadeUp 0.7s 0.8s ease forwards;
+  pointer-events: none;
 }
 
-.scroll-line {
-  width: 32px;
-  height: 1px;
-  background: var(--text-3);
+.scroll-mouse {
+  width: 20px;
+  height: 32px;
+  display: block;
+}
+
+.scroll-wheel {
+  animation: scrollWheel 1.8s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+@keyframes scrollWheel {
+  0%   { transform: translateY(0);    opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { transform: translateY(10px); opacity: 0; }
 }
 
 .about-stats {
@@ -1113,13 +1120,18 @@ footer {
 /* ── RESPONSIVE ── */
 @media (max-width: 900px) {
   nav { padding: 0 24px; }
-  .nav-pill { gap: 14px; padding: 0 14px 0 18px; height: 48px; transition: none; }
-  .nav-extra { max-width: none; opacity: 1; transform: none; overflow: visible; gap: 14px; transition: none; }
+  .nav-pill { gap: 14px; padding: 0 14px 0 18px; height: 48px; transition: gap 0.5s cubic-bezier(0.22,1,0.36,1), padding 0.5s cubic-bezier(0.22,1,0.36,1); }
+  .nav-extra { max-width: 500px; opacity: 1; transform: none; overflow: hidden; gap: 14px; transition: max-width 0.5s cubic-bezier(0.22,1,0.36,1), opacity 0.35s ease; }
   .nav-links { gap: 14px; }
   .nav-links a { font-size: 12px; }
   .nav-cta { padding: 6px 12px; font-size: 11px; }
   .nav-pill:hover, .nav-pill:focus-within { gap: 14px; padding: 0 14px 0 18px; }
-  #hero { padding: 96px 24px 48px; }
+
+  /* Auto-collapse on scroll (mobile) */
+  nav.nav-collapsed .nav-pill { gap: 0; padding: 0 18px; }
+  nav.nav-collapsed .nav-extra { max-width: 0; opacity: 0; }
+
+  #hero { padding: 96px 24px 88px; }
   .hero-headline { font-size: 40px; }
   .hero-stats { display: none; }
   .hero-actions { flex-wrap: wrap; gap: 10px; }
@@ -1132,4 +1144,12 @@ footer {
   .card-wide { grid-column: span 1; }
   .about-grid { grid-template-columns: 1fr; gap: 48px; }
   footer { padding: 20px 24px; flex-direction: column; gap: 12px; text-align: center; }
+}
+
+/* Disable hover/cursor FX on touch devices */
+@media (hover: none) {
+  .cursor { display: none; }
+  body { cursor: auto; }
+  .halo-card::before, .halo-card::after,
+  #hero::before { display: none; }
 }
