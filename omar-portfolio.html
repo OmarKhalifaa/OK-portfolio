@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Omar Khalifa — Senior Product Designer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0C0C0B;
+    --bg-2:      #111110;
+    --bg-3:      #181817;
+    --bg-4:      #1F1F1E;
+    --border:    rgba(255,255,255,0.07);
+    --border-2:  rgba(255,255,255,0.12);
+    --text-1:    #F0EFE8;
+    --text-2:    #8A8A84;
+    --text-3:    #4A4A46;
+    --accent:    #5DCAA5;
+    --accent-dim: rgba(93,202,165,0.1);
+    --red:       #E8524A;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text-1);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.025;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    height: 60px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(12,12,11,0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 17px;
+    color: var(--text-1);
+    letter-spacing: -0.02em;
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 13px;
+    color: var(--text-2);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text-1); }
+
+  .nav-cta {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-1);
+    background: transparent;
+    border: 1px solid var(--border-2);
+    border-radius: 6px;
+    padding: 7px 16px;
+    text-decoration: none;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .nav-cta:hover {
+    background: var(--bg-3);
+    border-color: rgba(255,255,255,0.2);
+  }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 40px 72px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-orb {
+    position: absolute;
+    top: -120px;
+    right: -80px;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(93,202,165,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-orb-2 {
+    position: absolute;
+    bottom: 40px;
+    left: -100px;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(93,202,165,0.04) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-grid-line {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 1px;
+    background: var(--border);
+    pointer-events: none;
+  }
+
+  .available-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 5px 14px 5px 10px;
+    margin-bottom: 32px;
+    width: fit-content;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.1s ease forwards;
+  }
+
+  .badge-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .badge-text {
+    font-size: 11px;
+    color: var(--text-2);
+    letter-spacing: 0.03em;
+  }
+
+  .hero-headline {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(42px, 6vw, 80px);
+    font-weight: 700;
+    line-height: 1.0;
+    letter-spacing: -0.04em;
+    color: var(--text-1);
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.2s ease forwards;
+  }
+
+  .hero-headline em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .hero-headline .muted {
+    color: var(--text-3);
+  }
+
+  .hero-sub {
+    font-size: 16px;
+    color: var(--text-2);
+    font-weight: 300;
+    max-width: 460px;
+    line-height: 1.65;
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.35s ease forwards;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.45s ease forwards;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--text-1);
+    color: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    border-radius: 8px;
+    padding: 11px 22px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+  }
+  .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: var(--text-2);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 22px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s, transform 0.15s;
+  }
+  .btn-ghost:hover { color: var(--text-1); border-color: var(--border-2); transform: translateY(-1px); }
+
+  .hero-scroll-hint {
+    position: absolute;
+    bottom: 32px;
+    right: 40px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--text-3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.8s ease forwards;
+  }
+
+  .scroll-line {
+    width: 32px;
+    height: 1px;
+    background: var(--text-3);
+  }
+
+  .hero-stats {
+    position: absolute;
+    right: 40px;
+    bottom: 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.6s ease forwards;
+  }
+
+  .hero-stat {
+    text-align: right;
+  }
+
+  .hero-stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-1);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+
+  .hero-stat-label {
+    font-size: 11px;
+    color: var(--text-3);
+    letter-spacing: 0.04em;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── MARQUEE ── */
+  .marquee-section {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 0;
+    overflow: hidden;
+    background: var(--bg-2);
+  }
+
+  .marquee-track {
+    display: flex;
+    gap: 0;
+    width: max-content;
+    animation: marquee 24s linear infinite;
+  }
+
+  .marquee-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 0 28px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    white-space: nowrap;
+  }
+
+  .marquee-dot {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0.5;
+    flex-shrink: 0;
+  }
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  /* ── SECTION COMMONS ── */
+  section {
+    padding: 100px 40px;
+  }
+
+  .section-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 48px;
+  }
+
+  .eyebrow-line {
+    width: 32px;
+    height: 1px;
+    background: var(--text-3);
+  }
+
+  /* ── PROJECTS ── */
+  #work {
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+  }
+
+  .work-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 48px;
+  }
+
+  .work-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(32px, 4vw, 52px);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--text-1);
+    line-height: 1.05;
+  }
+
+  .work-count {
+    font-size: 12px;
+    color: var(--text-3);
+    padding-bottom: 6px;
+  }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  /* HALO CARD */
+  .halo-card {
+    position: relative;
+    background: var(--bg-2);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+    transition: border-color 0.3s ease, transform 0.3s ease;
+  }
+
+  .halo-card:hover {
+    transform: translateY(-3px);
+  }
+
+  /* The fill halo */
+  .halo-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    background: radial-gradient(500px circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.055), transparent 50%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .halo-card:hover::before { opacity: 1; }
+
+  /* The border halo */
+  .halo-card::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 16px;
+    border: 1px solid transparent;
+    background: radial-gradient(300px circle at var(--mx, 50%) var(--my, 50%), rgba(93,202,165,0.25), transparent 60%) border-box;
+    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .halo-card:hover::after { opacity: 1; }
+
+  .card-thumb {
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .card-thumb.t1 { background: linear-gradient(135deg, #111624 0%, #161c2e 100%); }
+  .card-thumb.t2 { background: linear-gradient(135deg, #0f1a17 0%, #141f1c 100%); }
+  .card-thumb.t3 { background: linear-gradient(135deg, #1a1412 0%, #201a16 100%); }
+  .card-thumb.t4 { background: linear-gradient(135deg, #181318 0%, #1e1520 100%); }
+
+  .thumb-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .thumb-icon svg { width: 28px; height: 28px; }
+
+  .t1 .thumb-icon { background: rgba(83,74,183,0.15); }
+  .t2 .thumb-icon { background: rgba(29,158,117,0.15); }
+  .t3 .thumb-icon { background: rgba(216,90,48,0.15); }
+  .t4 .thumb-icon { background: rgba(170,74,183,0.15); }
+
+  .card-tag-pill {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    background: rgba(12,12,11,0.7);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 3px 8px;
+  }
+
+  .card-body {
+    padding: 20px 22px;
+    position: relative;
+    z-index: 3;
+  }
+
+  .card-category {
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: var(--text-3);
+    margin-bottom: 6px;
+  }
+
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-1);
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+
+  .card-desc {
+    font-size: 13px;
+    color: var(--text-2);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  .card-footer {
+    padding: 14px 22px 18px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 3;
+  }
+
+  .card-tags {
+    display: flex;
+    gap: 6px;
+  }
+
+  .tag {
+    font-size: 10px;
+    color: var(--text-3);
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 8px;
+  }
+
+  .card-arrow {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-3);
+    transition: color 0.2s, border-color 0.2s, background 0.2s, transform 0.2s;
+    flex-shrink: 0;
+  }
+
+  .halo-card:hover .card-arrow {
+    color: var(--accent);
+    border-color: rgba(93,202,165,0.3);
+    background: rgba(93,202,165,0.06);
+    transform: translate(2px, -2px);
+  }
+
+  /* WIDE CARD — spans 2 cols */
+  .card-wide {
+    grid-column: span 2;
+  }
+
+  .card-wide .card-thumb {
+    height: 240px;
+  }
+
+  /* ── ABOUT ── */
+  #about {
+    background: var(--bg-2);
+    border-top: 1px solid var(--border);
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .about-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 3.5vw, 44px);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--text-1);
+    line-height: 1.1;
+    margin-bottom: 24px;
+  }
+
+  .about-title em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .about-body {
+    font-size: 15px;
+    color: var(--text-2);
+    font-weight: 300;
+    line-height: 1.75;
+    margin-bottom: 16px;
+  }
+
+  .about-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-1);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border-2);
+    padding-bottom: 2px;
+    margin-top: 12px;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .about-cta:hover { color: var(--accent); border-color: var(--accent); }
+
+  .skills-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .skill-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .skill-item:first-child {
+    border-top: 1px solid var(--border);
+  }
+
+  .skill-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-1);
+    letter-spacing: -0.01em;
+  }
+
+  .skill-tools {
+    display: flex;
+    gap: 6px;
+  }
+
+  .skill-tool {
+    font-size: 10px;
+    color: var(--text-3);
+    background: var(--bg-3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 3px 8px;
+  }
+
+  .experience-list {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    margin-top: 48px;
+  }
+
+  .exp-item {
+    display: flex;
+    gap: 20px;
+  }
+
+  .exp-dot-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 4px;
+    gap: 0;
+  }
+
+  .exp-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .exp-line {
+    width: 1px;
+    flex: 1;
+    background: var(--border);
+    min-height: 32px;
+    margin-top: 4px;
+  }
+
+  .exp-last .exp-line { display: none; }
+
+  .exp-role {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-1);
+    letter-spacing: -0.01em;
+    margin-bottom: 2px;
+  }
+
+  .exp-company {
+    font-size: 13px;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+
+  .exp-period {
+    font-size: 11px;
+    color: var(--text-3);
+    letter-spacing: 0.04em;
+  }
+
+  /* ── CONTACT ── */
+  #contact {
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    min-height: 420px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .contact-orb {
+    position: absolute;
+    bottom: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(93,202,165,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .contact-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 28px;
+    justify-content: center;
+  }
+
+  .contact-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    color: var(--text-1);
+    line-height: 1.0;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .contact-sub {
+    font-size: 15px;
+    color: var(--text-2);
+    font-weight: 300;
+    margin-bottom: 40px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .contact-links {
+    display: flex;
+    gap: 12px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg-2);
+  }
+
+  .footer-left {
+    font-size: 12px;
+    color: var(--text-3);
+  }
+
+  .footer-right {
+    display: flex;
+    gap: 24px;
+  }
+
+  .footer-right a {
+    font-size: 12px;
+    color: var(--text-3);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-right a:hover { color: var(--text-1); }
+
+  /* ── SCROLL ANIMATIONS ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  /* ── CUSTOM CURSOR ── */
+  .cursor {
+    width: 8px;
+    height: 8px;
+    background: var(--text-1);
+    border-radius: 50%;
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 99999;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s, height 0.2s, background 0.2s, opacity 0.2s;
+    mix-blend-mode: difference;
+  }
+
+  .cursor.hover-state {
+    width: 36px;
+    height: 36px;
+    opacity: 0.6;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 0 24px; }
+    #hero { padding: 0 24px 60px; }
+    .hero-headline { font-size: 40px; }
+    .hero-stats { display: none; }
+    section { padding: 72px 24px; }
+    .cards-grid { grid-template-columns: 1fr; }
+    .card-wide { grid-column: span 1; }
+    .about-grid { grid-template-columns: 1fr; gap: 48px; }
+    footer { padding: 20px 24px; flex-direction: column; gap: 12px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">OK.</a>
+  <ul class="nav-links">
+    <li><a href="#work">Work</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact" class="nav-cta">Get in touch ↗</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-orb"></div>
+  <div class="hero-orb-2"></div>
+  <div class="hero-grid-line" style="left: 33.33%;"></div>
+  <div class="hero-grid-line" style="left: 66.66%;"></div>
+
+  <div class="available-badge">
+    <div class="badge-dot"></div>
+    <span class="badge-text">Available for freelance projects</span>
+  </div>
+
+  <h1 class="hero-headline">
+    I make<br>
+    <em>complex systems</em><br>
+    <span class="muted">feel effortless.</span>
+  </h1>
+
+  <p class="hero-sub">
+    Senior product designer specializing in design systems, fintech UX, and mobile interfaces. Currently building Vodafone's Master Design System Kit.
+  </p>
+
+  <div class="hero-actions">
+    <a href="#work" class="btn-primary">
+      View my work
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <a href="https://www.linkedin.com/in/omar-k/" target="_blank" class="btn-ghost">LinkedIn ↗</a>
+    <a href="#" class="btn-ghost">Resume ↗</a>
+  </div>
+
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-num">5+</div>
+      <div class="hero-stat-label">Years experience</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">12+</div>
+      <div class="hero-stat-label">Products shipped</div>
+    </div>
+  </div>
+
+  <div class="hero-scroll-hint">
+    <div class="scroll-line"></div>
+    Scroll
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee-track">
+    <!-- repeated twice for seamless loop -->
+    <div class="marquee-item"><span>UX Design</span><div class="marquee-dot"></div></div>
+    <div class="marquee-item"><span>Design Systems</span><div class="marquee-dot"></div></div>
+    <div class="marquee-item"><span>Token Architecture</span><div class="marquee-dot"></div></div>
+    <div class="marquee-item"><span>UI Design</span><div class="marquee-dot"></div></div>
+    <div class="marquee-item"><span>Interaction Design</span><div class="marquee-dot"></div></div>
+    <div class="marquee-item"><span>Figma</span><div class="marquee-dot"></div></div>
+    <div class="marquee-item"><span>Rapid Prototyping</span><div class="marquee-dot"></div></div>
+    <div class="marquee-item"><span>Mobile UX</span><div class="marquee-dot"></div></div>
+    <div class="marquee-item"><span>UX Research</span><div class="marquee-dot"></div></div>
+    <div class="marquee-item"><span>Visual Design</span><div class="marquee-dot"></div></div>
+    <div class="marquee-item"><span>UX Design</span><div class="marquee-dot"></div></div>
+    <div class="marquee-item"><span>Design Systems</span><div class="marquee-dot"></div></div>
+    <div class="marquee-item"><span>Token Architecture</span><div class="marquee-dot"></div></div>
+    <div class="marquee-item"><span>UI Design</span><div class="marquee-dot"></div></div>
+    <div class="marquee-item"><span>Interaction Design</span><div class="marquee-dot"></div></div>
+    <div class="marquee-item"><span>Figma</span><div class="marquee-dot"></div></div>
+    <div class="marquee-item"><span>Rapid Prototyping</span><div class="marquee-dot"></div></div>
+    <div class="marquee-item"><span>Mobile UX</span><div class="marquee-dot"></div></div>
+    <div class="marquee-item"><span>UX Research</span><div class="marquee-dot"></div></div>
+    <div class="marquee-item"><span>Visual Design</span><div class="marquee-dot"></div></div>
+  </div>
+</div>
+
+<!-- WORK -->
+<section id="work">
+  <div class="work-header reveal">
+    <h2 class="work-title">Selected<br>work</h2>
+    <span class="work-count">4 case studies</span>
+  </div>
+
+  <div class="cards-grid">
+
+    <!-- CARD 1 — wide -->
+    <a href="#" class="halo-card card-wide reveal reveal-delay-1">
+      <div class="card-thumb t1">
+        <span class="card-tag-pill">Design System</span>
+        <div class="thumb-icon">
+          <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="3" width="10" height="10" rx="2" stroke="#7F77DD" stroke-width="1.5"/>
+            <rect x="15" y="3" width="10" height="10" rx="2" stroke="#7F77DD" stroke-width="1.5"/>
+            <rect x="3" y="15" width="10" height="10" rx="2" stroke="#7F77DD" stroke-width="1.5"/>
+            <circle cx="20" cy="20" r="5" stroke="#7F77DD" stroke-width="1.5"/>
+          </svg>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-category">Vodafone · 2023–2024</div>
+        <div class="card-title">Master Design System Kit</div>
+        <div class="card-desc">Built a three-tier token architecture (Primitive → Semantic → Component) across web and mobile, powering 40+ product teams. Covers dark mode, motion tokens, RTL support, and an automated Tokens Studio → Style Dictionary pipeline.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="tag">Figma</span>
+          <span class="tag">Token Architecture</span>
+          <span class="tag">Style Dictionary</span>
+        </div>
+        <div class="card-arrow">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 10L10 2M10 2H4M10 2v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+    </a>
+
+    <!-- CARD 2 -->
+    <a href="#" class="halo-card reveal reveal-delay-2">
+      <div class="card-thumb t2">
+        <span class="card-tag-pill">Mobile UX</span>
+        <div class="thumb-icon">
+          <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="7" y="2" width="14" height="24" rx="3" stroke="#1D9E75" stroke-width="1.5"/>
+            <circle cx="14" cy="22" r="1.5" fill="#1D9E75"/>
+            <path d="M10 8h8M10 12h5" stroke="#1D9E75" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-category">Vodafone · eKYC</div>
+        <div class="card-title">Proof of Payment Flow</div>
+        <div class="card-desc">Redesigned the returning-user state for digital identity verification, balancing security with a frictionless mobile experience.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="tag">Mobile</span>
+          <span class="tag">Fintech</span>
+        </div>
+        <div class="card-arrow">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 10L10 2M10 2H4M10 2v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+    </a>
+
+    <!-- CARD 3 -->
+    <a href="#" class="halo-card reveal reveal-delay-3">
+      <div class="card-thumb t3">
+        <span class="card-tag-pill">Product Design</span>
+        <div class="thumb-icon">
+          <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="9" cy="20" r="3" stroke="#D85A30" stroke-width="1.5"/>
+            <circle cx="21" cy="20" r="3" stroke="#D85A30" stroke-width="1.5"/>
+            <path d="M4 20H6M12 20h6M24 20h1" stroke="#D85A30" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M8 14l4-8 3 5 2-3 3 6" stroke="#D85A30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-category">E-commerce · Website</div>
+        <div class="card-title">Bikeopolis</div>
+        <div class="card-desc">End-to-end shopping experience for urban cyclists. Covers product discovery, configurator, and checkout flow.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="tag">UX Research</span>
+          <span class="tag">E-commerce</span>
+        </div>
+        <div class="card-arrow">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 10L10 2M10 2H4M10 2v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+    </a>
+
+    <!-- CARD 4 -->
+    <a href="#" class="halo-card reveal reveal-delay-1">
+      <div class="card-thumb t4">
+        <span class="card-tag-pill">App Design</span>
+        <div class="thumb-icon">
+          <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14 4C8.477 4 4 8.477 4 14s4.477 10 10 10 10-4.477 10-10S19.523 4 14 4z" stroke="#AA4AB7" stroke-width="1.5"/>
+            <path d="M14 8v6l4 2" stroke="#AA4AB7" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-category">Food delivery · App</div>
+        <div class="card-title">Meal-Holic</div>
+        <div class="card-desc">Subscription meal delivery app with weekly and monthly plans, order tracking, and personalised meal selection.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="tag">iOS</span>
+          <span class="tag">Subscription UX</span>
+        </div>
+        <div class="card-arrow">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 10L10 2M10 2H4M10 2v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+    </a>
+
+    <!-- CARD 5 — wide -->
+    <a href="#" class="halo-card card-wide reveal reveal-delay-2">
+      <div class="card-thumb t1" style="background: linear-gradient(135deg, #121a14 0%, #162018 100%);">
+        <span class="card-tag-pill">Telecom UX</span>
+        <div class="thumb-icon" style="background: rgba(29,158,117,0.15);">
+          <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="7" width="22" height="14" rx="3" stroke="#1D9E75" stroke-width="1.5"/>
+            <path d="M9 11h10M9 15h6" stroke="#1D9E75" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-category">Vodafone · Consumer</div>
+        <div class="card-title">RED Plan Management</div>
+        <div class="card-desc">Redesigned the telecom plan management screen for Vodafone RED, improving discoverability of features, reducing support tickets by 22%, and increasing plan upgrade conversion.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-tags">
+          <span class="tag">Telecom</span>
+          <span class="tag">Dashboard</span>
+          <span class="tag">React</span>
+        </div>
+        <div class="card-arrow">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 10L10 2M10 2H4M10 2v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-eyebrow reveal">
+    <div class="eyebrow-line"></div>
+    About
+  </div>
+
+  <div class="about-grid">
+    <div class="reveal">
+      <h2 class="about-title">Designing at the intersection of<br><em>systems and experience</em></h2>
+      <p class="about-body">
+        I'm a senior product designer based in Cairo, Egypt, specialising in design systems, mobile UX, and the infrastructure that makes great products consistent at scale.
+      </p>
+      <p class="about-body">
+        At Vodafone I built the Master Design System Kit from the ground up — establishing the token pipeline, component architecture, and the processes that let 40+ product teams ship faster with better consistency.
+      </p>
+      <p class="about-body">
+        Outside systems work, I'm drawn to fintech and telecom interfaces where the UX challenge is making genuinely complex domains feel simple: onboarding flows, plan management, identity verification.
+      </p>
+      <a href="#" class="about-cta">
+        Download résumé
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 2v6M3 6l3 3 3-3M2 10h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+
+      <div class="experience-list">
+        <div class="exp-item">
+          <div class="exp-dot-col">
+            <div class="exp-dot"></div>
+            <div class="exp-line"></div>
+          </div>
+          <div>
+            <div class="exp-role">Senior Product Designer</div>
+            <div class="exp-company">Vodafone Egypt</div>
+            <div class="exp-period">2022 — Present</div>
+          </div>
+        </div>
+        <div class="exp-item">
+          <div class="exp-dot-col">
+            <div class="exp-dot" style="background: var(--text-3);"></div>
+            <div class="exp-line"></div>
+          </div>
+          <div>
+            <div class="exp-role">UI/UX Designer</div>
+            <div class="exp-company">Freelance</div>
+            <div class="exp-period">2020 — 2022</div>
+          </div>
+        </div>
+        <div class="exp-item exp-last">
+          <div class="exp-dot-col">
+            <div class="exp-dot" style="background: var(--text-3);"></div>
+          </div>
+          <div>
+            <div class="exp-role">Product Design Intern</div>
+            <div class="exp-company">Various agencies</div>
+            <div class="exp-period">2019 — 2020</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal reveal-delay-2">
+      <div class="skills-list">
+        <div class="skill-item">
+          <span class="skill-name">Design Systems</span>
+          <div class="skill-tools">
+            <span class="skill-tool">Figma</span>
+            <span class="skill-tool">Tokens Studio</span>
+          </div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">Token Pipelines</span>
+          <div class="skill-tools">
+            <span class="skill-tool">Style Dictionary</span>
+            <span class="skill-tool">GitHub Actions</span>
+          </div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">Mobile UX</span>
+          <div class="skill-tools">
+            <span class="skill-tool">iOS</span>
+            <span class="skill-tool">Android</span>
+          </div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">Interaction Design</span>
+          <div class="skill-tools">
+            <span class="skill-tool">Prototyping</span>
+            <span class="skill-tool">Framer</span>
+          </div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">UX Research</span>
+          <div class="skill-tools">
+            <span class="skill-tool">User Testing</span>
+            <span class="skill-tool">Analytics</span>
+          </div>
+        </div>
+        <div class="skill-item">
+          <span class="skill-name">Frontend Fluency</span>
+          <div class="skill-tools">
+            <span class="skill-tool">HTML/CSS</span>
+            <span class="skill-tool">React</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-orb"></div>
+  <div class="contact-eyebrow reveal">
+    <div class="eyebrow-line"></div>
+    Contact
+    <div class="eyebrow-line"></div>
+  </div>
+  <h2 class="contact-title reveal">Let's build<br>something.</h2>
+  <p class="contact-sub reveal reveal-delay-1">Open to freelance projects, design system consulting, and collaborations.</p>
+  <div class="contact-links reveal reveal-delay-2">
+    <a href="mailto:omar@example.com" class="btn-primary">
+      Send a message
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 3h8l-4 4-4-4zm0 0v6h8V3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <a href="https://www.linkedin.com/in/omar-k/" target="_blank" class="btn-ghost">LinkedIn ↗</a>
+    <a href="https://medium.com" target="_blank" class="btn-ghost">Medium ↗</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-left">© 2025 Omar Khalifa. All rights reserved.</span>
+  <div class="footer-right">
+    <a href="https://dribbble.com" target="_blank">Dribbble</a>
+    <a href="https://www.linkedin.com/in/omar-k/" target="_blank">LinkedIn</a>
+    <a href="https://medium.com" target="_blank">Medium</a>
+  </div>
+</footer>
+
+<script>
+  /* ── CUSTOM CURSOR ── */
+  const cursor = document.getElementById('cursor');
+  let cx = -100, cy = -100;
+
+  document.addEventListener('mousemove', e => {
+    cx = e.clientX; cy = e.clientY;
+    cursor.style.left = cx + 'px';
+    cursor.style.top  = cy + 'px';
+  });
+
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('hover-state'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('hover-state'));
+  });
+
+  /* ── HALO CARDS ── */
+  document.querySelectorAll('.halo-card').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      card.style.setProperty('--my', (e.clientY - r.top)  + 'px');
+    });
+  });
+
+  /* ── SCROLL REVEAL ── */
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+</body>
+</html>
