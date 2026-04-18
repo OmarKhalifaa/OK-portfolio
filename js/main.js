@@ -81,7 +81,7 @@ if (hero) {
 if (window.matchMedia('(hover: hover)').matches) {
   let targetY = window.scrollY;
   let currentY = window.scrollY;
-  const EASE = 0.075;
+  const EASE = 0.12;
 
   window.addEventListener('wheel', e => {
     if (e.ctrlKey || e.metaKey) return; // allow pinch-zoom
@@ -125,30 +125,34 @@ function lerpColor(hex1, hex2, t) {
 }
 
 const THUMB_COLORS = {
-  t1: ['#111624','#161c2e'],
-  t2: ['#0f1a17','#141f1c'],
-  t3: ['#1a1412','#201a16'],
-  t4: ['#181318','#1e1520'],
+  t1: ['#111624','#4a4f7a'],
+  t2: ['#0f1a17','#3a6b58'],
+  t3: ['#1a1412','#6b4a3a'],
+  t4: ['#181318','#5a3a5a'],
 };
 
-document.querySelectorAll('.card-thumb').forEach(thumb => {
+// Delay setup so page-load visible cards still show the pixel effect
+setTimeout(() => document.querySelectorAll('.card-thumb').forEach(thumb => {
   const cls = [...thumb.classList].find(c => THUMB_COLORS[c]);
   if (!cls) return;
   const [c1, c2] = THUMB_COLORS[cls];
 
-  const COLS = 16, ROWS = 10;
+  const COLS = 8, ROWS = 5;
   const canvas = document.createElement('canvas');
   canvas.width = COLS; canvas.height = ROWS;
   Object.assign(canvas.style, {
-    position: 'absolute', inset: '0', width: '100%', height: '100%',
+    position: 'absolute', top: '0', left: '0', right: '0', bottom: '0',
+    width: '100%', height: '100%',
     imageRendering: 'pixelated', zIndex: '3', pointerEvents: 'none',
-    opacity: '1', transition: 'opacity 1.1s cubic-bezier(0.4, 0, 0.2, 1) 0.15s',
+    opacity: '1', transition: 'opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1)',
   });
 
   const ctx = canvas.getContext('2d');
   for (let x = 0; x < COLS; x++) {
     for (let y = 0; y < ROWS; y++) {
-      const t = (x / COLS) + (Math.random() * 0.3 - 0.15);
+      // Mix dark base with lighter accent pixels for visible contrast
+      const rand = Math.random();
+      const t = rand < 0.35 ? Math.random() * 0.4 + 0.6 : Math.random() * 0.4;
       ctx.fillStyle = lerpColor(c1, c2, t);
       ctx.fillRect(x, y, 1, 1);
     }
@@ -156,23 +160,26 @@ document.querySelectorAll('.card-thumb').forEach(thumb => {
 
   thumb.appendChild(canvas);
 
-  const obs = new IntersectionObserver(entries => {
-    if (entries[0].isIntersecting) {
-      canvas.style.opacity = '0';
-      obs.disconnect();
+  // Fade out 900ms after card enters viewport (independent of scroll-reveal)
+  let faded = false;
+  const pixelObs = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting && !faded) {
+      faded = true;
+      setTimeout(() => { canvas.style.opacity = '0'; }, 900);
+      pixelObs.disconnect();
     }
-  }, { threshold: 0.25 });
-  obs.observe(thumb);
-});
+  }, { threshold: 0.2, rootMargin: '0px 0px -40px 0px' });
+  pixelObs.observe(thumb);
+}), 50);
 
 /* ── COUNTER ANIMATION ── */
 function animateCounter(el) {
   const target = +el.dataset.count;
   const suffix = el.dataset.suffix || '';
-  const duration = 1800;
+  const duration = 1400;
   const start = performance.now();
 
-  const easeOutExpo = t => t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+  const easeOutExpo = t => 1 - Math.pow(1 - t, 4);
 
   function tick(now) {
     const elapsed = now - start;
