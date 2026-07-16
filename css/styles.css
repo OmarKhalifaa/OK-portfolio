@@ -107,7 +107,7 @@ nav {
   background: var(--nav-bg);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  transition: gap 2s cubic-bezier(0.4, 0, 0.2, 1), padding 2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: gap 2s cubic-bezier(0.4, 0, 0.2, 1), padding 2s cubic-bezier(0.4, 0, 0.2, 1), background .45s ease, backdrop-filter .45s ease, -webkit-backdrop-filter .45s ease;
 }
 
 .nav-extra {
@@ -126,6 +126,9 @@ nav {
 nav.nav-collapsed .nav-pill {
   gap: 0;
   padding: 0 20px;
+  background: color-mix(in srgb, var(--nav-bg) 72%, transparent);
+  backdrop-filter: blur(22px) saturate(1.25);
+  -webkit-backdrop-filter: blur(22px) saturate(1.25);
 }
 
 nav.nav-collapsed .nav-extra {
@@ -1178,6 +1181,14 @@ footer {
 
 .concept-page .nav-pill { pointer-events: auto; }
 
+html,
+.concept-page {
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar,
+.concept-page::-webkit-scrollbar { display: none; }
+
 .concept-shell {
   display: grid;
   grid-template-columns: minmax(300px, 26fr) minmax(560px, 48fr) minmax(300px, 26fr);
@@ -1220,6 +1231,34 @@ footer {
   pointer-events: none;
 }
 
+.hero-dot-glints {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.hero-dot-glints span {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 9px 2px color-mix(in srgb, var(--accent) 55%, transparent);
+  opacity: 0;
+  animation: dotGlint var(--speed) var(--delay) ease-in-out infinite;
+}
+
+@keyframes dotGlint {
+  0%, 72%, 100% { opacity: 0; transform: scale(.45); }
+  78% { opacity: .25; }
+  84% { opacity: .95; transform: scale(1); }
+  91% { opacity: 0; transform: scale(.55); }
+}
+
 .concept-page .hero-trail {
   z-index: 1;
   opacity: .76;
@@ -1248,6 +1287,13 @@ footer {
   letter-spacing: -.065em;
 }
 
+.concept-name {
+  display: block;
+  white-space: nowrap;
+  font-size: .78em;
+  margin-top: .1em;
+}
+
 .concept-role {
   max-width: 320px;
   margin-top: 28px;
@@ -1267,6 +1313,29 @@ footer {
   color: var(--text-3);
   font-size: 11px;
   line-height: 1.5;
+}
+
+.location-flag {
+  display: inline-block;
+  position: relative;
+  width: 16px;
+  height: 11px;
+  margin-left: 3px;
+  border: 1px solid rgba(0,0,0,.12);
+  border-radius: 1px;
+  background: linear-gradient(to bottom, #ce1126 0 33.33%, #fff 33.33% 66.66%, #000 66.66% 100%);
+  transform: translateY(2px);
+}
+
+.location-flag::after {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 4px;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: #c9a227;
 }
 
 .concept-socials {
@@ -1478,29 +1547,41 @@ footer {
   background: var(--surface-soft);
   color: var(--text-2);
   font-family: 'Syne', sans-serif;
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: .04em;
   overflow: hidden;
   flex-shrink: 0;
 }
 
+.profile-timeline .profile-exp-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  line-height: 1;
+  text-align: center;
+}
+
+.profile-exp-logo img {
+  display: block;
+  width: 28px;
+  height: 28px;
+}
+
 .profile-exp-logo-vodafone {
   border-color: transparent;
-  background: linear-gradient(135deg, #ef3d48, #b90f1b);
-  color: #fff;
+  background: transparent;
 }
 
 .profile-exp-logo-freelance {
-  border-color: transparent;
-  background: linear-gradient(135deg, #cfff54, #88c900);
-  color: #111110;
+  background: var(--surface-soft);
+  color: var(--text-1);
 }
 
 .profile-exp-logo-agency {
-  border-color: transparent;
-  background: linear-gradient(135deg, #5b78ff, #2e46be);
-  color: #f7f8ff;
+  background: var(--surface-soft);
+  color: var(--text-1);
 }
 
 .profile-about-content > p {
@@ -1538,6 +1619,56 @@ footer {
   line-height: 1;
 }
 .profile-stats span { color: var(--text-3); font-size: 11px; line-height: 1.4; }
+
+.profile-stats .about-stat-num {
+  display: flex;
+  align-items: flex-end;
+  height: 1em;
+  overflow: visible;
+}
+
+.profile-stats .counter-number {
+  display: inline-flex;
+  height: 1em;
+  overflow: hidden;
+  color: inherit;
+  font-size: inherit;
+  line-height: 1;
+}
+
+.profile-stats .counter-slot {
+  display: inline-block;
+  height: 1em;
+  overflow: hidden;
+  color: inherit;
+  font-size: inherit;
+  line-height: 1;
+}
+
+.profile-stats .counter-reel {
+  display: flex;
+  flex-direction: column;
+  color: inherit;
+  font-size: inherit;
+  line-height: 1;
+  will-change: transform;
+}
+
+.profile-stats .counter-digit {
+  display: block;
+  flex: 0 0 1em;
+  height: 1em;
+  color: inherit;
+  font-size: inherit;
+  line-height: 1;
+}
+
+.profile-stats .counter-suffix {
+  display: inline-block;
+  color: inherit;
+  font-size: inherit;
+  line-height: 1;
+}
 
 .concept-profile-bottom {
   display: flex;
@@ -1600,16 +1731,17 @@ footer {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .concept-page .nav-pill { animation: conceptEnter .7s .05s cubic-bezier(.22,.75,.25,1) both; }
-  .concept-page #hero { animation: columnBlend 1.15s .05s cubic-bezier(.22,.75,.25,1) both; }
-  .concept-page #work { animation: columnBlend 1.15s .32s cubic-bezier(.22,.75,.25,1) both; }
-  .concept-profile { animation: columnBlend 1.15s .62s cubic-bezier(.22,.75,.25,1) both; }
+  .concept-page .nav-pill { animation: conceptEnter .55s .03s cubic-bezier(.22,.75,.25,1) both; }
+  .concept-page #hero { animation: columnBlend .9s .03s cubic-bezier(.22,.75,.25,1) both; }
+  .concept-page #work { animation: columnBlend .9s .2s cubic-bezier(.22,.75,.25,1) both; }
+  .concept-profile { animation: columnBlend .9s .38s cubic-bezier(.22,.75,.25,1) both; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .concept-page #hero::after,
   .concept-page #work::after,
   .concept-card-stack::after { animation: none; display: none; }
+  .hero-dot-glints span { animation: none; display: none; }
 }
 
 @media (max-width: 1180px) {
