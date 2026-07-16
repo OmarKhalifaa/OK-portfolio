@@ -1,8 +1,7 @@
 /* ── THEME TOGGLE ── */
 (() => {
   const saved = localStorage.getItem('theme');
-  const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
-  const theme = saved || (prefersLight ? 'light' : 'dark');
+  const theme = saved || 'light';
   if (theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
   const btn = document.getElementById('themeToggle');
   if (btn) {
@@ -53,18 +52,21 @@ document.querySelectorAll('.halo-card').forEach(card => {
 (() => {
   const navEl = document.getElementById('nav');
   if (!navEl) return;
-  const mq = window.matchMedia('(max-width: 900px)');
-  let lastY = window.scrollY;
+  let ticking = false;
+
   const update = () => {
-    if (!mq.matches) { navEl.classList.remove('nav-collapsed'); return; }
-    const y = window.scrollY;
-    if (y < 40) navEl.classList.remove('nav-collapsed');
-    else if (y > lastY + 4) navEl.classList.add('nav-collapsed');
-    else if (y < lastY - 4) navEl.classList.remove('nav-collapsed');
-    lastY = y;
+    navEl.classList.toggle('nav-collapsed', window.scrollY > 32);
+    ticking = false;
   };
-  window.addEventListener('scroll', update, { passive: true });
-  mq.addEventListener('change', update);
+
+  const requestUpdate = () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(update);
+  };
+
+  update();
+  window.addEventListener('scroll', requestUpdate, { passive: true });
 })();
 
 /* ── HERO HALO ── */
