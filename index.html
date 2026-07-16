@@ -10,7 +10,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=uplift-5">
+  <link rel="stylesheet" href="css/styles.css?v=uplift-7">
 </head>
 
 <body class="concept-page">
@@ -21,7 +21,7 @@
       <a href="#hero" class="nav-logo">OK.</a>
       <div class="nav-extra">
         <ul class="nav-links">
-          <li><a href="#profile">About us</a></li>
+          <li><a href="#profile">About me</a></li>
           <li><a href="#profile" class="nav-cta">Profile ↗</a></li>
         </ul>
         <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
@@ -41,6 +41,7 @@
   <main class="concept-shell">
     <section class="concept-intro" id="hero">
       <canvas class="hero-trail" id="heroTrail" aria-hidden="true"></canvas>
+      <div class="hero-dot-glints" id="heroDotGlints" aria-hidden="true"></div>
 
       <div class="concept-intro-top">
         <div class="available-badge">
@@ -48,12 +49,12 @@
           <span class="badge-text">Available for select projects</span>
         </div>
 
-        <h1 class="concept-title">Hey,<br>I am Omar!</h1>
+        <h1 class="concept-title">Hey,<span class="concept-name">I'm Omar!</span></h1>
         <p class="concept-role">Senior product designer building useful systems and clear digital experiences.</p>
       </div>
 
       <div class="concept-intro-bottom">
-        <p class="concept-location">Cairo, Egypt<br>Working worldwide</p>
+        <p class="concept-location">Cairo, Egypt <span class="location-flag" role="img" aria-label="Egyptian flag"></span><br>Working worldwide</p>
         <div class="concept-socials" aria-label="Social links">
           <a href="https://www.linkedin.com/in/omarkhalifaa/" target="_blank" rel="noreferrer">LinkedIn ↗</a>
           <a href="https://dribbble.com" target="_blank" rel="noreferrer">Dribbble ↗</a>
@@ -90,7 +91,6 @@
       <div class="concept-card-stack">
         <a href="#" class="halo-card concept-card">
           <div class="card-thumb t1">
-            <span class="card-tag-pill">Design System</span>
             <div class="thumb-icon">
               <svg viewBox="0 0 28 28" fill="none" aria-hidden="true">
                 <rect x="3" y="3" width="10" height="10" rx="2" stroke="#7F77DD" stroke-width="1.5" />
@@ -117,7 +117,6 @@
 
         <a href="#" class="halo-card concept-card">
           <div class="card-thumb t2">
-            <span class="card-tag-pill">Mobile UX</span>
             <div class="thumb-icon">
               <svg viewBox="0 0 28 28" fill="none" aria-hidden="true">
                 <rect x="7" y="2" width="14" height="24" rx="3" stroke="#1D9E75" stroke-width="1.5" />
@@ -143,7 +142,6 @@
 
         <a href="#" class="halo-card concept-card">
           <div class="card-thumb t3">
-            <span class="card-tag-pill">Product Design</span>
             <div class="thumb-icon">
               <svg viewBox="0 0 28 28" fill="none" aria-hidden="true">
                 <circle cx="9" cy="20" r="3" stroke="#D85A30" stroke-width="1.5" />
@@ -170,7 +168,6 @@
 
         <a href="#" class="halo-card concept-card">
           <div class="card-thumb t4">
-            <span class="card-tag-pill">App Design</span>
             <div class="thumb-icon">
               <svg viewBox="0 0 28 28" fill="none" aria-hidden="true">
                 <circle cx="14" cy="14" r="10" stroke="#AA4AB7" stroke-width="1.5" />
@@ -203,17 +200,17 @@
         </div>
         <ol class="profile-timeline">
           <li>
-            <span class="profile-exp-logo profile-exp-logo-vodafone" aria-hidden="true">VE</span>
+            <span class="profile-exp-logo profile-exp-logo-vodafone" aria-hidden="true"><img src="images/vodafone.svg" alt=""></span>
             <div><strong>Vodafone Egypt</strong><span>Senior Product Designer</span></div>
             <time>2022—Now</time>
           </li>
           <li>
-            <span class="profile-exp-logo profile-exp-logo-freelance" aria-hidden="true">FR</span>
+            <span class="profile-exp-logo profile-exp-logo-freelance" aria-hidden="true">F</span>
             <div><strong>Freelance</strong><span>UI/UX Designer</span></div>
             <time>2020—22</time>
           </li>
           <li>
-            <span class="profile-exp-logo profile-exp-logo-agency" aria-hidden="true">AG</span>
+            <span class="profile-exp-logo profile-exp-logo-agency" aria-hidden="true">V</span>
             <div><strong>Various agencies</strong><span>Product Design Intern</span></div>
             <time>2019—20</time>
           </li>
@@ -234,7 +231,7 @@
     </aside>
   </main>
 
-  <script src="js/main.js?v=uplift-5"></script>
+  <script src="js/main.js?v=uplift-7"></script>
 </body>
 
 </html>

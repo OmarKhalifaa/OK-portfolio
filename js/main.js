@@ -39,6 +39,21 @@ document.querySelectorAll('a, button').forEach(el => {
   el.addEventListener('mouseleave', () => cursor.classList.remove('hover-state'));
 });
 
+/* ── HERO DOT GLINTS ── */
+(() => {
+  const field = document.getElementById('heroDotGlints');
+  if (!field) return;
+
+  for (let i = 0; i < 12; i += 1) {
+    const glint = document.createElement('span');
+    glint.style.setProperty('--x', `${4 + Math.random() * 92}%`);
+    glint.style.setProperty('--y', `${4 + Math.random() * 82}%`);
+    glint.style.setProperty('--delay', `${-Math.random() * 7}s`);
+    glint.style.setProperty('--speed', `${3.5 + Math.random() * 4}s`);
+    field.appendChild(glint);
+  }
+})();
+
 /* ── HALO CARDS ── */
 document.querySelectorAll('.halo-card').forEach(card => {
   card.addEventListener('mousemove', e => {
@@ -454,20 +469,63 @@ setTimeout(() => document.querySelectorAll('.card-thumb').forEach(thumb => {
 function animateCounter(el) {
   const target = +el.dataset.count;
   const suffix = el.dataset.suffix || '';
-  const duration = 3000;
-  const start = performance.now();
+  const duration = 6500;
+  const targetText = String(target);
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const easeOutExpo = t => 1 - Math.pow(1 - t, 4);
+  el.textContent = '';
+  el.setAttribute('aria-label', `${target}${suffix}`);
 
-  function tick(now) {
-    const elapsed = now - start;
-    const progress = Math.min(elapsed / duration, 1);
-    const value = Math.floor(easeOutExpo(progress) * target);
-    el.textContent = value + suffix;
-    if (progress < 1) requestAnimationFrame(tick);
+  const number = document.createElement('span');
+  number.className = 'counter-number';
+  number.setAttribute('aria-hidden', 'true');
+
+  [...targetText].forEach((digit, index) => {
+    const place = 10 ** (targetText.length - index - 1);
+    const turns = Math.floor(target / place);
+    const slot = document.createElement('span');
+    const reel = document.createElement('span');
+    slot.className = 'counter-slot';
+    reel.className = 'counter-reel';
+
+    for (let step = 0; step <= turns; step += 1) {
+      const item = document.createElement('span');
+      item.className = 'counter-digit';
+      item.textContent = String(step % 10);
+      reel.appendChild(item);
+    }
+
+    slot.appendChild(reel);
+    number.appendChild(slot);
+
+    if (!reduceMotion && turns > 0) {
+      requestAnimationFrame(() => {
+        reel.animate(
+          [
+            { transform: 'translateY(0)' },
+            { transform: `translateY(-${turns}em)` }
+          ],
+          {
+            duration,
+            easing: 'cubic-bezier(.45, 0, .25, 1)',
+            fill: 'forwards'
+          }
+        );
+      });
+    } else {
+      reel.style.transform = `translateY(-${turns}em)`;
+    }
+  });
+
+  el.appendChild(number);
+
+  if (suffix) {
+    const suffixEl = document.createElement('span');
+    suffixEl.className = 'counter-suffix';
+    suffixEl.setAttribute('aria-hidden', 'true');
+    suffixEl.textContent = suffix;
+    el.appendChild(suffixEl);
   }
-
-  requestAnimationFrame(tick);
 }
 
 const counterObserver = new IntersectionObserver(entries => {

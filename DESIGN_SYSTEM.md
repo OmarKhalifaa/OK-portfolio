@@ -1,153 +1,160 @@
-# Design System — Omar Khalifa Portfolio
+# Design Language System — Omar Khalifa Portfolio
 
-A reference for all design tokens, typography, components, and interaction patterns used in this portfolio.
+This document is the source of truth for the portfolio’s visual language, layout, components, and motion behaviour.
 
----
+## Principles
 
-## Fonts
+- Calm editorial structure with visible grid logic.
+- Light-first presentation with a fully supported dark theme.
+- Green is an interaction accent, not a surface colour.
+- Motion should feel deliberate, physical, and continuous.
+- Information density comes from alignment and hierarchy rather than decoration.
 
-| Role | Family | Weights | Usage |
-|------|--------|---------|-------|
-| **Display / Headings** | [Syne](https://fonts.google.com/specimen/Syne) | 400, 500, 600, 700, 800 | Hero headline, section headings, logo, card titles |
-| **Body / UI** | [DM Sans](https://fonts.google.com/specimen/DM+Sans) | 300, 400, 500 | Body copy, nav links, buttons, meta labels, descriptions |
+## Foundations
 
-```html
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
-```
+### Typography
 
----
+| Role | Family | Weight | Current use |
+|---|---|---:|---|
+| Display | Syne | 500–800 | Hero, section titles, card titles, logo, counters |
+| Body and UI | DM Sans | 300–500 | Navigation, body copy, metadata, tags, timeline |
 
-## Colour Tokens
+Key concept sizes:
 
-### Dark Mode (default)
+| Element | Specification |
+|---|---|
+| Hero greeting | `clamp(54px, 5vw, 92px)`, `0.92` line-height, `-0.065em` tracking |
+| “I’m Omar!” line | `0.78em` of the greeting, no wrap, `0.1em` top separation |
+| Middle statement | Responsive display size defined by `.concept-statement` |
+| Section titles | `18px` Syne 600 via `--concept-section-title` |
+| Card titles | `clamp(17px, 1.35vw, 22px)` |
+| Stat counters | `42px` Syne, one-line odometer slots |
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `--bg` | `#0C0C0B` | Page background |
-| `--bg-2` | `#111110` | Card background |
-| `--bg-3` | `#181817` | Elevated surfaces, hover states |
-| `--bg-4` | `#1F1F1E` | Highest elevation surface |
-| `--border` | `rgba(255,255,255,0.07)` | Default borders |
-| `--border-2` | `rgba(255,255,255,0.12)` | Stronger borders, focus rings |
-| `--text-1` | `#F5F4EE` | Primary text |
-| `--text-2` | `#B8B8B1` | Secondary text, descriptions |
-| `--text-3` | `#7A7A73` | Muted text, labels, hints |
-| `--accent` | `#5DCAA5` | Brand green, highlights, badges |
-| `--accent-dim` | `rgba(93,202,165,0.10)` | Accent tints, tag backgrounds |
-| `--red` | `#E8524A` | Error / destructive states |
-| `--nav-bg` | `rgba(12,12,11,0.85)` | Nav pill background (frosted) |
-| `--surface-soft` | `rgba(255,255,255,0.04)` | Subtle surface tint |
+### Colour tokens
 
-### Light Mode (`[data-theme="light"]`)
+Light mode is the default document theme. Dark mode remains available through the theme toggle.
 
-| Token | Value |
-|-------|-------|
-| `--bg` | `#F5F3EC` |
-| `--bg-2` | `#EFEDE5` |
-| `--bg-3` | `#E5E2D8` |
-| `--bg-4` | `#DCD9CE` |
-| `--text-1` | `#111110` |
-| `--text-2` | `#4A4A46` |
-| `--text-3` | `#7A7A73` |
-| `--accent` | `#1F8F6A` |
-| `--red` | `#C4372F` |
+| Token | Light | Dark | Purpose |
+|---|---|---|---|
+| `--bg` | `#F5F3EC` | `#0C0C0B` | Page and column background |
+| `--bg-2` | `#EFEDE5` | `#111110` | Secondary surfaces |
+| `--bg-3` | `#E5E2D8` | `#181817` | Hover/elevated surfaces |
+| `--border` | `rgba(10,10,8,.09)` | `rgba(255,255,255,.07)` | Grid and card separators |
+| `--border-2` | `rgba(10,10,8,.18)` | `rgba(255,255,255,.12)` | Strong controls and outlines |
+| `--text-1` | `#111110` | `#F5F4EE` | Primary text |
+| `--text-2` | `#4A4A46` | `#B8B8B1` | Body copy |
+| `--text-3` | `#7A7A73` | `#7A7A73` | Metadata and muted labels |
+| `--accent` | `#1F8F6A` | `#5DCAA5` | Trail, glints, rain, active details |
+| `--nav-bg` | `rgba(245,243,236,.85)` | `rgba(12,12,11,.85)` | Frosted floating navigation |
+| `--surface-soft` | `rgba(10,10,8,.035)` | `rgba(255,255,255,.04)` | Stat and logo tiles |
 
----
+### Texture and visibility
 
-## Typography Scale
+- A fixed fractal-noise overlay adds subtle material texture.
+- The left column uses an `18px × 18px` dot field with a bottom fade mask.
+- Twelve green glints are placed randomly on load and pulse independently.
+- Browser scrollbars are visually hidden while scrolling remains enabled.
 
-| Element | Font | Size | Weight | Letter Spacing |
-|---------|------|------|--------|----------------|
-| Hero headline | Syne | `clamp(42px, 6vw, 80px)` | 700 | `-0.04em` |
-| Section heading | Syne | `clamp(28px, 3vw, 40px)` | 700 | `-0.02em` |
-| Card title | Syne | `18px` | 700 | `-0.02em` |
-| Body | DM Sans | `15px` | 400 | — |
-| Hero sub | DM Sans | `16px` | 300 | — |
-| Nav links | DM Sans | `13px` | 400 | — |
-| Tags / labels | DM Sans | `11px` | 500 | `0.03em` |
-| Muted hints | DM Sans | `11px` | 400 | `0.06em` uppercase |
+## Layout
 
----
+### Desktop
 
-## Spacing & Layout
+The main shell is a full-height three-column grid:
 
-| Token | Value |
-|-------|-------|
-| Max content width | `1920px` (via dynamic padding) |
-| Section padding (desktop) | `80px max(40px, calc((100% - 1920px) / 2))` |
-| Section padding (mobile) | `72px 24px` |
-| Hero padding (desktop) | `56px max(40px, ...) 72px` |
-| Hero padding (mobile) | `96px 24px 88px` |
-| Cards grid gap | `12px` |
-| Card border radius | `18px` |
-| Pill border radius | `100px` |
+| Column | Share | Behaviour |
+|---|---:|---|
+| Introduction | 26% | Sticky, viewport-height profile/greeting column |
+| Selected work | 48% | Scrolling editorial work column |
+| Experience | 26% | Sticky, viewport-height timeline and metrics column |
 
----
+Vertical borders are structural grid lines. The middle card stack uses a two-column, two-row grid with hard separators and no rounded outer card containers.
+
+### Responsive
+
+| Breakpoint | Behaviour |
+|---|---|
+| `≤1180px` | Two-column hero/work shell; Experience moves below as a full-width section |
+| `≤820px` | Single document flow; work cards stack; sticky columns become normal sections |
+| `≤620px` | Compact navigation and profile padding; simplified card metadata |
+| `(hover: none)` | Custom cursor, trail, and halo effects are disabled |
 
 ## Components
 
-### Nav Pill
-- Fixed, centred, frosted glass (`backdrop-filter: blur(14px)`)
-- Expands on hover/focus-within to reveal links (desktop)
-- Always expanded on mobile; auto-collapses when scrolling down, expands when scrolling up
+### Floating navigation
 
-### Halo Card (`.halo-card`)
-- Dark surface card with `border-radius: 18px`
-- On hover: radial fill glow follows the cursor (`--mx`, `--my` CSS vars set via JS `mousemove`)
-- Border-halo: green radial gradient on border using CSS mask technique
-- Lifts `translateY(-3px)` on hover
-- Disabled on touch devices (`@media (hover: none)`)
+- Fixed and centred at the top of the viewport.
+- Pill form with a `14px` backdrop blur at rest.
+- Collapses after `32px` of scrolling.
+- Collapsed state uses `22px` blur plus `1.25` saturation for stronger separation over content.
+- Hover or keyboard focus re-expands the links.
+- Current links are “About me” and “Profile”.
 
-### Buttons
+### Introduction column
 
-| Variant | Class | Style |
-|---------|-------|-------|
-| Primary | `.btn-primary` | Filled `--text-1` background, `--bg` text |
-| Ghost | `.btn-ghost` | Transparent, `--border` outline, `--text-2` text |
+- Availability badge at the top.
+- Two-line greeting: “Hey,” followed by the unbroken “I’m Omar!” line.
+- Cairo location includes a small CSS-rendered Egyptian flag.
+- Social and resume links anchor the bottom-right.
+- Dot field, fluid trail, and independent glints share the column without blocking input.
 
-Both: `border-radius: 8px`, `font-size: 13px`, `DM Sans 500`
+### Capability ribbon
 
-### Tags / Pills (`.card-tag`)
-- `background: var(--accent-dim)`
-- `color: var(--accent)`
-- `border: 1px solid var(--border)`
-- `border-radius: 4px`, `padding: 3px 8px`, `font-size: 11px`
+- Horizontally looping pill strip in the middle column.
+- Transparent background with top and bottom rules.
+- Edge masks create soft entry and exit crops.
+- Standard loop duration: `28s`.
 
-### Available Badge
-- Rounded pill with animated green dot (`box-shadow: 0 0 8px var(--accent)` + pulse animation)
-- Fade-up entrance animation on load
+### Selected-work cards
 
----
+- Four cards shown as a `2 × 2` grid on desktop.
+- Zero outer radius and no standalone surface; hierarchy comes from grid separators.
+- Thumbnail ratio is `4 / 3`.
+- Category pills are intentionally removed from thumbnail tops.
+- Metadata tags remain below the project description.
+- Cursor halo remains available on hover-capable devices.
 
-## Motion & Interactions
+### Experience and profile rail
 
-| Interaction | Behaviour |
-|-------------|-----------|
-| Scroll reveal | `IntersectionObserver` adds `.visible` class at 10% threshold; elements fade + slide up |
-| Card halo | `mousemove` → CSS custom properties `--mx` / `--my` → radial gradients on `::before` / `::after` |
-| Hero halo | Same mouse-tracking technique on `#hero::before` with green tint |
-| Custom cursor | Dot follows mouse with lerp easing (`0.15` factor via `requestAnimationFrame`) |
-| Nav expand | `max-width` transition `1.7s cubic-bezier(0.22, 1, 0.36, 1)` |
-| Theme switch | `background` / `color` transition `0.3s ease` on `body` |
-| Scroll indicator | Animated mouse SVG — scroll wheel bobs down and fades via `@keyframes scrollWheel` |
-| Noise overlay | SVG fractal noise on `body::before`, `opacity: 0.025` dark / `0.04` light |
+- Experience and About content are blended into one module.
+- Vodafone uses the official red mark asset.
+- Freelance and Various Agencies use centred, bold `F` and `V` tiles.
+- The About heading is omitted; copy follows the timeline after a separator.
+- Metrics use large odometer counters with their labels directly below.
 
----
+## Motion
 
-## Card Thumbnail Palettes
+| Pattern | Behaviour |
+|---|---|
+| Column entrance | Columns blend in left-to-right with blur removal; delays are `.03s`, `.2s`, `.38s` |
+| Hero trail | Inertial green cursor trail with collision fragments; continues within the active hero session |
+| Dot glints | Random positions, `3.5–7.5s` independent pulse cycles |
+| Grid rain | Green light pulses travel down the three primary vertical separators every `4.6s` |
+| Odometer counters | Digits roll upward only, from zero to `5+` and `12+`, over `6.5s` |
+| Capability ribbon | Continuous horizontal movement over `28s` |
+| Nav state | Expansion remains slow and soft; blur changes over `.45s` |
 
-| Class | Gradient |
-|-------|----------|
-| `.t1` | `#111624 → #161c2e` (blue-dark) |
-| `.t2` | `#0f1a17 → #141f1c` (green-dark) |
-| `.t3` | `#1a1412 → #201a16` (warm-dark) |
-| `.t4` | `#181318 → #1e1520` (purple-dark) |
+The counter reels are clipped to one digit height. For multi-digit values, each place rolls the number of turns required to arrive at the final value. The accessible value is supplied through `aria-label` while animated reel glyphs are hidden from assistive technology.
 
----
+### Reduced motion
 
-## Breakpoints
+When `prefers-reduced-motion: reduce` is active:
 
-| Breakpoint | Behaviour |
-|------------|-----------|
-| `≤ 900px` | Single-column cards, stacked about grid, simplified nav, mobile hero padding |
-| `(hover: none)` | Cursor hidden, halo FX disabled, touch-safe interactions only |
+- Grid rain and random glints are removed.
+- Counter reels immediately show their final values.
+- Touch devices do not render the custom cursor or fluid trail.
+
+## Asset palettes
+
+| Work thumbnail | Palette |
+|---|---|
+| Master Design System Kit | Deep navy with violet icon |
+| Proof of Payment Flow | Deep green with emerald icon |
+| Bikeopolis | Warm near-black with orange icon |
+| Meal-Holic | Aubergine near-black with purple icon |
+
+## Maintenance rules
+
+- Update this file whenever layout proportions, tokens, motion durations, breakpoints, or component behaviours change.
+- Keep cache-busting query versions in `index.html` aligned for CSS and JavaScript.
+- Preserve light mode as the default unless the product direction explicitly changes.
+- Every new continuous animation must include a reduced-motion treatment.
