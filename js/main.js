@@ -371,7 +371,9 @@ if (window.matchMedia('(hover: hover)').matches) {
   // Intercept anchor nav so lerp follows
   document.querySelectorAll('a[href^="#"]').forEach(a => {
     a.addEventListener('click', e => {
-      const target = document.querySelector(a.getAttribute('href'));
+      const href = (a.getAttribute('href') || '').trim();
+      if (!href || href === '#') return;
+      const target = document.querySelector(href);
       if (target) { e.preventDefault(); targetY = target.offsetTop; }
     });
   });
@@ -452,7 +454,7 @@ setTimeout(() => document.querySelectorAll('.card-thumb').forEach(thumb => {
 function animateCounter(el) {
   const target = +el.dataset.count;
   const suffix = el.dataset.suffix || '';
-  const duration = 1400;
+  const duration = 3000;
   const start = performance.now();
 
   const easeOutExpo = t => 1 - Math.pow(1 - t, 4);
