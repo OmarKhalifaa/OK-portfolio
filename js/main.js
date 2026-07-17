@@ -38,6 +38,36 @@
   }
 })();
 
+/* ── MOBILE MENU ── */
+(() => {
+  const nav = document.getElementById('nav');
+  const toggle = document.getElementById('mobileMenuToggle');
+  const links = document.getElementById('primaryLinks');
+  if (!nav || !toggle || !links) return;
+
+  const setOpen = open => {
+    nav.classList.toggle('mobile-menu-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  };
+
+  toggle.addEventListener('click', () => {
+    setOpen(!nav.classList.contains('mobile-menu-open'));
+  });
+
+  links.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => setOpen(false));
+  });
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') setOpen(false);
+  });
+
+  window.matchMedia('(min-width: 621px)').addEventListener('change', event => {
+    if (event.matches) setOpen(false);
+  });
+})();
+
 /* ── CUSTOM CURSOR ── */
 const cursor = document.getElementById('cursor');
 let tx = -100, ty = -100, cx = -100, cy = -100;

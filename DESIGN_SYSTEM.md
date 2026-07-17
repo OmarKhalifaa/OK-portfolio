@@ -75,7 +75,7 @@ Vertical borders are structural grid lines. The middle card stack uses a two-col
 |---|---|
 | `≤1180px` | Two-column hero/work shell; Experience moves below as a full-width section |
 | `≤820px` | Single document flow; work cards stack; sticky columns become normal sections |
-| `≤620px` | Two-row mobile navigation, compact profile padding, and simplified card metadata |
+| `≤620px` | Single-row mobile header with an expanding `+` dropdown sheet, compact profile padding, and simplified card metadata |
 | `(hover: none)` | Custom cursor, trail, and halo effects are disabled |
 
 ## Components
@@ -86,6 +86,7 @@ Vertical borders are structural grid lines. The middle card stack uses a two-col
 - Bold uppercase “OMAR KHALIFA” wordmark begins at the middle-column grid line.
 - “About | Profile” links and the theme control align to the right edge of that same middle column.
 - The bar does not collapse or change shape while scrolling.
+- On mobile, a `+` control reveals the links in a compact dropdown sheet below the wordmark; it rotates into a close icon while open.
 
 ### Introduction column
 
