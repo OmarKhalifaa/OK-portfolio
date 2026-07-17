@@ -1,19 +1,39 @@
 /* ── THEME TOGGLE ── */
 (() => {
   const saved = localStorage.getItem('theme');
-  const theme = saved || 'light';
-  if (theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
+  const theme = saved || 'dark';
+  if (theme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+  }
   const btn = document.getElementById('themeToggle');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let isTransitioning = false;
+
+  const applyTheme = isLight => {
+    if (isLight) {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+      localStorage.setItem('theme', 'light');
+    }
+  };
+
   if (btn) {
     btn.addEventListener('click', () => {
+      if (isTransitioning) return;
       const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-      if (isLight) {
-        document.documentElement.removeAttribute('data-theme');
-        localStorage.setItem('theme', 'dark');
-      } else {
-        document.documentElement.setAttribute('data-theme', 'light');
-        localStorage.setItem('theme', 'light');
+
+      if (!document.startViewTransition || reduceMotion.matches) {
+        applyTheme(isLight);
+        return;
       }
+
+      isTransitioning = true;
+      const transition = document.startViewTransition(() => applyTheme(isLight));
+      transition.finished.finally(() => { isTransitioning = false; });
     });
   }
 })();
@@ -62,27 +82,6 @@ document.querySelectorAll('.halo-card').forEach(card => {
     card.style.setProperty('--my', (e.clientY - r.top)  + 'px');
   });
 });
-
-/* ── NAV AUTO COLLAPSE ON SCROLL (mobile) ── */
-(() => {
-  const navEl = document.getElementById('nav');
-  if (!navEl) return;
-  let ticking = false;
-
-  const update = () => {
-    navEl.classList.toggle('nav-collapsed', window.scrollY > 32);
-    ticking = false;
-  };
-
-  const requestUpdate = () => {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(update);
-  };
-
-  update();
-  window.addEventListener('scroll', requestUpdate, { passive: true });
-})();
 
 /* ── HERO FLUID TRAIL ── */
 (() => {
