@@ -1240,6 +1240,8 @@ footer {
 .concept-page .nav-separator { color: var(--text-3); font-size: 12px; }
 .concept-page .theme-toggle { width: 34px; height: 34px; }
 
+.mobile-menu-toggle { display: none; }
+
 html,
 .concept-page {
   scrollbar-width: none;
@@ -1913,10 +1915,12 @@ html::-webkit-scrollbar,
   .concept-page nav { padding: 0; }
   .concept-page .nav-pill {
     display: grid;
-    grid-template-columns: 1fr auto;
-    grid-template-rows: 48px 36px;
-    height: 84px;
+    grid-template-columns: 1fr auto auto;
+    grid-template-rows: 58px auto;
+    min-height: 58px;
+    height: auto;
     padding: 0 16px;
+    transition: background .3s ease;
   }
   .concept-page .nav-logo {
     grid-column: 1;
@@ -1929,9 +1933,17 @@ html::-webkit-scrollbar,
   .concept-page .nav-links {
     grid-column: 1 / -1;
     grid-row: 2;
-    align-self: start;
-    justify-self: start;
-    gap: 12px;
+    width: 100%;
+    max-height: 0;
+    padding: 0;
+    gap: 14px;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-8px);
+    border-top: 1px solid transparent;
+    transition: max-height .38s cubic-bezier(.22,.75,.25,1), padding .38s cubic-bezier(.22,.75,.25,1), opacity .24s ease, transform .38s cubic-bezier(.22,.75,.25,1), border-color .24s ease, visibility 0s .38s;
   }
   .concept-page .nav-links a { font-size: 12px; }
   .concept-page .theme-toggle {
@@ -1942,7 +1954,49 @@ html::-webkit-scrollbar,
     width: 32px;
     height: 32px;
   }
-  .concept-page #hero { padding-top: 122px; }
+  .mobile-menu-toggle {
+    grid-column: 3;
+    grid-row: 1;
+    align-self: center;
+    justify-self: end;
+    display: grid;
+    place-items: center;
+    position: relative;
+    width: 32px;
+    height: 32px;
+    margin-left: 8px;
+    padding: 0;
+    border: 1px solid var(--border-2);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-1);
+    cursor: pointer;
+  }
+  .mobile-menu-toggle::before,
+  .mobile-menu-toggle::after {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 1.5px;
+    border-radius: 2px;
+    background: currentColor;
+    transition: transform .32s cubic-bezier(.22,.75,.25,1);
+  }
+  .mobile-menu-toggle::after { transform: rotate(90deg); }
+  .mobile-menu-toggle span { display: none; }
+  .concept-page nav.mobile-menu-open .nav-links {
+    max-height: 58px;
+    padding: 14px 0 16px;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+    border-top-color: var(--border);
+    transition-delay: 0s;
+  }
+  .concept-page nav.mobile-menu-open .mobile-menu-toggle::before { transform: rotate(45deg); }
+  .concept-page nav.mobile-menu-open .mobile-menu-toggle::after { transform: rotate(-45deg); }
+  .concept-page #hero { padding-top: 98px; }
   .concept-intro-bottom { align-items: flex-end; }
   .concept-profile { display: flex; padding: 56px 20px 28px; }
   .profile-module,
@@ -1954,4 +2008,10 @@ html::-webkit-scrollbar,
 @media (max-width: 820px) and (prefers-reduced-motion: reduce) {
   .concept-page #hero::after,
   .concept-work-heading::after { display: none; }
+}
+
+@media (max-width: 620px) and (prefers-reduced-motion: reduce) {
+  .concept-page .nav-links,
+  .mobile-menu-toggle::before,
+  .mobile-menu-toggle::after { transition: none; }
 }
