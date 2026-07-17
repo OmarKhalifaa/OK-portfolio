@@ -75,7 +75,7 @@ Vertical borders are structural grid lines. The middle card stack uses a two-col
 |---|---|
 | `≤1180px` | Two-column hero/work shell; Experience moves below as a full-width section |
 | `≤820px` | Single document flow; work cards stack; sticky columns become normal sections |
-| `≤620px` | Compact navigation and profile padding; simplified card metadata |
+| `≤620px` | Two-row mobile navigation, compact profile padding, and simplified card metadata |
 | `(hover: none)` | Custom cursor, trail, and halo effects are disabled |
 
 ## Components
@@ -127,6 +127,7 @@ Vertical borders are structural grid lines. The middle card stack uses a two-col
 | Hero trail | Inertial green cursor trail with collision fragments; continues within the active hero session |
 | Dot glints | Random positions, `3.5–7.5s` independent pulse cycles |
 | Grid rain | Green light pulses travel down the three primary vertical separators every `4.6s` |
+| Mobile line rain | Green pulses travel horizontally across the hero and work-heading dividers every `4.8s` |
 | Odometer counters | Digits roll upward only, from zero to `7+` and `12+`, over `6.5s` |
 | Capability ribbon | Continuous horizontal movement over `28s` |
 | Navigation | Full-width flat header with stable geometry and `12px` backdrop blur |
