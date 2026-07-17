@@ -42,6 +42,24 @@
 
 html { scroll-behavior: auto; }
 
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) { z-index: 1; }
+
+::view-transition-new(root) {
+  z-index: 2;
+  animation: themeWipeUp .62s cubic-bezier(.76, 0, .24, 1) both;
+}
+
+@keyframes themeWipeUp {
+  from { clip-path: inset(100% 0 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+
 body {
   background: var(--bg);
   color: var(--text-1);
@@ -1175,11 +1193,52 @@ footer {
 .concept-page::before { display: none; }
 
 .concept-page nav {
-  top: 16px;
+  top: 0;
   pointer-events: none;
 }
 
-.concept-page .nav-pill { pointer-events: auto; }
+.concept-page .nav-pill {
+  display: grid;
+  grid-template-columns: minmax(300px, 26fr) minmax(560px, 48fr) minmax(300px, 26fr);
+  width: 100%;
+  height: 64px;
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  box-shadow: none;
+  gap: 0;
+  pointer-events: auto;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.concept-page .nav-logo {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: start;
+  margin-left: 18px;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -.025em;
+}
+
+.concept-page .nav-extra {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+  justify-content: flex-end;
+  max-width: none;
+  padding: 0 18px;
+  gap: 18px;
+  overflow: visible;
+}
+
+.concept-page .nav-links { gap: 18px; }
+.concept-page .nav-links a { font-size: 13px; }
+.concept-page .nav-separator { color: var(--text-3); font-size: 12px; }
+.concept-page .theme-toggle { width: 34px; height: 34px; }
 
 html,
 .concept-page {
@@ -1341,8 +1400,8 @@ html::-webkit-scrollbar,
 .concept-socials {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  gap: 6px;
+  align-items: flex-start;
+  gap: 8px;
 }
 
 .concept-socials a,
@@ -1354,6 +1413,33 @@ html::-webkit-scrollbar,
 
 .concept-socials a:hover,
 .concept-profile-bottom a:hover { color: var(--accent); }
+
+.concept-socials a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.concept-socials svg,
+.location-line svg {
+  flex: 0 0 auto;
+  width: 14px;
+  height: 14px;
+}
+
+.concept-location {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.location-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
 
 .concept-page #work {
   min-height: 100svh;
@@ -1731,13 +1817,15 @@ html::-webkit-scrollbar,
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .concept-page .nav-pill { animation: conceptEnter .55s .03s cubic-bezier(.22,.75,.25,1) both; }
+  .concept-page .nav-pill { animation: conceptEnter .45s .03s cubic-bezier(.22,.75,.25,1) both; }
   .concept-page #hero { animation: columnBlend .9s .03s cubic-bezier(.22,.75,.25,1) both; }
   .concept-page #work { animation: columnBlend .9s .2s cubic-bezier(.22,.75,.25,1) both; }
   .concept-profile { animation: columnBlend .9s .38s cubic-bezier(.22,.75,.25,1) both; }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation: none; }
   .concept-page #hero::after,
   .concept-page #work::after,
   .concept-card-stack::after { animation: none; display: none; }
@@ -1745,6 +1833,12 @@ html::-webkit-scrollbar,
 }
 
 @media (max-width: 1180px) {
+  .concept-page .nav-pill {
+    display: flex;
+    padding: 0 28px;
+  }
+  .concept-page .nav-logo { margin-left: 0; }
+  .concept-page .nav-extra { padding: 0; }
   .concept-shell { grid-template-columns: minmax(300px, 38fr) minmax(520px, 62fr); }
   .concept-profile {
     grid-column: 1 / -1;
@@ -1789,8 +1883,13 @@ html::-webkit-scrollbar,
 }
 
 @media (max-width: 620px) {
-  .concept-page nav { padding: 0 12px; }
-  .concept-page .nav-cta { padding-inline: 10px; }
+  .concept-page nav { padding: 0; }
+  .concept-page .nav-pill { height: 58px; padding: 0 16px; }
+  .concept-page .nav-logo { font-size: 14px; }
+  .concept-page .nav-extra { gap: 12px; }
+  .concept-page .nav-links { gap: 10px; }
+  .concept-page .nav-links a { font-size: 12px; }
+  .concept-page .theme-toggle { width: 32px; height: 32px; }
   .concept-intro-bottom { align-items: flex-end; }
   .concept-profile { display: flex; padding: 56px 20px 28px; }
   .profile-module,
