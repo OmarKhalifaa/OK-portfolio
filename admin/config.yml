@@ -5,6 +5,9 @@ backend:
   repo: OmarKhalifaa/OK-portfolio
   branch: main
   use_graphql: true
+  base_url: https://api.netlify.com
+  auth_endpoint: auth
+  site_domain: stately-sfogliatella-379d14.netlify.app
 
 publish_mode: editorial_workflow
 media_folder: images/uploads

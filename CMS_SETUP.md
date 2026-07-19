@@ -82,6 +82,8 @@ Other projects use their slug:
 
 The production configuration uses Decap's GitHub backend with Netlify's OAuth provider. It does not use the deprecated Git Gateway feature. Editors must have write access to the GitHub repository.
 
+Hosted CMS: `https://stately-sfogliatella-379d14.netlify.app/admin/`
+
 1. Import `OmarKhalifaa/OK-portfolio` into Netlify.
 2. Use the repository root as the publish directory. `netlify.toml` already contains the build settings.
 3. In GitHub, open **Settings → Developer settings → OAuth Apps** and register a new OAuth application.
@@ -90,10 +92,10 @@ The production configuration uses Decap's GitHub backend with Netlify's OAuth pr
 6. Copy the GitHub Client ID and generate a Client Secret.
 7. In Netlify, open **Project configuration → Access & security → OAuth**.
 8. Install the GitHub authentication provider and enter the Client ID and Client Secret.
-9. Open `https://YOUR-SITE.netlify.app/admin/` and sign in with the GitHub account that has write access to the repository.
+9. Open `https://stately-sfogliatella-379d14.netlify.app/admin/` and sign in with the GitHub account that has write access to the repository.
 
 The CMS publishes to the `main` branch. Decap's editorial workflow creates a branch and pull request for drafts before publishing.
 
 ## Important deployment note
 
-GitHub Pages can continue serving the public site, but its `/admin` will not know which Netlify OAuth configuration to use. Use the Netlify URL for online editing, or connect the final custom domain to Netlify.
+GitHub Pages can continue serving the public site. The CMS configuration pins `site_domain` to `stately-sfogliatella-379d14.netlify.app`, so both the GitHub Pages and Netlify `/admin/` routes use the same Netlify OAuth provider. Use the Netlify URL for the clearest online editing workflow.
