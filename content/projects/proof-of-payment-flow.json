@@ -1,0 +1,36 @@
+{
+  "slug": "proof-of-payment-flow",
+  "title": "Proof of Payment Flow",
+  "heroTitle": "Proof of\nPayment Flow",
+  "seoDescription": "A returning-user payment verification flow balancing security, speed, and a frictionless mobile experience.",
+  "client": "Vodafone",
+  "category": "eKYC · Mobile",
+  "year": "2024",
+  "deck": "A returning-user payment verification flow balancing security, speed, and a frictionless mobile experience.",
+  "industry": "Telecommunications",
+  "role": "Senior Product Designer",
+  "team": ["Fintech squad", "Engineering", "Compliance"],
+  "timeline": "2024",
+  "recommendations": ["master-design-system", "bikeopolis", "meal-holic"],
+  "blocks": [
+    {
+      "type": "two_column_text",
+      "sectionId": "overview",
+      "navLabel": "Overview",
+      "showInNav": true,
+      "eyebrow": "Overview",
+      "heading": "Making verification feel fast without weakening trust.",
+      "left": "Returning customers needed a clear way to confirm payment while keeping sensitive financial information protected.",
+      "right": "The flow reduced unnecessary repetition, clarified system feedback, and preserved the controls required by compliance."
+    },
+    {
+      "type": "quote",
+      "sectionId": "case-study-coming-soon",
+      "navLabel": "Coming soon",
+      "showInNav": true,
+      "eyebrow": "Case study in progress",
+      "quote": "The complete process, screens, and outcomes will be added through the CMS.",
+      "attribution": "Omar Khalifa"
+    }
+  ]
+}

@@ -57,6 +57,22 @@ Dark mode is the default document theme. Light mode remains available through th
 
 ## Layout
 
+### Project case studies
+
+Project pages use a three-column editorial shell on desktop:
+
+| Column | Width | Behaviour |
+|---|---:|---|
+| Section navigation | `238px` | Sticky table of contents with active-section tracking |
+| Case study | Flexible | Hero, fixed four-field metadata strip, and CMS-ready content blocks |
+| Next projects | `286px` | Sticky recommendation rail with three project cards |
+
+At `960px` the recommendation rail moves below the case study. At `720px` the section navigation becomes a sticky horizontal strip and all content follows a single-column flow. The project metadata remains fixed in structure while the content blocks are intended to become reorderable through Decap CMS.
+
+Project content is stored as JSON in `content/projects`. `project.html` renders each block at runtime, builds the side navigation from block labels, and resolves the three recommended-project cards. Decap CMS is available at `/admin/`; its schema and allowed block types live in `admin/config.yml`.
+
+The project-page header reuses the homepage navigation geometry, typography, link structure, theme control, and mobile `+` menu. Image blocks expose controlled width, alignment, aspect-ratio, fit, focal-point, and caption settings; text-image blocks also expose column proportion and vertical alignment.
+
 ### Desktop
 
 The main shell is a full-height three-column grid:

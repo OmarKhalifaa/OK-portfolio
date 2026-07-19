@@ -1,0 +1,141 @@
+{
+  "slug": "master-design-system",
+  "title": "Master Design System Kit",
+  "heroTitle": "Master Design\nSystem Kit",
+  "seoDescription": "A scalable design-system foundation supporting more than 40 product teams across Vodafone web and mobile products.",
+  "client": "Vodafone",
+  "category": "Design systems",
+  "year": "2023—2024",
+  "deck": "A scalable token architecture and component foundation supporting more than 40 product teams across web and mobile.",
+  "industry": "Telecommunications",
+  "role": "Senior Product Designer",
+  "team": [
+    "Design system squad",
+    "Product teams"
+  ],
+  "timeline": "2023 — 2024",
+  "recommendations": [
+    "proof-of-payment-flow",
+    "bikeopolis",
+    "meal-holic"
+  ],
+  "blocks": [
+    {
+      "type": "two_column_text",
+      "sectionId": "overview",
+      "navLabel": "Overview",
+      "showInNav": true,
+      "eyebrow": "Overview",
+      "heading": "One shared foundation for a growing product ecosystem.",
+      "left": "Vodafone’s digital products were evolving quickly across platforms, markets, and product teams. The work needed a common design language that could make delivery faster without flattening the character of each experience.",
+      "right": "The Master Design System Kit brought foundations, tokens, components, documentation, and contribution workflows into one dependable product for designers and engineers."
+    },
+    {
+      "type": "feature_grid",
+      "sectionId": "problem",
+      "navLabel": "The problem",
+      "showInNav": true,
+      "eyebrow": "01 · The problem",
+      "heading": "Consistency was being rebuilt project by project.",
+      "items": [
+        {
+          "number": "01",
+          "title": "Fragmented foundations",
+          "body": "Teams used similar patterns with different spacing, colour, and interaction decisions."
+        },
+        {
+          "number": "02",
+          "title": "Repeated effort",
+          "body": "Designers and engineers recreated familiar product patterns instead of reusing them."
+        },
+        {
+          "number": "03",
+          "title": "Uneven quality",
+          "body": "Accessibility and responsive behaviour varied depending on the project and delivery pressure."
+        }
+      ]
+    },
+    {
+      "type": "rich_text",
+      "sectionId": "research",
+      "navLabel": "Research & insights",
+      "showInNav": true,
+      "eyebrow": "02 · Research & insights",
+      "heading": "The audit exposed a large shared core.",
+      "contentWidth": "narrow",
+      "body": "Mapping the product ecosystem revealed that teams were repeatedly solving the same interaction and foundation problems.\n\nThe strongest opportunity was not simply consolidating components. It was clarifying the decisions behind them and creating a dependable contribution model."
+    },
+    {
+      "type": "process",
+      "sectionId": "solution",
+      "navLabel": "Solution",
+      "showInNav": true,
+      "eyebrow": "03 · Solution",
+      "heading": "A system designed as a product, not a static library.",
+      "steps": [
+        {
+          "label": "Step 1",
+          "title": "Align foundations",
+          "body": "Establish semantic colour, typography, spacing, radius, and elevation tokens."
+        },
+        {
+          "label": "Step 2",
+          "title": "Build components",
+          "body": "Create responsive, accessible components with shared design and engineering contracts."
+        },
+        {
+          "label": "Step 3",
+          "title": "Document decisions",
+          "body": "Explain when, why, and how patterns should be used across product contexts."
+        },
+        {
+          "label": "Step 4",
+          "title": "Enable contribution",
+          "body": "Give product teams a clear route to propose, review, and release improvements."
+        }
+      ]
+    },
+    {
+      "type": "rich_text",
+      "sectionId": "system",
+      "navLabel": "The system",
+      "showInNav": true,
+      "eyebrow": "04 · The system",
+      "heading": "From foundations to production-ready patterns.",
+      "contentWidth": "wide",
+      "body": "The system connected semantic tokens to reusable components, then wrapped both in clear usage guidance. This made decisions visible and gave teams a predictable path from design to production.\n\nContribution and release workflows made the library sustainable: product teams could propose improvements while the core squad protected quality and coherence."
+    },
+    {
+      "type": "stats",
+      "sectionId": "results",
+      "navLabel": "Results",
+      "showInNav": true,
+      "eyebrow": "05 · Results",
+      "heading": "A shared language with measurable reach.",
+      "items": [
+        {
+          "value": "40+",
+          "label": "Product teams supported"
+        },
+        {
+          "value": "2",
+          "label": "Core platforms aligned"
+        },
+        {
+          "value": "1",
+          "label": "Shared source of truth"
+        }
+      ]
+    },
+    {
+      "type": "quote",
+      "sectionId": "learnings",
+      "navLabel": "Learnings",
+      "showInNav": true,
+      "eyebrow": "06 · Learnings",
+      "quote": "A design system succeeds when teams trust the decisions behind it—not only the components inside it.",
+      "attribution": "Omar Khalifa",
+      "body": "Clear ownership, contribution paths, and documentation proved as important as the visual foundations themselves."
+    }
+  ]
+}
