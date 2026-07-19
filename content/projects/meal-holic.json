@@ -1,0 +1,36 @@
+{
+  "slug": "meal-holic",
+  "title": "Meal-Holic",
+  "heroTitle": "Meal-Holic",
+  "seoDescription": "A flexible meal-subscription app with plan management, delivery tracking, and personalized selection.",
+  "client": "Meal-Holic",
+  "category": "Food delivery · Mobile",
+  "year": "2021",
+  "deck": "A flexible meal-subscription app with plan management, delivery tracking, and personalized selection.",
+  "industry": "Food delivery",
+  "role": "Product Designer",
+  "team": ["Product", "Engineering"],
+  "timeline": "2021",
+  "recommendations": ["bikeopolis", "proof-of-payment-flow", "master-design-system"],
+  "blocks": [
+    {
+      "type": "two_column_text",
+      "sectionId": "overview",
+      "navLabel": "Overview",
+      "showInNav": true,
+      "eyebrow": "Overview",
+      "heading": "A meal plan that adapts when life changes.",
+      "left": "Subscription customers needed flexibility around meal selection, skips, delivery timing, and plan changes.",
+      "right": "The mobile experience made recurring orders understandable while keeping the daily decisions lightweight."
+    },
+    {
+      "type": "quote",
+      "sectionId": "case-study-coming-soon",
+      "navLabel": "Coming soon",
+      "showInNav": true,
+      "eyebrow": "Case study in progress",
+      "quote": "The complete process, screens, and outcomes will be added through the CMS.",
+      "attribution": "Omar Khalifa"
+    }
+  ]
+}

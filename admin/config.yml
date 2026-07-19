@@ -1,0 +1,385 @@
+local_backend: true
+
+backend:
+  name: github
+  repo: OmarKhalifaa/OK-portfolio
+  branch: main
+  use_graphql: true
+
+publish_mode: editorial_workflow
+media_folder: images/uploads
+public_folder: images/uploads
+
+collections:
+  - name: projects
+    label: Projects
+    label_singular: Project
+    folder: content/projects
+    create: true
+    delete: true
+    extension: json
+    format: json
+    identifier_field: title
+    slug: "{{fields.slug}}"
+    summary: "{{title}} — {{client}}"
+    sortable_fields: [title, client, year]
+    view_filters:
+      - label: Vodafone
+        field: client
+        pattern: Vodafone
+    fields:
+      - label: Slug
+        name: slug
+        widget: string
+        hint: Lowercase letters, numbers, and hyphens only. This becomes the project URL.
+        pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Use lowercase letters, numbers, and hyphens only.']
+      - label: Project title
+        name: title
+        widget: string
+      - label: Hero title
+        name: heroTitle
+        widget: text
+        hint: Use a new line to control the title break in the hero.
+      - label: SEO description
+        name: seoDescription
+        widget: text
+      - label: Client
+        name: client
+        widget: string
+      - label: Category
+        name: category
+        widget: string
+      - label: Year
+        name: year
+        widget: string
+      - label: Hero description
+        name: deck
+        widget: text
+      - label: Industry
+        name: industry
+        widget: string
+      - label: My role
+        name: role
+        widget: string
+      - label: Team
+        name: team
+        widget: list
+        label_singular: Team member or group
+        field: { label: Name, name: name, widget: string }
+      - label: Timeline
+        name: timeline
+        widget: string
+      - label: Recommended / next projects
+        name: recommendations
+        widget: relation
+        collection: projects
+        search_fields: [title, client, category]
+        value_field: "{{slug}}"
+        display_fields: ["{{title}} — {{client}}"]
+        multiple: true
+        min: 1
+        max: 3
+      - label: Page content
+        name: blocks
+        widget: list
+        label_singular: Content block
+        collapsed: true
+        minimize_collapsed: false
+        summary: "{{fields.navLabel}} — {{type}}"
+        types:
+          - label: Rich text
+            name: rich_text
+            widget: object
+            fields:
+              - { label: Section ID, name: sectionId, widget: string, hint: 'Lowercase identifier, for example: research' }
+              - { label: Side-menu label, name: navLabel, widget: string }
+              - { label: Show in side menu, name: showInNav, widget: boolean, default: true }
+              - { label: Eyebrow, name: eyebrow, widget: string, required: false }
+              - { label: Heading, name: heading, widget: string, required: false }
+              - label: Content width
+                name: contentWidth
+                widget: select
+                default: wide
+                options:
+                  - { label: Wide, value: wide }
+                  - { label: Narrow, value: narrow }
+              - { label: Body, name: body, widget: richtext }
+
+          - label: Two-column text
+            name: two_column_text
+            widget: object
+            fields:
+              - { label: Section ID, name: sectionId, widget: string }
+              - { label: Side-menu label, name: navLabel, widget: string }
+              - { label: Show in side menu, name: showInNav, widget: boolean, default: true }
+              - { label: Eyebrow, name: eyebrow, widget: string, required: false }
+              - { label: Heading, name: heading, widget: string }
+              - { label: Left column, name: left, widget: richtext }
+              - { label: Right column, name: right, widget: richtext }
+
+          - label: Full-width image
+            name: image_full
+            widget: object
+            fields:
+              - { label: Section ID, name: sectionId, widget: string }
+              - { label: Side-menu label, name: navLabel, widget: string, required: false }
+              - { label: Show in side menu, name: showInNav, widget: boolean, default: false }
+              - { label: Eyebrow, name: eyebrow, widget: string, required: false }
+              - { label: Heading, name: heading, widget: string, required: false }
+              - { label: Image, name: image, widget: image }
+              - { label: Alternative text, name: alt, widget: string }
+              - { label: Caption, name: caption, widget: string, required: false }
+              - label: Image width
+                name: width
+                widget: select
+                default: full
+                options:
+                  - { label: Full block width, value: full }
+                  - { label: Wide — 82%, value: wide }
+                  - { label: Medium — 64%, value: medium }
+                  - { label: Small — 46%, value: narrow }
+              - label: Image alignment
+                name: alignment
+                widget: select
+                default: center
+                options:
+                  - { label: Left, value: left }
+                  - { label: Center, value: center }
+                  - { label: Right, value: right }
+              - label: Aspect ratio
+                name: aspectRatio
+                widget: select
+                default: auto
+                options:
+                  - { label: Natural image ratio, value: auto }
+                  - { label: Landscape — 16:9, value: landscape }
+                  - { label: Standard — 4:3, value: standard }
+                  - { label: Square — 1:1, value: square }
+                  - { label: Portrait — 4:5, value: portrait }
+              - label: Image fit
+                name: fit
+                widget: select
+                default: cover
+                options:
+                  - { label: Crop to fill, value: cover }
+                  - { label: Show complete image, value: contain }
+              - label: Crop focus
+                name: focalPoint
+                widget: select
+                default: center
+                options:
+                  - { label: Center, value: center }
+                  - { label: Top, value: top }
+                  - { label: Bottom, value: bottom }
+                  - { label: Left, value: left }
+                  - { label: Right, value: right }
+              - label: Caption alignment
+                name: captionAlignment
+                widget: select
+                default: left
+                options:
+                  - { label: Left, value: left }
+                  - { label: Center, value: center }
+                  - { label: Right, value: right }
+
+          - label: Text + image
+            name: text_image
+            widget: object
+            fields:
+              - { label: Section ID, name: sectionId, widget: string }
+              - { label: Side-menu label, name: navLabel, widget: string, required: false }
+              - { label: Show in side menu, name: showInNav, widget: boolean, default: true }
+              - { label: Eyebrow, name: eyebrow, widget: string, required: false }
+              - { label: Heading, name: heading, widget: string }
+              - { label: Body, name: body, widget: richtext }
+              - { label: Image, name: image, widget: image }
+              - { label: Alternative text, name: alt, widget: string }
+              - { label: Caption, name: caption, widget: string, required: false }
+              - label: Image position
+                name: imagePosition
+                widget: select
+                default: right
+                options:
+                  - { label: Right, value: right }
+                  - { label: Left, value: left }
+              - label: Image column width
+                name: imageWidth
+                widget: select
+                default: '50'
+                options:
+                  - { label: 40% image / 60% text, value: '40' }
+                  - { label: Equal columns, value: '50' }
+                  - { label: 60% image / 40% text, value: '60' }
+              - label: Vertical alignment
+                name: verticalAlignment
+                widget: select
+                default: center
+                options:
+                  - { label: Top, value: top }
+                  - { label: Center, value: center }
+                  - { label: Bottom, value: bottom }
+              - label: Image aspect ratio
+                name: aspectRatio
+                widget: select
+                default: auto
+                options:
+                  - { label: Natural image ratio, value: auto }
+                  - { label: Landscape — 16:9, value: landscape }
+                  - { label: Standard — 4:3, value: standard }
+                  - { label: Square — 1:1, value: square }
+                  - { label: Portrait — 4:5, value: portrait }
+              - label: Image fit
+                name: fit
+                widget: select
+                default: cover
+                options:
+                  - { label: Crop to fill, value: cover }
+                  - { label: Show complete image, value: contain }
+              - label: Crop focus
+                name: focalPoint
+                widget: select
+                default: center
+                options:
+                  - { label: Center, value: center }
+                  - { label: Top, value: top }
+                  - { label: Bottom, value: bottom }
+                  - { label: Left, value: left }
+                  - { label: Right, value: right }
+
+          - label: Image gallery
+            name: gallery
+            widget: object
+            fields:
+              - { label: Section ID, name: sectionId, widget: string }
+              - { label: Side-menu label, name: navLabel, widget: string, required: false }
+              - { label: Show in side menu, name: showInNav, widget: boolean, default: false }
+              - { label: Eyebrow, name: eyebrow, widget: string, required: false }
+              - { label: Heading, name: heading, widget: string, required: false }
+              - label: Columns
+                name: columns
+                widget: select
+                default: two
+                options:
+                  - { label: Two, value: two }
+                  - { label: Three, value: three }
+              - label: Image aspect ratio
+                name: aspectRatio
+                widget: select
+                default: auto
+                options:
+                  - { label: Natural image ratio, value: auto }
+                  - { label: Landscape — 16:9, value: landscape }
+                  - { label: Standard — 4:3, value: standard }
+                  - { label: Square — 1:1, value: square }
+                  - { label: Portrait — 4:5, value: portrait }
+              - label: Image fit
+                name: fit
+                widget: select
+                default: cover
+                options:
+                  - { label: Crop to fill, value: cover }
+                  - { label: Show complete image, value: contain }
+              - label: Crop focus
+                name: focalPoint
+                widget: select
+                default: center
+                options:
+                  - { label: Center, value: center }
+                  - { label: Top, value: top }
+                  - { label: Bottom, value: bottom }
+                  - { label: Left, value: left }
+                  - { label: Right, value: right }
+              - label: Images
+                name: images
+                widget: list
+                label_singular: Gallery image
+                fields:
+                  - { label: Image, name: image, widget: image }
+                  - { label: Alternative text, name: alt, widget: string }
+                  - { label: Caption, name: caption, widget: string, required: false }
+
+          - label: Video
+            name: video
+            widget: object
+            fields:
+              - { label: Section ID, name: sectionId, widget: string }
+              - { label: Side-menu label, name: navLabel, widget: string, required: false }
+              - { label: Show in side menu, name: showInNav, widget: boolean, default: false }
+              - { label: Eyebrow, name: eyebrow, widget: string, required: false }
+              - { label: Heading, name: heading, widget: string, required: false }
+              - { label: Video URL, name: url, widget: string, hint: 'YouTube, Vimeo, or an uploaded video path.' }
+              - { label: Caption, name: caption, widget: string, required: false }
+
+          - label: Feature / insight cards
+            name: feature_grid
+            widget: object
+            fields:
+              - { label: Section ID, name: sectionId, widget: string }
+              - { label: Side-menu label, name: navLabel, widget: string }
+              - { label: Show in side menu, name: showInNav, widget: boolean, default: true }
+              - { label: Eyebrow, name: eyebrow, widget: string, required: false }
+              - { label: Heading, name: heading, widget: string }
+              - label: Cards
+                name: items
+                widget: list
+                label_singular: Card
+                fields:
+                  - { label: Number, name: number, widget: string, required: false }
+                  - { label: Title, name: title, widget: string }
+                  - { label: Body, name: body, widget: richtext }
+
+          - label: Results / statistics
+            name: stats
+            widget: object
+            fields:
+              - { label: Section ID, name: sectionId, widget: string }
+              - { label: Side-menu label, name: navLabel, widget: string }
+              - { label: Show in side menu, name: showInNav, widget: boolean, default: true }
+              - { label: Eyebrow, name: eyebrow, widget: string, required: false }
+              - { label: Heading, name: heading, widget: string }
+              - label: Statistics
+                name: items
+                widget: list
+                label_singular: Statistic
+                fields:
+                  - { label: Value, name: value, widget: string, hint: 'For example: 40+ or 62%' }
+                  - { label: Label, name: label, widget: string }
+
+          - label: Quote
+            name: quote
+            widget: object
+            fields:
+              - { label: Section ID, name: sectionId, widget: string }
+              - { label: Side-menu label, name: navLabel, widget: string, required: false }
+              - { label: Show in side menu, name: showInNav, widget: boolean, default: true }
+              - { label: Eyebrow, name: eyebrow, widget: string, required: false }
+              - { label: Quote, name: quote, widget: text }
+              - { label: Attribution, name: attribution, widget: string, required: false }
+              - { label: Supporting text, name: body, widget: richtext, required: false }
+
+          - label: Process steps
+            name: process
+            widget: object
+            fields:
+              - { label: Section ID, name: sectionId, widget: string }
+              - { label: Side-menu label, name: navLabel, widget: string }
+              - { label: Show in side menu, name: showInNav, widget: boolean, default: true }
+              - { label: Eyebrow, name: eyebrow, widget: string, required: false }
+              - { label: Heading, name: heading, widget: string }
+              - label: Steps
+                name: steps
+                widget: list
+                label_singular: Step
+                fields:
+                  - { label: Label, name: label, widget: string, hint: 'For example: Step 1' }
+                  - { label: Title, name: title, widget: string }
+                  - { label: Body, name: body, widget: richtext }
+
+          - label: Section divider
+            name: divider
+            widget: object
+            fields:
+              - { label: Section ID, name: sectionId, widget: string }
+              - { label: Divider label, name: label, widget: string, required: false }
+              - { label: Side-menu label, name: navLabel, widget: hidden, default: '' }
+              - { label: Show in side menu, name: showInNav, widget: hidden, default: false }

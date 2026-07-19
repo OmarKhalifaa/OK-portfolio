@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Master Design System Kit — a case study by Omar Khalifa.">
+  <title>Master Design System Kit — Omar Khalifa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="css/project.css?v=cms-2">
+</head>
+
+<body class="project-page">
+  <nav id="nav" aria-label="Primary navigation">
+    <div class="nav-pill">
+      <a href="index.html" class="nav-logo">OMAR KHALIFA</a>
+      <div class="nav-extra">
+        <ul class="nav-links" id="primaryLinks">
+          <li><a href="index.html#profile">About</a></li>
+          <li class="nav-separator" aria-hidden="true">|</li>
+          <li><a href="index.html#profile">Profile</a></li>
+        </ul>
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle theme">
+          <svg class="icon-moon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M13 9.5A5.5 5.5 0 1 1 6.5 3a4.5 4.5 0 0 0 6.5 6.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" />
+          </svg>
+          <svg class="icon-sun" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.3" />
+            <path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.3 3.3l1 1M11.7 11.7l1 1M3.3 12.7l1-1M11.7 4.3l1-1"
+              stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
+          </svg>
+        </button>
+        <button class="mobile-menu-toggle" id="mobileMenuToggle" type="button" aria-label="Open menu" aria-controls="primaryLinks" aria-expanded="false">
+          <span aria-hidden="true"></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="project-layout">
+    <aside class="project-toc" aria-label="Case study sections">
+      <p class="rail-label">In this project</p>
+      <nav class="toc-links" id="projectTocLinks">
+        <a class="is-active" href="#overview"><span class="toc-marker" aria-hidden="true">→</span>Overview</a>
+        <a href="#problem"><span class="toc-marker" aria-hidden="true">→</span>The problem</a>
+        <a href="#research"><span class="toc-marker" aria-hidden="true">→</span>Research &amp; insights</a>
+        <a href="#solution"><span class="toc-marker" aria-hidden="true">→</span>Solution</a>
+        <a href="#system"><span class="toc-marker" aria-hidden="true">→</span>The system</a>
+        <a href="#results"><span class="toc-marker" aria-hidden="true">→</span>Results</a>
+        <a href="#learnings"><span class="toc-marker" aria-hidden="true">→</span>Learnings</a>
+      </nav>
+      <a class="rail-back" href="index.html#work">← All projects</a>
+    </aside>
+
+    <article class="project-canvas">
+      <header class="project-hero" id="project-top">
+        <a class="back-link" href="index.html#work">← Back to selected work</a>
+        <p class="project-kicker" id="projectKicker">Vodafone · Design systems · 2023—2024</p>
+        <h1 id="projectTitle">Master Design<br>System Kit</h1>
+        <p class="project-deck" id="projectDeck">A scalable token architecture and component foundation supporting more than 40 product teams across web and mobile.</p>
+      </header>
+
+      <dl class="project-meta" aria-label="Project details">
+        <div>
+          <dt>Industry</dt>
+          <dd id="projectIndustry">Telecommunications</dd>
+        </div>
+        <div>
+          <dt>My role</dt>
+          <dd id="projectRole">Senior Product Designer</dd>
+        </div>
+        <div>
+          <dt>Team</dt>
+          <dd id="projectTeam">Design system squad<br>Product teams</dd>
+        </div>
+        <div>
+          <dt>Timeline</dt>
+          <dd id="projectTimeline">2023 — 2024</dd>
+        </div>
+      </dl>
+
+      <div id="projectContent" aria-live="polite">
+      <section class="content-block content-copy" aria-labelledby="overview-heading">
+        <p class="block-eyebrow">Overview</p>
+        <h2 id="overview-heading">One shared foundation for a growing product ecosystem.</h2>
+        <div class="copy-columns">
+          <p>Vodafone’s digital products were evolving quickly across platforms, markets, and product teams. The work needed a common design language that could make delivery faster without flattening the character of each experience.</p>
+          <p>The Master Design System Kit brought foundations, tokens, components, documentation, and contribution workflows into one dependable product for designers and engineers.</p>
+        </div>
+      </section>
+
+      <section class="content-block" id="problem" aria-labelledby="problem-heading">
+        <div class="section-heading">
+          <p class="block-eyebrow">01 · The problem</p>
+          <h2 id="problem-heading">Consistency was being rebuilt project by project.</h2>
+        </div>
+        <div class="insight-grid">
+          <article><span>01</span><h3>Fragmented foundations</h3><p>Teams used similar patterns with different spacing, colour, and interaction decisions.</p></article>
+          <article><span>02</span><h3>Repeated effort</h3><p>Designers and engineers recreated familiar product patterns instead of reusing them.</p></article>
+          <article><span>03</span><h3>Uneven quality</h3><p>Accessibility and responsive behaviour varied depending on the project and delivery pressure.</p></article>
+        </div>
+      </section>
+
+      <figure class="content-block media-block media-system-map" id="research">
+        <div class="system-map-bar"><span>Foundation audit</span><span>40+ product teams</span></div>
+        <div class="system-map-canvas" aria-hidden="true">
+          <div class="map-core">MASTER<br>SYSTEM</div>
+          <div class="map-node node-a">Web</div>
+          <div class="map-node node-b">iOS</div>
+          <div class="map-node node-c">Android</div>
+          <div class="map-node node-d">Care</div>
+          <div class="map-node node-e">Commerce</div>
+        </div>
+        <figcaption>Mapping shared patterns revealed where one source of truth could remove the most repeated work.</figcaption>
+      </figure>
+
+      <section class="content-block content-copy" id="solution" aria-labelledby="solution-heading">
+        <p class="block-eyebrow">02 · Solution</p>
+        <h2 id="solution-heading">A system designed as a product, not a static library.</h2>
+        <div class="copy-columns">
+          <p>The system connected semantic tokens to reusable components, then wrapped both in clear usage guidance. This made decisions visible and gave teams a predictable path from design to production.</p>
+          <p>Contribution and release workflows made the library sustainable: product teams could propose improvements while the core squad protected quality and coherence.</p>
+        </div>
+      </section>
+
+      <section class="content-block system-showcase" id="system" aria-labelledby="system-heading">
+        <div class="section-heading compact-heading">
+          <p class="block-eyebrow">03 · The system</p>
+          <h2 id="system-heading">From foundations to production-ready patterns.</h2>
+        </div>
+        <div class="token-demo" aria-hidden="true">
+          <div class="token-col token-col-colour"><span></span><span></span><span></span><span></span></div>
+          <div class="token-col token-col-type"><strong>Aa</strong><p>Display / Heading / Body</p></div>
+          <div class="token-col token-col-space"><i></i><i></i><i></i><i></i></div>
+        </div>
+        <div class="component-demo" aria-hidden="true">
+          <button type="button" tabindex="-1">Primary action</button>
+          <div class="demo-field"><span>Mobile number</span><strong>+20 100 000 0000</strong></div>
+          <div class="demo-toggle"><span></span><strong>Notifications</strong></div>
+        </div>
+      </section>
+
+      <section class="content-block results-block" id="results" aria-labelledby="results-heading">
+        <div class="section-heading compact-heading">
+          <p class="block-eyebrow">04 · Results</p>
+          <h2 id="results-heading">A shared language with measurable reach.</h2>
+        </div>
+        <div class="results-grid">
+          <div><strong>40+</strong><span>Product teams supported</span></div>
+          <div><strong>2</strong><span>Core platforms aligned</span></div>
+          <div><strong>1</strong><span>Shared source of truth</span></div>
+        </div>
+      </section>
+
+      <section class="content-block learning-block" id="learnings" aria-labelledby="learnings-heading">
+        <p class="block-eyebrow">05 · Learnings</p>
+        <blockquote id="learnings-heading">“A design system succeeds when teams trust the decisions behind it—not only the components inside it.”</blockquote>
+        <p>Clear ownership, contribution paths, and documentation proved as important as the visual foundations themselves.</p>
+      </section>
+      </div>
+
+      <footer class="project-footer">
+        <span>End of case study</span>
+        <a href="index.html#work">Explore all projects →</a>
+      </footer>
+    </article>
+
+    <aside class="next-projects" aria-labelledby="next-projects-heading">
+      <div class="next-projects-inner">
+        <p class="rail-label" id="next-projects-heading">Next projects</p>
+        <a class="next-card next-card-green" href="#" aria-label="Proof of Payment Flow case study">
+          <span class="next-index">01</span>
+          <div><p>Vodafone · eKYC</p><h2>Proof of Payment Flow</h2></div>
+          <span class="next-arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="next-card next-card-orange" href="#" aria-label="Bikeopolis case study">
+          <span class="next-index">02</span>
+          <div><p>E-commerce · Website</p><h2>Bikeopolis</h2></div>
+          <span class="next-arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="next-card next-card-purple" href="#" aria-label="Meal-Holic case study">
+          <span class="next-index">03</span>
+          <div><p>Food delivery · Mobile</p><h2>Meal-Holic</h2></div>
+          <span class="next-arrow" aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </aside>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked@15.0.12/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
+  <script src="js/project.js?v=cms-1"></script>
+</body>
+
+</html>

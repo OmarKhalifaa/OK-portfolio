@@ -1,0 +1,36 @@
+{
+  "slug": "bikeopolis",
+  "title": "Bikeopolis",
+  "heroTitle": "Bikeopolis",
+  "seoDescription": "An end-to-end shopping experience for urban cyclists, from discovery and configuration through checkout.",
+  "client": "Bikeopolis",
+  "category": "E-commerce · Website",
+  "year": "2022",
+  "deck": "An end-to-end shopping experience for urban cyclists, from discovery and configuration through checkout.",
+  "industry": "E-commerce",
+  "role": "Product Designer",
+  "team": ["Product", "Engineering"],
+  "timeline": "2022",
+  "recommendations": ["proof-of-payment-flow", "meal-holic", "master-design-system"],
+  "blocks": [
+    {
+      "type": "two_column_text",
+      "sectionId": "overview",
+      "navLabel": "Overview",
+      "showInNav": true,
+      "eyebrow": "Overview",
+      "heading": "A clearer route from discovering a bike to owning it.",
+      "left": "Urban cyclists needed enough product detail to choose confidently without navigating a catalogue built for experts.",
+      "right": "The experience connected discovery, comparison, configuration, and checkout in one approachable purchase journey."
+    },
+    {
+      "type": "quote",
+      "sectionId": "case-study-coming-soon",
+      "navLabel": "Coming soon",
+      "showInNav": true,
+      "eyebrow": "Case study in progress",
+      "quote": "The complete process, screens, and outcomes will be added through the CMS.",
+      "attribution": "Omar Khalifa"
+    }
+  ]
+}
