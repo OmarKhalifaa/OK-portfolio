@@ -1,18 +1,19 @@
 {
-  "slug": "proof-of-payment-flow",
-  "title": "Proof of Payment Flow",
-  "heroTitle": "Proof of\nPayment Flow",
-  "seoDescription": "A returning-user payment verification flow balancing security, speed, and a frictionless mobile experience.",
-  "client": "Vodafone",
-  "category": "eKYC · Mobile",
-  "year": "2024",
-  "deck": "A returning-user payment verification flow balancing security, speed, and a frictionless mobile experience.",
-  "industry": "Telecommunications",
-  "role": "Senior Product Designer",
-  "team": ["Fintech squad", "Engineering", "Compliance"],
   "timeline": "2024",
-  "recommendations": ["master-design-system", "bikeopolis", "meal-holic"],
   "blocks": [
+    {
+      "sectionId": "Herosection",
+      "showInNav": false,
+      "alignment": "center",
+      "width": "full",
+      "alt": "Assurance",
+      "focalPoint": "center",
+      "fit": "cover",
+      "aspectRatio": "auto",
+      "type": "image_full",
+      "image": "images/uploads/livingtype_bounce-2-.png",
+      "captionAlignment": "left"
+    },
     {
       "type": "two_column_text",
       "sectionId": "overview",
@@ -30,7 +31,28 @@
       "showInNav": true,
       "eyebrow": "Case study in progress",
       "quote": "The complete process, screens, and outcomes will be added through the CMS.",
-      "attribution": "Omar Khalifa"
+      "attribution": "Omar Khalifa",
+      "body": ""
     }
-  ]
+  ],
+  "deck": "A returning-user payment verification flow balancing security, speed, and a frictionless mobile experience.",
+  "slug": "proof-of-payment-flow",
+  "client": "Vodafone",
+  "role": "Senior Product Designer",
+  "title": "Proof of Payment Flow",
+  "recommendations": [
+    "master-design-system",
+    "bikeopolis",
+    "meal-holic"
+  ],
+  "year": "2024",
+  "team": [
+    "Fintech squad",
+    "Engineering",
+    "Compliance"
+  ],
+  "category": "eKYC · Mobile",
+  "industry": "Telecommunications",
+  "heroTitle": "Proof of\nPayment Flow",
+  "seoDescription": "A returning-user payment verification flow balancing security, speed, and a frictionless mobile experience."
 }
