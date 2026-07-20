@@ -1464,13 +1464,14 @@ html::-webkit-scrollbar,
 }
 
 .concept-statement {
-  max-width: 620px;
+  max-width: none;
   font-family: 'Syne', sans-serif;
-  font-size: clamp(25px, 2.1vw, 38px);
+  font-size: clamp(17px, 2.2vw, 34px);
   font-weight: 500;
   line-height: 1.05;
   letter-spacing: -.045em;
-  text-wrap: balance;
+  text-wrap: nowrap;
+  white-space: nowrap;
 }
 
 .concept-ribbon {
@@ -1902,7 +1903,7 @@ html::-webkit-scrollbar,
   .concept-title { font-size: clamp(58px, 16vw, 96px); }
   .concept-page #work { padding: 72px 0 48px; border-right: 0; }
   .concept-work-intro { padding: 0 20px 18px; }
-  .concept-statement { font-size: clamp(30px, 7vw, 46px); }
+  .concept-statement { font-size: clamp(17px, 4.3vw, 34px); }
   .concept-ribbon { margin-top: 34px; }
   .concept-card-stack { grid-template-columns: 1fr; }
   .concept-card { min-height: auto; }
