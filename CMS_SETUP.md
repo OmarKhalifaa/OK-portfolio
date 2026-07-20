@@ -97,6 +97,6 @@ Hosted CMS: `https://stately-sfogliatella-379d14.netlify.app/admin/`
 
 The CMS publishes to the `main` branch. Decap's editorial workflow creates a branch and pull request for drafts before publishing.
 
-## Important deployment note
+## Production hosting
 
-GitHub Pages can continue serving the public site. The CMS configuration pins `site_domain` to `stately-sfogliatella-379d14.netlify.app`, so both the GitHub Pages and Netlify `/admin/` routes use the same Netlify OAuth provider. Use the Netlify URL for the clearest online editing workflow.
+Netlify is the production host for the portfolio. GitHub stores the source and CMS content, while every update merged into `main` is automatically published by Netlify. GitHub Pages should remain disabled to avoid maintaining a second public copy of the site.
