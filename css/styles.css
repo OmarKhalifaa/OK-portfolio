@@ -1547,6 +1547,19 @@ html::-webkit-scrollbar,
   border-radius: 0;
 }
 
+.concept-card .card-thumb-project img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform .45s ease;
+}
+
+.concept-card:hover .card-thumb-project img {
+  transform: scale(1.025);
+}
+
 .concept-card .card-body { padding: 16px 10px 10px; }
 .concept-card .card-title { font-size: clamp(17px, 1.35vw, 22px); }
 .concept-card .card-desc { max-width: 620px; }
