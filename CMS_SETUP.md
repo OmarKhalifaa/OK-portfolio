@@ -28,10 +28,11 @@ Local CMS mode writes directly to the JSON files and `images/uploads`. It does n
 1. Open **Projects**.
 2. Select an existing project or choose **New Project**.
 3. Complete the fixed hero and metadata fields.
-4. Choose up to three recommended projects.
-5. Under **Page content**, add, remove, or reorder blocks.
-6. Upload media through image fields.
-7. Save locally or publish when using the hosted CMS.
+4. Upload a dedicated 4:3 **Project thumbnail** for the outer project card.
+5. Choose up to three recommended projects.
+6. Under **Page content**, add, remove, or reorder blocks.
+7. Upload media through image fields.
+8. Save locally or publish when using the hosted CMS.
 
 Available content blocks:
 

@@ -4,6 +4,8 @@
 body { margin: 0; background: #0c0c0b; color: #f5f4ee; font-family: 'DM Sans', sans-serif; }
 .cms-project-preview { width: 100%; }
 .preview-hero,.preview-block { padding: 64px 7%; border-bottom: 1px solid rgba(255,255,255,.08); }
+.preview-thumbnail { padding: 28px 7%; border-bottom: 1px solid rgba(255,255,255,.08); background: #111; }
+.preview-thumbnail img { display: block; width: min(100%, 760px); aspect-ratio: 4 / 3; object-fit: cover; border: 1px solid rgba(255,255,255,.12); }
 .preview-hero h1 { max-width: 760px; margin: 20px 0; white-space: pre-line; font: 600 clamp(48px,7vw,84px)/.93 'Syne',sans-serif; letter-spacing: -.055em; }
 .preview-eyebrow { color: #5dcaa5; font: 600 11px/1.3 'Syne',sans-serif; letter-spacing: .07em; text-transform: uppercase; }
 .preview-deck,.preview-copy { color: #b8b8b1; font-weight: 300; line-height: 1.7; }

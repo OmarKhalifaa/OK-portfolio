@@ -46,6 +46,16 @@ collections:
       - label: SEO description
         name: seoDescription
         widget: text
+      - label: Project thumbnail
+        name: thumbnail
+        widget: image
+        required: false
+        hint: 'Upload a landscape image designed for the project card. Recommended ratio: 4:3.'
+      - label: Project thumbnail alternative text
+        name: thumbnailAlt
+        widget: string
+        required: false
+        hint: Describe the thumbnail for visitors using screen readers.
       - label: Client
         name: client
         widget: string

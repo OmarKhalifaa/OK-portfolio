@@ -42,6 +42,10 @@
       const data = this.props.entry.getIn(['data']).toJS();
       const getAsset = this.props.getAsset;
       return h('main', { className: 'cms-project-preview' },
+        data.thumbnail ? h('section', { className: 'preview-thumbnail' },
+          h('p', { className: 'preview-eyebrow' }, 'Project card thumbnail'),
+          h('img', { src: getAsset(data.thumbnail).toString(), alt: data.thumbnailAlt || '' })
+        ) : null,
         h('header', { className: 'preview-hero' },
           h('p', { className: 'preview-eyebrow' }, [data.client, data.category, data.year].filter(Boolean).join(' · ')),
           h('h1', {}, data.heroTitle || data.title),
