@@ -1,0 +1,151 @@
+{
+  "timeline": "Interview exercise",
+  "blocks": [
+    {
+      "type": "rich_text",
+      "showInNav": true,
+      "contentWidth": "wide",
+      "body": "Hash Store is a mobile app that primarily sells technology accessories. The interviewer provided a short scenario for purchasing computer accessories online with a straightforward payment method.\n\n\n\nThe goal was to create a clean, simple checkout experience for someone buying a camera setup for videos and remote meetings.\n\n\n\nI used the Double Diamond model, starting with secondary research and then narrowing the work around payment and checkout friction.",
+      "sectionId": "overview",
+      "navLabel": "Overview",
+      "eyebrow": "Context",
+      "heading": "About the project"
+    },
+    {
+      "sectionId": "hash-store-hero",
+      "showInNav": false,
+      "alignment": "center",
+      "width": "full",
+      "caption": "Hash Store mobile app concept",
+      "alt": "Hash Store mobile commerce project overview",
+      "focalPoint": "center",
+      "fit": "cover",
+      "aspectRatio": "auto",
+      "type": "image_full",
+      "image": "images/uploads/161b1bd361020e7c.png",
+      "captionAlignment": "left"
+    },
+    {
+      "type": "rich_text",
+      "showInNav": true,
+      "contentWidth": "wide",
+      "body": "Because time was limited, I used secondary research to study common checkout problems and real user reviews. The main issues were complex account creation, unclear shipping options, weak card-field implementation, hidden fees, long checkout flows, and having to restart after an error.\n\n\n\nI grouped the findings in an affinity map and focused the project on payment friction. A persona and user story helped keep the design grounded: as a TikTok user, Noha wants to order mobile accessories using different payment methods so she can improve her video setup.\n\n\n\nI compared Noon, Amazon, and Jumia, concentrating on checkout and payment features. The resulting problem statement was simple: Noha needs to buy a ring light and tripod online with flexible payment options and a straightforward checkout process.",
+      "sectionId": "research",
+      "navLabel": "Research",
+      "eyebrow": "Discover & define",
+      "heading": "Understanding checkout friction"
+    },
+    {
+      "sectionId": "research-gallery",
+      "showInNav": false,
+      "heading": "From insights to definition",
+      "eyebrow": "Research artifacts",
+      "focalPoint": "center",
+      "fit": "cover",
+      "aspectRatio": "auto",
+      "images": [
+        {
+          "image": "images/uploads/e0d04cd8628c9c7b.png",
+          "alt": "Double Diamond process used for the Hash Store case study",
+          "caption": "Double Diamond model"
+        },
+        {
+          "image": "images/uploads/e8ee8384855b79b1.png",
+          "alt": "Affinity map grouping checkout and payment issues",
+          "caption": "Affinity diagram"
+        },
+        {
+          "image": "images/uploads/163ad75d0ef1906e.png",
+          "alt": "User persona created for the Hash Store interview task",
+          "caption": "Sample user persona"
+        },
+        {
+          "image": "images/uploads/96fcccc6e2eb8cc7.png",
+          "alt": "Competitive analysis of regional e-commerce checkout experiences",
+          "caption": "Competitive analysis"
+        },
+        {
+          "image": "images/uploads/18da682b6f6f9385.png",
+          "alt": "Information architecture for the simplified commerce flow",
+          "caption": "Information architecture"
+        }
+      ],
+      "type": "gallery",
+      "columns": "two"
+    },
+    {
+      "type": "rich_text",
+      "showInNav": true,
+      "contentWidth": "wide",
+      "body": "The information architecture translated the research into a simpler purchase path. I mapped the product-selection and checkout user flow, then moved from quick paper sketches into digital wireframes.\n\n\n\nThe high-fidelity work began with three onboarding screens that introduced the app’s key features. The home experience combined promotional banners, categories, recommendations, and a shopping cart with a clear cost breakdown.\n\n\n\nCheckout offered delivery or pickup, address details, and delivery preferences. Payment options included cash, bank cards, PayPal, e-wallets, and crypto. A final order-review step let users confirm everything before placing the order.",
+      "sectionId": "design",
+      "navLabel": "Design",
+      "eyebrow": "Develop & deliver",
+      "heading": "Designing the checkout flow"
+    },
+    {
+      "sectionId": "design-gallery",
+      "showInNav": false,
+      "heading": "From wireframes to final screens",
+      "eyebrow": "Design artifacts",
+      "focalPoint": "center",
+      "fit": "cover",
+      "aspectRatio": "auto",
+      "images": [
+        {
+          "image": "images/uploads/cc5f13b50050446a.png",
+          "alt": "Digital wireframes for the Hash Store shopping and checkout flow",
+          "caption": "Digital wireframes"
+        },
+        {
+          "image": "images/uploads/601c5cc2c5f79c31.jpeg",
+          "alt": "Onboarding screens introducing the Hash Store mobile experience",
+          "caption": "Onboarding"
+        },
+        {
+          "image": "images/uploads/629f566427294907.png",
+          "alt": "Hash Store home screen and shopping cart design",
+          "caption": "Home screen and shopping cart"
+        },
+        {
+          "image": "images/uploads/2ab235943bb407f2.png",
+          "alt": "Checkout and payment screens with shipping and flexible payment options",
+          "caption": "Checkout and payment walkthrough"
+        },
+        {
+          "image": "images/uploads/b7a92ef8eedcaa39.png",
+          "alt": "Payment-screen iteration adding a promo-code field",
+          "caption": "First usability-test iteration"
+        }
+      ],
+      "type": "gallery",
+      "columns": "two"
+    },
+    {
+      "type": "rich_text",
+      "showInNav": true,
+      "contentWidth": "wide",
+      "body": "I ran a remote moderated usability study focused on checkout time, drop-off points, and cart abandonment. The main findings were that users could not change the language and had no place to apply a discount. The first iteration added a promo-code field to the payment screen.\n\n\n\nThe interviewer also highlighted that no payment option had a default state and asked how the experience supported the business goal of promoting its crypto-payment gateway. That feedback showed me the importance of balancing user needs with commercial priorities.\n\n\n\nI also learned to keep the core user goal visible throughout the process and to spend more time validating the color system before moving into final UI.\n\n\n\nUser flow: https://www.figma.com/file/Xd8TtOPTx0qOH1PIdBTA2M/Hash-User-Flow\n\n\n\nComplete prototype: https://www.figma.com/proto/lxI2rv5QCbSZbKDJXoiFSG/Hash-Store?page-id=0%3A1&node-id=1%3A2&viewport=501%2C48%2C0.33&scaling=scale-down&starting-point-node-id=246%3A928",
+      "sectionId": "testing",
+      "navLabel": "Testing",
+      "eyebrow": "Usability testing",
+      "heading": "What changed and what I learned"
+    }
+  ],
+  "deck": "A mobile commerce concept designed to make buying a camera setup simple, trustworthy, and flexible across shipping and payment options.",
+  "slug": "hash-store",
+  "client": "Interview task",
+  "role": "Product Designer",
+  "title": "Hash Store",
+  "recommendations": [
+    "bikeopolis"
+  ],
+  "year": "2022",
+  "team": [
+    "Solo project"
+  ],
+  "category": "UX Case Study",
+  "industry": "E-commerce",
+  "heroTitle": "Hash Store\nA simpler checkout experience",
+  "seoDescription": "Hash Store is a mobile commerce UX case study focused on creating a clear, flexible checkout and payment experience for technology accessories."
+}
