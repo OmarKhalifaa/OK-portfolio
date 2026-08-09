@@ -453,11 +453,62 @@ const THUMB_COLORS = {
   t4: ['#181318','#5a3a5a'],
 };
 
+const homepageCardsReady = Promise.all([...document.querySelectorAll('[data-project-card]')].map(async card => {
+  const slug = card.dataset.projectCard;
+  if (!slug) return;
+
+  try {
+    const response = await fetch(`content/projects/${encodeURIComponent(slug)}.json`, { cache: 'no-store' });
+    if (!response.ok) return;
+    const project = await response.json();
+    const thumb = card.querySelector('.card-thumb');
+    if (!thumb) return;
+
+    const isHex = value => typeof value === 'string' && /^#[0-9a-f]{6}$/i.test(value);
+    if (isHex(project.thumbnailBackground)) thumb.style.background = project.thumbnailBackground;
+    if (isHex(project.thumbnailPixelBase)) thumb.dataset.pixelBase = project.thumbnailPixelBase;
+    if (isHex(project.thumbnailPixelAccent)) thumb.dataset.pixelAccent = project.thumbnailPixelAccent;
+
+    if (project.thumbnail) {
+      const image = document.createElement('img');
+      image.className = 'cms-card-thumb-image';
+      image.src = project.thumbnail;
+      image.alt = project.thumbnailAlt || `${project.title || 'Project'} thumbnail`;
+      thumb.prepend(image);
+      thumb.classList.add('has-cms-thumbnail');
+    } else if (project.thumbnailIcon) {
+      const icon = card.querySelector('.thumb-icon');
+      if (icon) {
+        const image = document.createElement('img');
+        image.src = project.thumbnailIcon;
+        image.alt = '';
+        icon.replaceChildren(image);
+      }
+    }
+
+    if (Array.isArray(project.homepageTags) && project.homepageTags.length) {
+      const tags = card.querySelector('.card-tags');
+      if (tags) {
+        tags.replaceChildren(...project.homepageTags.slice(0, 3).map(label => {
+          const tag = document.createElement('span');
+          tag.className = 'tag';
+          tag.textContent = label;
+          return tag;
+        }));
+      }
+    }
+  } catch {
+    // Keep the static card artwork as a resilient fallback.
+  }
+}));
+
 // Delay setup so page-load visible cards still show the pixel effect
-setTimeout(() => document.querySelectorAll('.card-thumb').forEach(thumb => {
+homepageCardsReady.finally(() => setTimeout(() => document.querySelectorAll('.card-thumb').forEach(thumb => {
   const cls = [...thumb.classList].find(c => THUMB_COLORS[c]);
   if (!cls) return;
-  const [c1, c2] = THUMB_COLORS[cls];
+  const [fallbackBase, fallbackAccent] = THUMB_COLORS[cls];
+  const c1 = thumb.dataset.pixelBase || fallbackBase;
+  const c2 = thumb.dataset.pixelAccent || fallbackAccent;
 
   const COLS = 8, ROWS = 5;
   const canvas = document.createElement('canvas');
@@ -492,7 +543,7 @@ setTimeout(() => document.querySelectorAll('.card-thumb').forEach(thumb => {
     }
   }, { threshold: 0.2, rootMargin: '0px 0px -40px 0px' });
   pixelObs.observe(thumb);
-}), 50);
+}), 50));
 
 /* ── COUNTER ANIMATION ── */
 function animateCounter(el) {

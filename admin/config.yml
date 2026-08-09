@@ -7,7 +7,7 @@ backend:
   use_graphql: true
   base_url: https://api.netlify.com
   auth_endpoint: auth
-  site_domain: stately-sfogliatella-379d14.netlify.app
+  site_domain: omarkhalifa.netlify.app
 
 publish_mode: editorial_workflow
 media_folder: images/uploads
@@ -56,6 +56,32 @@ collections:
         widget: string
         required: false
         hint: Describe the thumbnail for visitors using screen readers.
+      - label: Thumbnail icon
+        name: thumbnailIcon
+        widget: image
+        required: false
+        hint: Optional icon displayed over the pixel background when no full thumbnail image is uploaded.
+      - label: Thumbnail background colour
+        name: thumbnailBackground
+        widget: color
+        required: false
+        hint: Used behind the icon and while the pixel animation fades.
+      - label: Pixel base colour
+        name: thumbnailPixelBase
+        widget: color
+        required: false
+        hint: Dark colour used by the animated pixel grid.
+      - label: Pixel accent colour
+        name: thumbnailPixelAccent
+        widget: color
+        required: false
+        hint: Highlight colour used by the animated pixel grid.
+      - label: Homepage tags
+        name: homepageTags
+        widget: list
+        required: false
+        max: 3
+        field: { label: Tag, name: tag, widget: string }
       - label: Client
         name: client
         widget: string
@@ -65,6 +91,7 @@ collections:
       - label: Year
         name: year
         widget: string
+        required: false
       - label: Hero description
         name: deck
         widget: text

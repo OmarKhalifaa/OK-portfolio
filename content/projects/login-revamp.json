@@ -2,10 +2,13 @@
   "slug": "login-revamp",
   "title": "Login Revamp",
   "heroTitle": "Login\nRevamp",
-  "seoDescription": "A shipped redesign of Ana Vodafone's login experience across 4G, Wi-Fi, biometrics, and authentication fallbacks.",
+  "seoDescription": "A redesign of Ana Vodafone's login experience across 4G, Wi-Fi, biometrics, and authentication fallbacks.",
+  "thumbnailBackground": "#230707",
+  "thumbnailPixelBase": "#230707",
+  "thumbnailPixelAccent": "#8F1717",
+  "homepageTags": ["Mobile", "Login"],
   "client": "Vodafone",
   "category": "Mobile · Login experience",
-  "year": "Shipped",
   "deck": "Making it easier to return to Ana Vodafone, no matter how customers connected.",
   "industry": "Telecommunications",
   "role": "Sole Product Designer",
@@ -23,26 +26,36 @@
     {
       "type": "two_column_text",
       "sectionId": "overview",
-      "navLabel": "The story",
+      "navLabel": "The trigger",
       "showInNav": true,
-      "eyebrow": "The starting point",
-      "heading": "A clearer way back into Ana Vodafone.",
-      "left": "The login journey needed to work for first-time and returning customers, across different network conditions and ways of signing in.",
-      "right": "I was the sole designer, working with product owners and the testing team from exploration through UI testing. The experience shipped after a one-month sprint."
+      "eyebrow": "Where it began",
+      "heading": "It started with the switch from 4G to Wi-Fi.",
+      "left": "On 4G, customers could be identified automatically. After switching to Wi-Fi, they were unexpectedly asked for a password without understanding why.",
+      "right": "Instead of fixing only that moment, we used it to uplift the wider login experience—clearer guidance, faster returning access, biometrics, account handling, and secure fallbacks. I led the one-month project as the sole designer, working with product owners and the testing team."
     },
     {
-      "type": "image_full",
-      "sectionId": "opening-visual",
-      "showInNav": false,
-      "image": "images/login-revamp/placeholders/login-overview.svg",
-      "alt": "Solid color placeholder for the Login Revamp overview screens",
-      "caption": "Placeholder — final mockup to be added.",
-      "captionAlignment": "left",
-      "alignment": "center",
-      "width": "full",
+      "type": "gallery",
+      "sectionId": "before-after",
+      "navLabel": "Before & after",
+      "showInNav": true,
+      "eyebrow": "The transformation",
+      "heading": "From an unexplained interruption to a guided login journey.",
+      "columns": "two",
+      "aspectRatio": "landscape",
       "fit": "cover",
       "focalPoint": "center",
-      "aspectRatio": "16:9"
+      "images": [
+        {
+          "image": "images/login-revamp/placeholders/before-login.svg",
+          "alt": "Solid color placeholder for the login experience before the redesign",
+          "caption": "Before — existing login journey."
+        },
+        {
+          "image": "images/login-revamp/placeholders/after-login.svg",
+          "alt": "Solid color placeholder for the login experience after the redesign",
+          "caption": "After — redesigned login journey."
+        }
+      ]
     },
     {
       "type": "two_column_text",
@@ -117,11 +130,11 @@
     {
       "type": "rich_text",
       "sectionId": "experiment",
-      "navLabel": "Experiment",
+      "navLabel": "A/B test",
       "showInNav": true,
-      "eyebrow": "A question worth testing",
-      "heading": "When is the right moment to create a password?",
-      "body": "We tested whether password creation should sit inside registration or happen afterwards. The experiment was designed to understand which option could reduce drop-off without weakening the experience; its final result was still being evaluated."
+      "eyebrow": "The password experiment",
+      "heading": "We tested two moments for password creation.",
+      "body": "Variant A asked customers to create a password during registration. Variant B moved password creation until after registration. The goal was to learn which moment could reduce drop-off and prevent customers from abandoning the app. The final experiment result was still being evaluated."
     },
     {
       "type": "image_full",
@@ -142,7 +155,7 @@
       "sectionId": "outcome",
       "navLabel": "Outcome",
       "showInNav": true,
-      "eyebrow": "Shipped",
+      "eyebrow": "What changed",
       "quote": "A clearer login journey, delivered in one month.",
       "attribution": "Login Revamp",
       "body": "The revamp clarified what happens when customers move from 4G to Wi-Fi, made returning access faster, and introduced fallbacks that kept people moving."
