@@ -9,7 +9,7 @@ backend:
   auth_endpoint: auth
   site_domain: omarkhalifa.netlify.app
 
-publish_mode: editorial_workflow
+publish_mode: simple
 media_folder: images/uploads
 public_folder: images/uploads
 
