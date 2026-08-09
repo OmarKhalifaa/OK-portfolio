@@ -56,6 +56,14 @@ collections:
         widget: string
         required: false
         hint: Describe the thumbnail for visitors using screen readers.
+      - label: Homepage card image fit
+        name: thumbnailFit
+        widget: select
+        default: contain
+        required: false
+        options:
+          - { label: Show complete image, value: contain }
+          - { label: Crop to fill card, value: cover }
       - label: Homepage card icon
         name: thumbnailIcon
         widget: image

@@ -474,8 +474,15 @@ const homepageCardsReady = Promise.all([...document.querySelectorAll('[data-proj
       image.className = 'cms-card-thumb-image';
       image.src = project.thumbnail;
       image.alt = project.thumbnailAlt || `${project.title || 'Project'} thumbnail`;
+      image.style.objectFit = project.thumbnailFit === 'cover' ? 'cover' : 'contain';
       thumb.prepend(image);
       thumb.classList.add('has-cms-thumbnail');
+      if (!image.complete) {
+        await new Promise(resolve => {
+          image.addEventListener('load', resolve, { once: true });
+          image.addEventListener('error', resolve, { once: true });
+        });
+      }
     } else if (project.thumbnailIcon) {
       const icon = card.querySelector('.thumb-icon');
       if (icon) {
@@ -516,7 +523,7 @@ homepageCardsReady.finally(() => setTimeout(() => document.querySelectorAll('.ca
   Object.assign(canvas.style, {
     position: 'absolute', top: '0', left: '0', right: '0', bottom: '0',
     width: '100%', height: '100%',
-    imageRendering: 'pixelated', zIndex: '3', pointerEvents: 'none',
+    imageRendering: 'pixelated', zIndex: '6', pointerEvents: 'none',
     opacity: '1', transition: 'opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1)',
   });
 
