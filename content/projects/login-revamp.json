@@ -152,7 +152,7 @@
   "thumbnailPixelBase": "#230707",
   "client": "Vodafone",
   "thumbnail": "images/uploads/thumb.png",
-  "thumbnailFit": "contain",
+  "thumbnailFit": "cover",
   "role": "Sole Product Designer",
   "title": "Login Revamp",
   "thumbnailBackground": "#230707",
