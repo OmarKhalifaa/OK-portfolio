@@ -64,6 +64,7 @@ collections:
         options:
           - { label: Show complete image, value: contain }
           - { label: Crop to fill card, value: cover }
+          - { label: Stretch to fill card — no crop, value: fill }
       - label: Homepage card icon
         name: thumbnailIcon
         widget: image

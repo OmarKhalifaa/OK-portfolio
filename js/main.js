@@ -474,7 +474,7 @@ const homepageCardsReady = Promise.all([...document.querySelectorAll('[data-proj
       image.className = 'cms-card-thumb-image';
       image.src = project.thumbnail;
       image.alt = project.thumbnailAlt || `${project.title || 'Project'} thumbnail`;
-      image.style.objectFit = project.thumbnailFit === 'cover' ? 'cover' : 'contain';
+      image.style.objectFit = ['cover', 'fill'].includes(project.thumbnailFit) ? project.thumbnailFit : 'contain';
       thumb.prepend(image);
       thumb.classList.add('has-cms-thumbnail');
       if (!image.complete) {
