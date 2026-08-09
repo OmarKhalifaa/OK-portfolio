@@ -636,7 +636,7 @@ section {
 }
 
 .card-thumb.t1 { background: linear-gradient(135deg, #111624 0%, #161c2e 100%); }
-.card-thumb.t2 { background: linear-gradient(135deg, #0f1a17 0%, #141f1c 100%); }
+.card-thumb.t2 { background: linear-gradient(135deg, #230707 0%, #150f12 100%); }
 .card-thumb.t3 { background: linear-gradient(135deg, #1a1412 0%, #201a16 100%); }
 .card-thumb.t4 { background: linear-gradient(135deg, #181318 0%, #1e1520 100%); }
 
@@ -653,7 +653,7 @@ section {
 .thumb-icon svg { width: 28px; height: 28px; }
 
 .t1 .thumb-icon { background: rgba(83,74,183,0.15); }
-.t2 .thumb-icon { background: rgba(29,158,117,0.15); }
+.t2 .thumb-icon { background: rgba(230,0,0,0.16); }
 .t3 .thumb-icon { background: rgba(216,90,48,0.15); }
 .t4 .thumb-icon { background: rgba(170,74,183,0.15); }
 

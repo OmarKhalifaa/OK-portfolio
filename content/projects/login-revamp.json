@@ -1,0 +1,151 @@
+{
+  "slug": "login-revamp",
+  "title": "Login Revamp",
+  "heroTitle": "Login\nRevamp",
+  "seoDescription": "A shipped redesign of Ana Vodafone's login experience across 4G, Wi-Fi, biometrics, and authentication fallbacks.",
+  "client": "Vodafone",
+  "category": "Mobile · Login experience",
+  "year": "Shipped",
+  "deck": "Making it easier to return to Ana Vodafone, no matter how customers connected.",
+  "industry": "Telecommunications",
+  "role": "Sole Product Designer",
+  "team": [
+    "Product owners",
+    "Testing team"
+  ],
+  "timeline": "1 month",
+  "recommendations": [
+    "master-design-system",
+    "bikeopolis",
+    "meal-holic"
+  ],
+  "blocks": [
+    {
+      "type": "two_column_text",
+      "sectionId": "overview",
+      "navLabel": "The story",
+      "showInNav": true,
+      "eyebrow": "The starting point",
+      "heading": "A clearer way back into Ana Vodafone.",
+      "left": "The login journey needed to work for first-time and returning customers, across different network conditions and ways of signing in.",
+      "right": "I was the sole designer, working with product owners and the testing team from exploration through UI testing. The experience shipped after a one-month sprint."
+    },
+    {
+      "type": "image_full",
+      "sectionId": "opening-visual",
+      "showInNav": false,
+      "image": "images/login-revamp/placeholders/login-overview.svg",
+      "alt": "Solid color placeholder for the Login Revamp overview screens",
+      "caption": "Placeholder — final mockup to be added.",
+      "captionAlignment": "left",
+      "alignment": "center",
+      "width": "full",
+      "fit": "cover",
+      "focalPoint": "center",
+      "aspectRatio": "16:9"
+    },
+    {
+      "type": "two_column_text",
+      "sectionId": "network-switch",
+      "navLabel": "The switch",
+      "showInNav": true,
+      "eyebrow": "Why the revamp began",
+      "heading": "The journey was familiar. The rules changed with the network.",
+      "left": "On 4G, the app could identify the customer's number automatically. We also needed to reassure them that using the app would not consume their mobile data.",
+      "right": "When customers switched to Wi-Fi, that automatic detection was no longer available. The experience had to explain the change clearly and guide them to enter their password."
+    },
+    {
+      "type": "image_full",
+      "sectionId": "network-visual",
+      "showInNav": false,
+      "image": "images/login-revamp/placeholders/network-switch.svg",
+      "alt": "Solid color placeholder for the 4G to Wi-Fi switching screens",
+      "caption": "Placeholder — 4G to Wi-Fi journey mockup to be added.",
+      "captionAlignment": "left",
+      "alignment": "center",
+      "width": "full",
+      "fit": "cover",
+      "focalPoint": "center",
+      "aspectRatio": "16:9"
+    },
+    {
+      "type": "rich_text",
+      "sectionId": "faster-return",
+      "navLabel": "Returning",
+      "showInNav": true,
+      "eyebrow": "Faster next time",
+      "heading": "Returning should feel effortless.",
+      "body": "Biometrics gave returning customers a faster way in, while the updated journey kept the right account and login choices visible when they were needed."
+    },
+    {
+      "type": "image_full",
+      "sectionId": "biometrics-visual",
+      "showInNav": false,
+      "image": "images/login-revamp/placeholders/biometrics.svg",
+      "alt": "Solid color placeholder for the biometric login screens",
+      "caption": "Placeholder — biometric return journey mockup to be added.",
+      "captionAlignment": "left",
+      "alignment": "center",
+      "width": "full",
+      "fit": "cover",
+      "focalPoint": "center",
+      "aspectRatio": "16:9"
+    },
+    {
+      "type": "rich_text",
+      "sectionId": "fallbacks",
+      "navLabel": "Fallbacks",
+      "showInNav": true,
+      "eyebrow": "No dead ends",
+      "heading": "A cancelled prompt should not end the journey.",
+      "body": "If biometrics were cancelled or unavailable, customers could continue with another secure login method instead of feeling stuck."
+    },
+    {
+      "type": "image_full",
+      "sectionId": "fallback-visual",
+      "showInNav": false,
+      "image": "images/login-revamp/placeholders/fallbacks.svg",
+      "alt": "Solid color placeholder for the authentication fallback screens",
+      "caption": "Placeholder — authentication fallback mockup to be added.",
+      "captionAlignment": "left",
+      "alignment": "center",
+      "width": "full",
+      "fit": "cover",
+      "focalPoint": "center",
+      "aspectRatio": "16:9"
+    },
+    {
+      "type": "rich_text",
+      "sectionId": "experiment",
+      "navLabel": "Experiment",
+      "showInNav": true,
+      "eyebrow": "A question worth testing",
+      "heading": "When is the right moment to create a password?",
+      "body": "We tested whether password creation should sit inside registration or happen afterwards. The experiment was designed to understand which option could reduce drop-off without weakening the experience; its final result was still being evaluated."
+    },
+    {
+      "type": "image_full",
+      "sectionId": "experiment-visual",
+      "showInNav": false,
+      "image": "images/login-revamp/placeholders/ab-test.svg",
+      "alt": "Solid color placeholder for the password placement experiment screens",
+      "caption": "Placeholder — A/B experiment comparison mockup to be added.",
+      "captionAlignment": "left",
+      "alignment": "center",
+      "width": "full",
+      "fit": "cover",
+      "focalPoint": "center",
+      "aspectRatio": "16:9"
+    },
+    {
+      "type": "quote",
+      "sectionId": "outcome",
+      "navLabel": "Outcome",
+      "showInNav": true,
+      "eyebrow": "Shipped",
+      "quote": "A clearer login journey, delivered in one month.",
+      "attribution": "Login Revamp",
+      "body": "The revamp clarified what happens when customers move from 4G to Wi-Fi, made returning access faster, and introduced fallbacks that kept people moving."
+    }
+  ]
+}

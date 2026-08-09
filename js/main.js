@@ -448,7 +448,7 @@ function lerpColor(hex1, hex2, t) {
 
 const THUMB_COLORS = {
   t1: ['#111624','#4a4f7a'],
-  t2: ['#0f1a17','#3a6b58'],
+  t2: ['#230707','#8f1717'],
   t3: ['#1a1412','#6b4a3a'],
   t4: ['#181318','#5a3a5a'],
 };

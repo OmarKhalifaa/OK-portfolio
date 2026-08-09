@@ -11,7 +11,7 @@
   "role": "Product Designer",
   "team": ["Product", "Engineering"],
   "timeline": "2022",
-  "recommendations": ["proof-of-payment-flow", "meal-holic", "master-design-system"],
+  "recommendations": ["login-revamp", "meal-holic", "master-design-system"],
   "blocks": [
     {
       "type": "two_column_text",

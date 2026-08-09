@@ -74,7 +74,7 @@ The default project opens at:
 Other projects use their slug:
 
 ```text
-/project.html?project=proof-of-payment-flow
+/project.html?project=login-revamp
 /project.html?project=bikeopolis
 /project.html?project=meal-holic
 ```

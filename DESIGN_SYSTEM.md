@@ -166,7 +166,7 @@ When `prefers-reduced-motion: reduce` is active:
 | Work thumbnail | Palette |
 |---|---|
 | Master Design System Kit | Deep navy with violet icon |
-| Proof of Payment Flow | Deep green with emerald icon |
+| Login Revamp | Deep red with Vodafone red icon |
 | Bikeopolis | Warm near-black with orange icon |
 | Meal-Holic | Aubergine near-black with purple icon |
 

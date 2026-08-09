@@ -71,7 +71,10 @@ a { color: inherit; }
   width: 100%;
   height: var(--header-h);
   display: grid;
-  grid-template-columns: minmax(300px, 26fr) minmax(560px, 48fr) minmax(300px, 26fr);
+  grid-template-columns:
+    max(var(--left-rail), calc((100vw - 1680px) / 2 + var(--left-rail)))
+    minmax(0, 1fr)
+    max(var(--right-rail), calc((100vw - 1680px) / 2 + var(--right-rail)));
   align-items: center;
   padding: 0;
   border-bottom: 1px solid var(--border);
@@ -85,7 +88,7 @@ a { color: inherit; }
   grid-column: 2;
   grid-row: 1;
   justify-self: start;
-  margin-left: 18px;
+  margin-left: clamp(32px, 5vw, 76px);
   color: var(--text-1);
   font-family: "Syne", sans-serif;
   font-size: 16px;
@@ -102,7 +105,7 @@ a { color: inherit; }
   align-items: center;
   justify-content: flex-end;
   gap: 18px;
-  padding: 0 18px;
+  padding: 0 clamp(32px, 5vw, 76px);
 }
 
 .nav-links {
@@ -521,9 +524,6 @@ a { color: inherit; }
 
 @media (max-width: 1180px) {
   :root { --right-rail: 238px; --left-rail: 210px; }
-  .nav-pill { display: flex; padding: 0 28px; }
-  .nav-logo { margin-left: 0; }
-  .nav-extra { margin-left: auto; padding: 0; }
   .project-meta { grid-template-columns: repeat(2, 1fr); }
   .project-meta > div:nth-child(2) { border-right: 0; }
   .project-meta > div:nth-child(-n + 2) { border-bottom: 1px solid var(--border); }
@@ -535,6 +535,7 @@ a { color: inherit; }
 
 @media (max-width: 960px) {
   :root { --left-rail: 190px; }
+  .nav-pill { grid-template-columns: var(--left-rail) minmax(0, 1fr); }
   .project-layout { grid-template-columns: var(--left-rail) minmax(0, 1fr); }
   .project-canvas { border-right: 0; }
   .next-projects { position: static; grid-column: 1 / -1; height: auto; min-height: 0; border-top: 1px solid var(--border); }
@@ -547,6 +548,9 @@ a { color: inherit; }
 }
 
 @media (max-width: 720px) {
+  .nav-pill { display: flex; padding: 0 22px; }
+  .nav-logo { margin-left: 0; }
+  .nav-extra { margin-left: auto; padding: 0; }
   .project-layout { display: block; }
   .project-toc { position: sticky; top: var(--header-h); z-index: 20; width: 100%; height: auto; min-height: 0; display: block; padding: 0; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--border); background: var(--header-bg); backdrop-filter: blur(14px); }
   .project-toc .rail-label,.rail-back { display: none; }

@@ -11,7 +11,7 @@
   "role": "Product Designer",
   "team": ["Product", "Engineering"],
   "timeline": "2021",
-  "recommendations": ["bikeopolis", "proof-of-payment-flow", "master-design-system"],
+  "recommendations": ["bikeopolis", "login-revamp", "master-design-system"],
   "blocks": [
     {
       "type": "two_column_text",
