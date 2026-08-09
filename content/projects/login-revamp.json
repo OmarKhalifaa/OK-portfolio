@@ -1,6 +1,7 @@
 {
   "timeline": "1 month",
   "thumbnailPixelAccent": "#8F1717",
+  "thumbnailFit": "cover",
   "blocks": [
     {
       "type": "two_column_text",
@@ -152,7 +153,6 @@
   "thumbnailPixelBase": "#230707",
   "client": "Vodafone",
   "thumbnail": "images/uploads/thumb.png",
-  "thumbnailFit": "fill",
   "role": "Sole Product Designer",
   "title": "Login Revamp",
   "thumbnailBackground": "#230707",
