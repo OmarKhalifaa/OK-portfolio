@@ -46,22 +46,22 @@ collections:
       - label: SEO description
         name: seoDescription
         widget: text
-      - label: Project thumbnail
+      - label: Homepage card image — outside only
         name: thumbnail
         widget: image
         required: false
-        hint: 'Upload a landscape image designed for the project card. Recommended ratio: 4:3.'
-      - label: Project thumbnail alternative text
+        hint: 'Used only on the selected-work card outside the case study. Recommended ratio: 4:3.'
+      - label: Homepage card image alternative text
         name: thumbnailAlt
         widget: string
         required: false
         hint: Describe the thumbnail for visitors using screen readers.
-      - label: Thumbnail icon
+      - label: Homepage card icon
         name: thumbnailIcon
         widget: image
         required: false
         hint: Optional icon displayed over the pixel background when no full thumbnail image is uploaded.
-      - label: Thumbnail background colour
+      - label: Homepage card background colour
         name: thumbnailBackground
         widget: color
         required: false

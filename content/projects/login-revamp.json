@@ -79,7 +79,7 @@
       "width": "full",
       "fit": "cover",
       "focalPoint": "center",
-      "aspectRatio": "16:9"
+      "aspectRatio": "landscape"
     },
     {
       "type": "rich_text",
@@ -102,7 +102,7 @@
       "width": "full",
       "fit": "cover",
       "focalPoint": "center",
-      "aspectRatio": "16:9"
+      "aspectRatio": "landscape"
     },
     {
       "type": "rich_text",
@@ -125,7 +125,7 @@
       "width": "full",
       "fit": "cover",
       "focalPoint": "center",
-      "aspectRatio": "16:9"
+      "aspectRatio": "landscape"
     },
     {
       "type": "rich_text",
@@ -148,7 +148,7 @@
       "width": "full",
       "fit": "cover",
       "focalPoint": "center",
-      "aspectRatio": "16:9"
+      "aspectRatio": "landscape"
     },
     {
       "type": "quote",
