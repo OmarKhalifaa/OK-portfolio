@@ -1,7 +1,7 @@
 {
   "timeline": "1 month",
   "thumbnailPixelAccent": "#8F1717",
-  "thumbnailFit": "fill",
+  "thumbnailFit": "contain",
   "blocks": [
     {
       "type": "two_column_text",
