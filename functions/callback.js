@@ -1,3 +1,5 @@
+const GITHUB_CLIENT_ID = "Ov23li4ZXs4IWdhl2NIV";
+
 function getCookie(request, name) {
   const cookieHeader = request.headers.get("Cookie") || "";
   const prefix = `${name}=`;
@@ -58,7 +60,7 @@ function popupResponse(status, content, responseStatus = 200) {
 }
 
 export async function onRequest({ request, env }) {
-  if (!env.GITHUB_CLIENT_ID || !env.GITHUB_CLIENT_SECRET) {
+  if (!env.GITHUB_CLIENT_SECRET) {
     return popupResponse("error", { message: "GitHub OAuth is not configured." }, 500);
   }
 
@@ -79,7 +81,7 @@ export async function onRequest({ request, env }) {
       "User-Agent": "Omar-Khalifa-Portfolio-CMS",
     },
     body: new URLSearchParams({
-      client_id: env.GITHUB_CLIENT_ID,
+      client_id: GITHUB_CLIENT_ID,
       client_secret: env.GITHUB_CLIENT_SECRET,
       code,
       redirect_uri: `${requestUrl.origin}/callback`,
