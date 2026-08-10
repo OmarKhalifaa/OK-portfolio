@@ -1,6 +1,7 @@
 {
   "timeline": "1 month",
   "thumbnailPixelAccent": "#8F1717",
+  "thumbnailFit": "fill",
   "blocks": [
     {
       "type": "two_column_text",
@@ -151,7 +152,7 @@
   "slug": "login-revamp",
   "thumbnailPixelBase": "#230707",
   "client": "Vodafone",
-  "thumbnailFit": "fill",
+  "thumbnail": "images/uploads/thumb.png",
   "role": "Sole Product Designer",
   "title": "Login Revamp",
   "thumbnailBackground": "#230707",
@@ -166,6 +167,6 @@
   ],
   "category": "Mobile · Login experience",
   "industry": "Telecommunications",
-  "heroTitle": "Login\nRevamp",
+  "heroTitle": "Login Revamp",
   "seoDescription": "A redesign of Ana Vodafone's login experience across 4G, Wi-Fi, biometrics, and authentication fallbacks."
 }
