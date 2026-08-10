@@ -1,6 +1,6 @@
 {
   "timeline": "1 month",
-  "thumbnailPixelAccent": "#9c9491",
+  "thumbnailPixelAccent": "#e7e7e7",
   "thumbnailFit": "contain",
   "blocks": [
     {
@@ -150,7 +150,7 @@
   ],
   "deck": "Making it easier to return to Ana Vodafone, no matter how customers connected.",
   "slug": "login-revamp",
-  "thumbnailPixelBase": "#230707",
+  "thumbnailPixelBase": "#626262",
   "client": "Vodafone",
   "thumbnail": "images/uploads/abasds.png",
   "role": "Sole Product Designer",
