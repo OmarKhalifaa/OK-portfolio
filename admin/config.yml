@@ -5,9 +5,9 @@ backend:
   repo: OmarKhalifaa/OK-portfolio
   branch: main
   use_graphql: true
-  base_url: https://api.netlify.com
+  base_url: https://ok-portfolio.pages.dev
   auth_endpoint: auth
-  site_domain: omarkhalifa.netlify.app
+  site_domain: ok-portfolio.pages.dev
 
 publish_mode: simple
 media_folder: images/uploads
