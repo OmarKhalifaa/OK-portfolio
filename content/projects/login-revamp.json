@@ -1,6 +1,6 @@
 {
   "timeline": "1 month",
-  "thumbnailPixelAccent": "#8F1717",
+  "thumbnailPixelAccent": "#9c9491",
   "thumbnailFit": "contain",
   "blocks": [
     {
@@ -155,7 +155,7 @@
   "thumbnail": "images/uploads/frame-514808726.png",
   "role": "Sole Product Designer",
   "title": "Login Revamp",
-  "thumbnailBackground": "#230707",
+  "thumbnailBackground": "#9c9491",
   "recommendations": [
     "master-design-system",
     "bikeopolis",
