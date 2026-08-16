@@ -8,7 +8,7 @@ const projects = files.map(file => {
   const project = JSON.parse(fs.readFileSync(path.join(projectDirectory, file), 'utf8'));
   const expectedSlug = path.basename(file, '.json');
   if (project.slug !== expectedSlug) throw new Error(`${file}: slug must match its filename`);
-  for (const field of ['slug', 'title', 'deck', 'industry', 'role', 'timeline']) {
+  for (const field of ['slug', 'title', 'deck', 'industry', 'role']) {
     if (!project[field]) throw new Error(`${file}: missing required field "${field}"`);
   }
   if (!Array.isArray(project.blocks)) throw new Error(`${file}: blocks must be an array`);

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 40" role="img" aria-labelledby="title">
+  <title id="title">Flag of Egypt</title>
+  <rect width="60" height="13.333" fill="#ce1126"/>
+  <rect y="13.333" width="60" height="13.334" fill="#ffffff"/>
+  <rect y="26.667" width="60" height="13.333" fill="#000000"/>
+  <g fill="#c09300" transform="translate(20 13)">
+    <path d="M10 1.2 12.2 3l4.8-.7-2.8 3.3 3.1 1.1-4.7 2.2-1 8.4H8.4l-1-8.4-4.7-2.2 3.1-1.1L3 2.3l4.8.7L10 1.2Z"/>
+    <circle cx="12.1" cy="2.2" r="1.55"/>
+    <path d="M8.1 17.4h3.8l1.3 2H6.8l1.3-2Z"/>
+  </g>
+</svg>

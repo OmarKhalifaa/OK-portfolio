@@ -1,5 +1,4 @@
 {
-  "timeline": "1 month",
   "thumbnailPixelAccent": "#e7e7e7",
   "thumbnailFit": "contain",
   "blocks": [
@@ -8,165 +7,254 @@
       "sectionId": "overview",
       "navLabel": "The trigger",
       "showInNav": true,
-      "eyebrow": "Where it began",
-      "heading": "It started with the switch from 4G to Wi-Fi.",
-      "left": "On 4G, customers could be identified automatically. After switching to Wi-Fi, they were unexpectedly asked for a password without understanding why.",
-      "right": "Instead of fixing only that moment, we used it to uplift the wider login experience—clearer guidance, faster returning access, biometrics, account handling, and secure fallbacks. I led the one-month project as the sole designer, working with product owners and the testing team."
+      "eyebrow": "The problem",
+      "heading": "The password was not the problem. The unexplained interruption was.",
+      "left": "On mobile data, Ana Vodafone could identify customers automatically. When the connection changed to Wi-Fi, that context disappeared and the app suddenly asked for credentials without explaining what had changed.",
+      "right": "The broken handoff made a familiar journey feel like an error. It also exposed wider gaps across first-time registration, account recognition, network changes, and returning access—turning one interruption into a broader login redesign."
     },
     {
-      "sectionId": "before-after",
+      "type": "rich_text",
+      "sectionId": "registration",
+      "navLabel": "Registration",
       "showInNav": true,
-      "heading": "From an unexplained interruption to a guided login journey.",
-      "eyebrow": "The transformation",
+      "eyebrow": "First-time access",
+      "heading": "Helping new customers get started without losing momentum.",
+      "body": "The registration journey guided first-time customers from confirming their mobile number through verification, account setup, and profile completion. Each step focused on one clear action, while optional details stayed out of the critical path.",
+      "contentWidth": "wide"
+    },
+    {
+      "sectionId": "registration-start-visual",
+      "showInNav": false,
       "focalPoint": "center",
-      "fit": "cover",
-      "navLabel": "Before & after",
-      "aspectRatio": "landscape",
+      "fit": "contain",
+      "aspectRatio": "auto",
+      "type": "gallery",
+      "columns": "two",
       "images": [
         {
-          "image": "images/login-revamp/placeholders/before-login.svg",
-          "alt": "Solid color placeholder for the login experience before the redesign",
-          "caption": "Before — existing login journey."
+          "image": "images/login-revamp/registration/home.png",
+          "alt": "Ana Vodafone welcome screen where a customer can enter a mobile number to begin registration",
+          "caption": "Welcome and registration entry"
         },
         {
-          "image": "images/login-revamp/placeholders/after-login.svg",
-          "alt": "Solid color placeholder for the login experience after the redesign",
-          "caption": "After — redesigned login journey."
+          "image": "images/login-revamp/registration/mobile-number.png",
+          "alt": "Mobile-number entry screen with the customer's number entered and the Next action available",
+          "caption": "Mobile number entry"
         }
-      ],
-      "type": "gallery",
-      "columns": "two"
+      ]
     },
     {
-      "type": "two_column_text",
+      "sectionId": "registration-verification-password-visual",
+      "showInNav": false,
+      "focalPoint": "center",
+      "fit": "contain",
+      "aspectRatio": "auto",
+      "type": "gallery",
+      "columns": "three",
+      "images": [
+        {
+          "image": "images/login-revamp/registration/otp-empty.png",
+          "alt": "Mobile-number verification screen with an empty six-digit code field",
+          "caption": "Verification code"
+        },
+        {
+          "image": "images/login-revamp/registration/otp-entry.png",
+          "alt": "Mobile-number verification screen while the customer enters the six-digit code",
+          "caption": "Entering the verification code"
+        },
+        {
+          "image": "images/login-revamp/registration/password.png",
+          "alt": "Password creation screen showing password requirements and confirmation fields",
+          "caption": "Password creation"
+        }
+      ]
+    },
+    {
+      "sectionId": "registration-completion-visual",
+      "showInNav": false,
+      "focalPoint": "center",
+      "fit": "contain",
+      "aspectRatio": "auto",
+      "type": "gallery",
+      "columns": "two",
+      "images": [
+        {
+          "image": "images/login-revamp/registration/login.png",
+          "alt": "Account login screen with the mobile number and password entered",
+          "caption": "Account login"
+        },
+        {
+          "image": "images/login-revamp/registration/profile-empty.png",
+          "alt": "Empty profile-completion screen with name, optional email, date of birth, and gender fields",
+          "caption": "Profile completion"
+        }
+      ]
+    },
+    {
+      "type": "rich_text",
       "sectionId": "network-switch",
       "navLabel": "The switch",
       "showInNav": true,
       "eyebrow": "Why the revamp began",
       "heading": "The journey was familiar. The rules changed with the network.",
-      "left": "On 4G, the app could identify the customer's number automatically. We also needed to reassure them that using the app would not consume their mobile data.",
-      "right": "When customers switched to Wi-Fi, that automatic detection was no longer available. The experience had to explain the change clearly and guide them to enter their password."
+      "body": "The redesigned experience separated the journey into two clear paths. On 5G, Ana Vodafone could recognize the customer's mobile number automatically, reduce manual entry, and reassure them that using the app would not consume their data allowance. Wi-Fi required a separate guided path for customers to identify themselves and continue securely.",
+      "contentWidth": "wide"
+    },
+    {
+      "sectionId": "network-5g-visual",
+      "showInNav": false,
+      "focalPoint": "center",
+      "fit": "contain",
+      "aspectRatio": "auto",
+      "type": "gallery",
+      "columns": "two",
+      "images": [
+        {
+          "image": "images/login-revamp/registration/mobile-data/home-5g.png",
+          "alt": "Ana Vodafone home screen on a 5G connection after automatic identification",
+          "caption": "Recognized automatically on 5G"
+        },
+        {
+          "image": "images/login-revamp/registration/mobile-data/mobile-network-login.png",
+          "alt": "Ana Vodafone welcome screen showing the recognized mobile number and the option to continue",
+          "caption": "Continue with the detected number"
+        }
+      ]
+    },
+    {
+      "type": "rich_text",
+      "sectionId": "network-wifi",
+      "navLabel": "",
+      "showInNav": false,
+      "eyebrow": "Path 02 · Wi-Fi",
+      "heading": "Wi-Fi required a clear sign-in path.",
+      "body": "Without network-based identification, customers entered their mobile number and password before continuing into the app.",
+      "contentWidth": "wide"
     },
     {
       "sectionId": "network-visual",
       "showInNav": false,
-      "alignment": "center",
-      "width": "full",
-      "caption": "Placeholder — 4G to Wi-Fi journey mockup to be added.",
-      "alt": "Solid color placeholder for the 4G to Wi-Fi switching screens",
       "focalPoint": "center",
-      "fit": "cover",
-      "aspectRatio": "landscape",
-      "type": "image_full",
-      "image": "images/login-revamp/placeholders/network-switch.svg",
-      "captionAlignment": "left"
+      "fit": "contain",
+      "aspectRatio": "auto",
+      "type": "gallery",
+      "columns": "two",
+      "images": [
+        {
+          "image": "images/login-revamp/registration/Wifi Login.png",
+          "alt": "Ana Vodafone welcome screen where a customer identifies their mobile number while using Wi-Fi",
+          "caption": "Identify with the mobile number on Wi-Fi"
+        },
+        {
+          "image": "images/login-revamp/registration/Wifi password.png",
+          "alt": "Ana Vodafone password screen used to complete secure sign-in while on Wi-Fi",
+          "caption": "Confirm securely with the password"
+        }
+      ]
+    },
+    {
+      "type": "rich_text",
+      "sectionId": "network-transition",
+      "navLabel": "Network change",
+      "showInNav": true,
+      "eyebrow": "Core problem · Mobile data to Wi-Fi",
+      "heading": "Switching networks should not feel like being logged out.",
+      "body": "A customer could begin on mobile data, then move to Wi-Fi while the app was still open. Previously, that change interrupted identification without explaining what happened. We introduced a lightweight overlay that acknowledged the network change, preserved context, and guided the customer into the secure Wi-Fi sign-in path.",
+      "contentWidth": "wide"
+    },
+    {
+      "sectionId": "network-transition-visual",
+      "showInNav": false,
+      "focalPoint": "center",
+      "fit": "contain",
+      "aspectRatio": "auto",
+      "type": "gallery",
+      "columns": "three",
+      "images": [
+        {
+          "image": "images/login-revamp/registration/switch/Home- Network.png",
+          "alt": "Ana Vodafone home screen while the customer is identified on 5G",
+          "caption": "Active on 5G"
+        },
+        {
+          "image": "images/login-revamp/registration/switch/Wifi Switching.png",
+          "alt": "Network-change screen explaining how to enable Ana Vodafone access after switching from mobile data to Wi-Fi",
+          "caption": "Network-change overlay"
+        },
+        {
+          "image": "images/login-revamp/registration/switch/Swtiching password.png",
+          "alt": "Password confirmation screen used after the customer switches to Wi-Fi",
+          "caption": "Continue securely on Wi-Fi"
+        }
+      ]
     },
     {
       "type": "rich_text",
       "sectionId": "faster-return",
-      "navLabel": "Returning",
+      "navLabel": "Biometrics",
       "showInNav": true,
-      "eyebrow": "Faster next time",
-      "heading": "Returning should feel effortless.",
-      "body": "Biometrics gave returning customers a faster way in, while the updated journey kept the right account and login choices visible when they were needed.",
+      "eyebrow": "Biometric access",
+      "heading": "Enable it once. Return with a touch.",
+      "body": "Biometrics became part of the login moment instead of a separate setup journey. After entering a password, customers could enable biometric access for that account without breaking their flow. On future visits, the app surfaced the saved account and moved directly to biometric confirmation, making the secure path back in feel immediate.",
       "contentWidth": "wide"
     },
     {
       "sectionId": "biometrics-visual",
       "showInNav": false,
-      "alignment": "center",
-      "width": "full",
-      "caption": "Placeholder — biometric return journey mockup to be added.",
-      "alt": "Solid color placeholder for the biometric login screens",
       "focalPoint": "center",
-      "fit": "cover",
-      "aspectRatio": "landscape",
-      "type": "image_full",
-      "image": "images/login-revamp/placeholders/biometrics.svg",
-      "captionAlignment": "left"
-    },
-    {
-      "type": "rich_text",
-      "sectionId": "fallbacks",
-      "navLabel": "Fallbacks",
-      "showInNav": true,
-      "eyebrow": "No dead ends",
-      "heading": "A cancelled prompt should not end the journey.",
-      "body": "If biometrics were cancelled or unavailable, customers could continue with another secure login method instead of feeling stuck.",
-      "contentWidth": "wide"
-    },
-    {
-      "sectionId": "fallback-visual",
-      "showInNav": false,
-      "alignment": "center",
-      "width": "full",
-      "caption": "Placeholder — authentication fallback mockup to be added.",
-      "alt": "Solid color placeholder for the authentication fallback screens",
-      "focalPoint": "center",
-      "fit": "cover",
-      "aspectRatio": "landscape",
-      "type": "image_full",
-      "image": "images/login-revamp/placeholders/fallbacks.svg",
-      "captionAlignment": "left"
-    },
-    {
-      "type": "rich_text",
-      "sectionId": "experiment",
-      "navLabel": "A/B test",
-      "showInNav": true,
-      "eyebrow": "The password experiment",
-      "heading": "We tested two moments for password creation.",
-      "body": "Variant A asked customers to create a password during registration. Variant B moved password creation until after registration. The goal was to learn which moment could reduce drop-off and prevent customers from abandoning the app. The final experiment result was still being evaluated.",
-      "contentWidth": "wide"
-    },
-    {
-      "sectionId": "experiment-visual",
-      "showInNav": false,
-      "alignment": "center",
-      "width": "full",
-      "caption": "Placeholder — A/B experiment comparison mockup to be added.",
-      "alt": "Solid color placeholder for the password placement experiment screens",
-      "focalPoint": "center",
-      "fit": "cover",
-      "aspectRatio": "landscape",
-      "type": "image_full",
-      "image": "images/login-revamp/placeholders/ab-test.svg",
-      "captionAlignment": "left"
+      "fit": "contain",
+      "aspectRatio": "auto",
+      "type": "gallery",
+      "columns": "three",
+      "images": [
+        {
+          "image": "images/login-revamp/registration/biometrics/Setting up The Biometrics.png",
+          "alt": "Password login screen with an option to enable biometric access for the account",
+          "caption": "Enable biometrics during login"
+        },
+        {
+          "image": "images/login-revamp/registration/biometrics/Wifi Multiple accounts Biometrics.png",
+          "alt": "Saved-account screen showing which account has biometric access enabled",
+          "caption": "Return to the saved account"
+        },
+        {
+          "image": "images/login-revamp/registration/biometrics/Wifi Multiple accounts Biometrics overlay.png",
+          "alt": "Fingerprint confirmation overlay displayed for the biometric-enabled account",
+          "caption": "Confirm with a fingerprint"
+        }
+      ]
     },
     {
       "type": "quote",
       "sectionId": "outcome",
       "navLabel": "Outcome",
       "showInNav": true,
-      "eyebrow": "What changed",
-      "quote": "A clearer login journey, delivered in one month.",
-      "attribution": "Login Revamp",
-      "body": "The revamp clarified what happens when customers move from 4G to Wi-Fi, made returning access faster, and introduced fallbacks that kept people moving."
+      "eyebrow": "Solution summary",
+      "quote": "A clearer login journey.",
+      "attribution": "Ana Vodafone Login",
+      "body": "The solution separated mobile-data and Wi-Fi identification, explained what happened when the network changed, streamlined first-time registration, and embedded biometrics into login for faster returns. Together, these changes turned an unexplained interruption into a clear and secure journey."
     }
   ],
   "homepageTags": [
     "Mobile",
     "Login"
   ],
-  "deck": "Making it easier to return to Ana Vodafone, no matter how customers connected.",
+  "deck": "Ana Vodafone could identify customers on mobile data—but switching to Wi-Fi broke that context and made login feel unexplained.",
   "slug": "login-revamp",
   "thumbnailPixelBase": "#626262",
   "client": "Vodafone",
-  "thumbnail": "images/uploads/abasds.png",
+  "thumbnail": "images/login-revamp/Thumbnail.png",
+  "thumbnailAlt": "Ana Vodafone login screen displayed in an iPhone frame",
   "role": "Sole Product Designer",
-  "title": "Login Revamp",
+  "title": "Ana Vodafone Login",
   "thumbnailBackground": "#ecedea",
-  "recommendations": [
-    "master-design-system",
-    "bikeopolis",
-    "meal-holic"
-  ],
+  "recommendations": [],
   "team": [
     "Product owners",
     "Testing team"
   ],
   "category": "Mobile · Login experience",
   "industry": "Telecommunications",
-  "heroTitle": "Login Revamp",
-  "seoDescription": "A redesign of Ana Vodafone's login experience across 4G, Wi-Fi, biometrics, and authentication fallbacks."
+  "heroTitle": "Ana Vodafone Login",
+  "seoDescription": "A redesign of Ana Vodafone's login experience across mobile data, Wi-Fi, network changes, registration, and biometrics."
 }

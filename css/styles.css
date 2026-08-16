@@ -1390,26 +1390,14 @@ html::-webkit-scrollbar,
 }
 
 .location-flag {
-  display: inline-block;
-  position: relative;
-  width: 16px;
-  height: 11px;
+  display: block;
+  flex: 0 0 auto;
+  width: 18px;
+  height: 12px;
   margin-left: 3px;
   border: 1px solid rgba(0,0,0,.12);
-  border-radius: 1px;
-  background: linear-gradient(to bottom, #ce1126 0 33.33%, #fff 33.33% 66.66%, #000 66.66% 100%);
-  transform: translateY(2px);
-}
-
-.location-flag::after {
-  content: '';
-  position: absolute;
-  left: 7px;
-  top: 4px;
-  width: 2px;
-  height: 2px;
-  border-radius: 50%;
-  background: #c9a227;
+  border-radius: 2px;
+  object-fit: cover;
 }
 
 .concept-socials {
@@ -1560,6 +1548,8 @@ html::-webkit-scrollbar,
   aspect-ratio: 4 / 3;
   border-radius: 0;
 }
+
+.concept-card-stack > .concept-card:only-child { grid-column: 1 / -1; }
 
 .concept-card .card-body { padding: 16px 10px 10px; }
 .concept-card .card-title { font-size: clamp(17px, 1.35vw, 22px); }
@@ -1817,6 +1807,10 @@ html::-webkit-scrollbar,
   animation-delay: -3.1s;
 }
 
+.concept-card-stack:has(> .concept-card:only-child)::after {
+  display: none;
+}
+
 @keyframes gridRain {
   from { transform: translateY(0); }
   to { transform: translateY(calc(100vh + 230px)); }
@@ -1880,7 +1874,10 @@ html::-webkit-scrollbar,
 
 @media (max-width: 820px) {
   .concept-shell { display: block; }
-  .concept-page #work { position: relative; }
+  .concept-page #work {
+    position: relative;
+    min-height: 0;
+  }
   .concept-card-stack::after { display: none; }
   .concept-page #hero::after,
   .concept-work-heading::after {

@@ -2,13 +2,32 @@
   const root = document.documentElement;
   const themeButton = document.getElementById('themeToggle');
   const savedTheme = localStorage.getItem('theme');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let isThemeTransitioning = false;
 
-  if (savedTheme === 'light') root.setAttribute('data-theme', 'light');
+  const applyTheme = theme => {
+    if (theme === 'light') root.setAttribute('data-theme', 'light');
+    else root.removeAttribute('data-theme');
+    localStorage.setItem('theme', theme);
+    themeButton?.setAttribute('aria-label', theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode');
+    themeButton?.setAttribute('aria-pressed', String(theme === 'light'));
+  };
+
+  applyTheme(savedTheme === 'light' ? 'light' : 'dark');
 
   themeButton?.addEventListener('click', () => {
+    if (isThemeTransitioning) return;
     const isLight = root.getAttribute('data-theme') === 'light';
-    root.toggleAttribute('data-theme', !isLight);
-    localStorage.setItem('theme', isLight ? 'dark' : 'light');
+    const nextTheme = isLight ? 'dark' : 'light';
+
+    if (!document.startViewTransition || reduceMotion.matches) {
+      applyTheme(nextTheme);
+      return;
+    }
+
+    isThemeTransitioning = true;
+    const transition = document.startViewTransition(() => applyTheme(nextTheme));
+    transition.finished.finally(() => { isThemeTransitioning = false; });
   });
 
   const nav = document.getElementById('nav');
@@ -64,11 +83,14 @@
     return candidate || `section-${index + 1}`;
   };
 
-  const blockHeading = block => `
-    <div class="section-heading ${block.compactHeading ? 'compact-heading' : ''}">
-      ${block.eyebrow ? `<p class="block-eyebrow">${escapeHTML(block.eyebrow)}</p>` : ''}
-      ${block.heading ? `<h2>${escapeHTML(block.heading)}</h2>` : ''}
-    </div>`;
+  const blockHeading = block => {
+    if (!block.eyebrow && !block.heading) return '';
+    return `
+      <div class="section-heading ${block.compactHeading ? 'compact-heading' : ''}">
+        ${block.eyebrow ? `<p class="block-eyebrow">${escapeHTML(block.eyebrow)}</p>` : ''}
+        ${block.heading ? `<h2>${escapeHTML(block.heading)}</h2>` : ''}
+      </div>`;
+  };
 
   const renderImage = (image, alt, className = '') => {
     const src = safeMediaUrl(image);
@@ -176,12 +198,29 @@
       else link.removeAttribute('aria-current');
     });
 
+    const activateHash = () => {
+      const id = window.location.hash.slice(1);
+      if (id && sections.some(section => section.id === id)) setActive(id);
+    };
+
+    links.forEach(link => link.addEventListener('click', () => {
+      const id = link.getAttribute('href')?.slice(1);
+      if (id) setActive(id);
+    }));
+
+    window.addEventListener('hashchange', activateHash);
+    window.addEventListener('scroll', () => {
+      const atPageEnd = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 8;
+      if (atPageEnd && sections.length) setActive(sections.at(-1).id);
+    }, { passive: true });
+
     const observer = new IntersectionObserver(entries => {
       const visible = entries.filter(entry => entry.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
       if (visible[0]) setActive(visible[0].target.id);
     }, { rootMargin: '-18% 0px -68% 0px', threshold: 0 });
 
     sections.forEach(section => observer.observe(section));
+    activateHash();
   };
 
   const fetchProject = async slug => {
@@ -193,6 +232,7 @@
   const renderRecommendations = async recommendations => {
     const rail = document.querySelector('.next-projects-inner');
     if (!rail) return;
+    const recommendationsPanel = rail.closest('.next-projects');
 
     const existing = rail.querySelectorAll('.next-card');
     existing.forEach(card => card.remove());
@@ -202,7 +242,12 @@
       catch { return null; }
     }));
 
-    projects.filter(Boolean).forEach((project, index) => {
+    const availableProjects = projects.filter(Boolean);
+    const hasRecommendations = availableProjects.length > 0;
+    if (recommendationsPanel) recommendationsPanel.hidden = !hasRecommendations;
+    document.body.classList.toggle('has-no-recommendations', !hasRecommendations);
+
+    availableProjects.forEach((project, index) => {
       rail.insertAdjacentHTML('beforeend', `
         <a class="next-card next-card-${themes[index % themes.length]}" href="project.html?project=${encodeURIComponent(project.slug)}" aria-label="${escapeHTML(project.title)} case study">
           <span class="next-index">${String(index + 1).padStart(2, '0')}</span>
@@ -214,6 +259,7 @@
 
   const renderProject = project => {
     document.title = `${project.title} — Omar Khalifa`;
+    document.body.dataset.project = project.slug || '';
     const description = document.querySelector('meta[name="description"]');
     if (description) description.setAttribute('content', project.seoDescription || project.deck || project.title);
 
@@ -223,7 +269,12 @@
     setText('projectDeck', project.deck);
     setText('projectIndustry', project.industry);
     setText('projectRole', project.role);
-    setText('projectTimeline', project.timeline);
+    const timeline = document.getElementById('projectTimeline');
+    const timelineValue = String(project.timeline || '').trim();
+    const timelineItem = timeline?.closest('div');
+    if (timeline) timeline.textContent = timelineValue;
+    if (timelineItem) timelineItem.hidden = !timelineValue;
+    document.querySelector('.project-meta')?.classList.toggle('has-no-timeline', !timelineValue);
 
     const team = document.getElementById('projectTeam');
     if (team) team.innerHTML = (project.team || []).map(escapeHTML).join('<br>');
@@ -235,8 +286,8 @@
     renderRecommendations(project.recommendations);
   };
 
-  const requestedSlug = new URLSearchParams(window.location.search).get('project') || 'master-design-system';
-  const slug = /^[a-z0-9-]+$/.test(requestedSlug) ? requestedSlug : 'master-design-system';
+  const requestedSlug = new URLSearchParams(window.location.search).get('project') || 'login-revamp';
+  const slug = /^[a-z0-9-]+$/.test(requestedSlug) ? requestedSlug : 'login-revamp';
 
   fetchProject(slug)
     .then(renderProject)

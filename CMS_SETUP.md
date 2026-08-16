@@ -81,22 +81,22 @@ Other projects use their slug:
 
 ## Enable the hosted CMS
 
-The production configuration uses Decap's GitHub backend with Netlify's OAuth provider. It does not use the deprecated Git Gateway feature. Editors must have write access to the GitHub repository.
+The production configuration uses Decap's GitHub backend with OAuth handled by Cloudflare Pages Functions. It does not use Git Gateway. Editors must have write access to the GitHub repository.
 
-Hosted CMS: `https://stately-sfogliatella-379d14.netlify.app/admin/`
+Hosted CMS: `https://ok-portfolio.pages.dev/admin/`
 
-1. Import `OmarKhalifaa/OK-portfolio` into Netlify.
-2. Use the repository root as the publish directory. `netlify.toml` already contains the build settings.
+1. In Cloudflare, create a Pages project connected to `OmarKhalifaa/OK-portfolio`.
+2. Use `main` as the production branch, no build command, and the repository root (`.`) as the output directory.
 3. In GitHub, open **Settings → Developer settings → OAuth Apps** and register a new OAuth application.
-4. Use the Netlify site URL as the application homepage.
-5. Use `https://api.netlify.com/auth/done` as the authorization callback URL.
-6. Copy the GitHub Client ID and generate a Client Secret.
-7. In Netlify, open **Project configuration → Access & security → OAuth**.
-8. Install the GitHub authentication provider and enter the Client ID and Client Secret.
-9. Open `https://stately-sfogliatella-379d14.netlify.app/admin/` and sign in with the GitHub account that has write access to the repository.
+4. Use `https://ok-portfolio.pages.dev` as the application homepage.
+5. Use `https://ok-portfolio.pages.dev/callback` as the authorization callback URL.
+6. Make sure the OAuth application's Client ID matches `GITHUB_CLIENT_ID` in `functions/auth.js` and `functions/callback.js`.
+7. In the Cloudflare Pages project settings, add `GITHUB_CLIENT_SECRET` as an encrypted secret for Production. Add it to Preview too if CMS sign-in must work on preview deployments.
+8. Redeploy the Pages project so the secret is available to the Functions.
+9. Open `https://ok-portfolio.pages.dev/admin/` and sign in with the GitHub account that has write access to the repository.
 
-The CMS publishes to the `main` branch. Decap's editorial workflow creates a branch and pull request for drafts before publishing.
+The CMS publishes directly to the `main` branch because `publish_mode` is set to `simple` in `admin/config.yml`.
 
 ## Production hosting
 
-Netlify is the production host for the portfolio. GitHub stores the source and CMS content, while every update merged into `main` is automatically published by Netlify. GitHub Pages should remain disabled to avoid maintaining a second public copy of the site.
+Cloudflare Pages is the production host for the portfolio. GitHub stores the source and CMS content, while every update pushed to `main` is automatically published by Cloudflare Pages. The `functions` directory contains the CMS OAuth endpoints, and `_headers` contains Cloudflare Pages response-header rules. GitHub Pages should remain disabled to avoid maintaining a second public copy of the site.
