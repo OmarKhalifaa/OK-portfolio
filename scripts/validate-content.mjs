@@ -18,9 +18,18 @@ const projects = files.map(file => {
 const knownSlugs = new Set(projects.map(project => project.slug));
 if (knownSlugs.size !== projects.length) throw new Error('Project slugs must be unique');
 
+const projectIndexPath = path.resolve('content/project-index.json');
+const projectIndex = {
+  projects: projects
+    .filter(project => project.showInRecommendations === true)
+    .map(project => project.slug)
+    .sort()
+};
+fs.writeFileSync(projectIndexPath, `${JSON.stringify(projectIndex, null, 2)}\n`);
+
 const allowedBlocks = new Set([
   'rich_text', 'two_column_text', 'image_full', 'text_image', 'gallery',
-  'video', 'feature_grid', 'stats', 'quote', 'process', 'divider'
+  'video', 'screen_slider', 'figma_prototype', 'feature_grid', 'stats', 'quote', 'process', 'divider'
 ]);
 
 for (const project of projects) {

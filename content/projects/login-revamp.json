@@ -241,6 +241,7 @@
   ],
   "deck": "Ana Vodafone could identify customers on mobile data—but switching to Wi-Fi broke that context and made login feel unexplained.",
   "slug": "login-revamp",
+  "showInRecommendations": true,
   "thumbnailPixelBase": "#626262",
   "client": "Vodafone",
   "thumbnail": "images/login-revamp/Thumbnail.png",
@@ -248,7 +249,9 @@
   "role": "Sole Product Designer",
   "title": "Ana Vodafone Login",
   "thumbnailBackground": "#ecedea",
-  "recommendations": [],
+  "recommendations": [
+    "digital-store"
+  ],
   "team": [
     "Product owners",
     "Testing team"

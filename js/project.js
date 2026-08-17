@@ -65,13 +65,29 @@
     return escapeHTML(url);
   };
 
+  const safeFigmaPrototypeUrl = value => {
+    try {
+      const url = new URL(String(value ?? '').trim());
+      const host = url.hostname.toLowerCase();
+      if (url.protocol !== 'https:' || !['figma.com', 'www.figma.com', 'embed.figma.com'].includes(host) || !url.pathname.startsWith('/proto/')) return '';
+      url.hostname = 'embed.figma.com';
+      url.searchParams.set('embed-host', 'omar-khalifa-portfolio');
+      url.searchParams.delete('t');
+      url.searchParams.delete('viewport');
+      return escapeHTML(url.toString());
+    } catch {
+      return '';
+    }
+  };
+
   const option = (value, allowed, fallback) => allowed.includes(value) ? value : fallback;
   const mediaClasses = block => [
     `cms-width-${option(block.width, ['full', 'wide', 'medium', 'narrow'], 'full')}`,
     `cms-align-${option(block.alignment, ['left', 'center', 'right'], 'center')}`,
     `cms-ratio-${option(block.aspectRatio, ['auto', 'landscape', 'standard', 'square', 'portrait'], 'auto')}`,
     `cms-fit-${option(block.fit, ['cover', 'contain'], 'cover')}`,
-    `cms-focal-${option(block.focalPoint, ['center', 'top', 'bottom', 'left', 'right'], 'center')}`
+    `cms-focal-${option(block.focalPoint, ['center', 'top', 'bottom', 'left', 'right'], 'center')}`,
+    `cms-display-${option(block.displayMode, ['static', 'browser', 'scroll'], 'static')}`
   ].join(' ');
 
   const blockId = (block, index) => {
@@ -91,6 +107,8 @@
         ${block.heading ? `<h2>${escapeHTML(block.heading)}</h2>` : ''}
       </div>`;
   };
+
+  const isHex = value => typeof value === 'string' && /^#[0-9a-f]{6}$/i.test(value);
 
   const renderImage = (image, alt, className = '') => {
     const src = safeMediaUrl(image);
@@ -128,25 +146,55 @@
         return `<section class="content-block content-copy" id="${id}">${heading}<div class="copy-columns"><div class="cms-richtext">${markdown(block.left)}</div><div class="cms-richtext">${markdown(block.right)}</div></div></section>`;
 
       case 'image_full':
-        return `<figure class="content-block media-block cms-image-block" id="${id}">${heading}<div class="cms-media-frame ${mediaClasses(block)}">${renderImage(block.image, block.alt)}</div>${block.caption ? `<figcaption class="cms-caption-${option(block.captionAlignment, ['left', 'center', 'right'], 'left')}">${escapeHTML(block.caption)}</figcaption>` : ''}</figure>`;
+        {
+          const isScrollable = block.displayMode === 'scroll';
+          const frame = `<div class="cms-media-frame ${mediaClasses(block)}"${isScrollable ? ` tabindex="0" role="region" aria-label="Scrollable preview: ${escapeHTML(block.alt || block.heading || 'project screen')}"` : ''}>${renderImage(block.image, block.alt)}</div>`;
+          const media = isScrollable ? `<div class="cms-scroll-shell">${frame}<span class="cms-scroll-hint" aria-hidden="true">Scroll to explore <span>↓</span></span></div>` : frame;
+          return `<figure class="content-block media-block cms-image-block" id="${id}">${heading}${media}${block.caption ? `<figcaption class="cms-caption-${option(block.captionAlignment, ['left', 'center', 'right'], 'left')}">${escapeHTML(block.caption)}</figcaption>` : ''}</figure>`;
+        }
 
       case 'text_image': {
         const ratio = option(block.aspectRatio, ['auto', 'landscape', 'standard', 'square', 'portrait'], 'auto');
         const fit = option(block.fit, ['cover', 'contain'], 'cover');
         const focal = option(block.focalPoint, ['center', 'top', 'bottom', 'left', 'right'], 'center');
-        const image = `<div class="cms-text-image-media cms-ratio-${ratio} cms-fit-${fit} cms-focal-${focal}">${renderImage(block.image, block.alt)}</div>`;
-        const copy = `<div class="cms-text-image-copy">${heading}<div class="cms-richtext">${markdown(block.body)}</div>${block.caption ? `<p class="cms-caption">${escapeHTML(block.caption)}</p>` : ''}</div>`;
+        const displayMode = option(block.displayMode, ['static', 'browser'], 'static');
+        const image = `<div class="cms-text-image-media cms-display-${displayMode} cms-ratio-${ratio} cms-fit-${fit} cms-focal-${focal}">${renderImage(block.image, block.alt)}</div>`;
+        const caption = block.caption ? `<p class="cms-caption">${escapeHTML(block.caption)}</p>` : '';
+        const layout = option(block.layout, ['split', 'stacked'], 'split');
+        const copy = `<div class="cms-text-image-copy">${heading}<div class="cms-richtext">${markdown(block.body)}</div>${layout === 'split' ? caption : ''}</div>`;
+        const media = layout === 'stacked' ? `<div class="cms-text-image-media-group">${image}${caption}</div>` : image;
         const imagePosition = option(block.imagePosition, ['left', 'right'], 'right');
         const imageWidth = option(block.imageWidth, ['40', '50', '60'], '50');
         const verticalAlignment = option(block.verticalAlignment, ['top', 'center', 'bottom'], 'center');
-        return `<section class="content-block cms-text-image image-${imagePosition} cms-split-${imageWidth} cms-vertical-${verticalAlignment}" id="${id}">${imagePosition === 'left' ? image + copy : copy + image}</section>`;
+        return `<section class="content-block cms-text-image cms-layout-${layout} image-${imagePosition} cms-split-${imageWidth} cms-vertical-${verticalAlignment}" id="${id}">${layout === 'stacked' || imagePosition === 'right' ? copy + media : media + copy}</section>`;
       }
 
       case 'gallery':
-        return `<section class="content-block cms-gallery-block" id="${id}">${heading}<div class="cms-gallery cms-gallery-${option(block.columns, ['two', 'three'], 'two')} cms-ratio-${option(block.aspectRatio, ['auto', 'landscape', 'standard', 'square', 'portrait'], 'auto')} cms-fit-${option(block.fit, ['cover', 'contain'], 'cover')} cms-focal-${option(block.focalPoint, ['center', 'top', 'bottom', 'left', 'right'], 'center')}">${(block.images || []).map(item => `<figure>${renderImage(item.image, item.alt)}${item.caption ? `<figcaption>${escapeHTML(item.caption)}</figcaption>` : ''}</figure>`).join('')}</div></section>`;
+        return `<section class="content-block cms-gallery-block" id="${id}">${heading}<div class="cms-gallery cms-gallery-${option(block.columns, ['two', 'three'], 'two')} cms-ratio-${option(block.aspectRatio, ['auto', 'landscape', 'standard', 'square', 'portrait'], 'auto')} cms-fit-${option(block.fit, ['cover', 'contain'], 'cover')} cms-focal-${option(block.focalPoint, ['center', 'top', 'bottom', 'left', 'right'], 'center')}">${(block.images || []).map(item => `<figure class="cms-item-focal-${option(item.focalPoint, ['center', 'top', 'bottom', 'left', 'right', 'upper', 'lower'], block.focalPoint || 'center')}">${renderImage(item.image, item.alt)}${item.caption ? `<figcaption>${escapeHTML(item.caption)}</figcaption>` : ''}</figure>`).join('')}</div></section>`;
 
       case 'video':
         return `<figure class="content-block media-block cms-video-block" id="${id}">${heading}<div class="cms-video-frame">${renderVideo(block.url)}</div>${block.caption ? `<figcaption>${escapeHTML(block.caption)}</figcaption>` : ''}</figure>`;
+
+      case 'screen_slider': {
+        const slides = (block.slides || []).filter(slide => slide.image);
+        const intro = block.body ? `<div class="cms-screen-slider-intro cms-richtext">${markdown(block.body)}</div>` : '';
+        const slideMarkup = slides.map((slide, slideIndex) => `<figure class="cms-screen-slide${slideIndex === 0 ? ' is-active' : ''}" aria-hidden="${slideIndex === 0 ? 'false' : 'true'}">${renderImage(slide.image, slide.alt)}</figure>`).join('');
+        const captions = slides.map((slide, slideIndex) => `<span class="cms-slider-caption${slideIndex === 0 ? ' is-active' : ''}" aria-hidden="${slideIndex === 0 ? 'false' : 'true'}">${escapeHTML(slide.caption || slide.label || '')}</span>`).join('');
+        const dots = slides.map((slide, slideIndex) => `<button type="button" class="cms-slider-dot${slideIndex === 0 ? ' is-active' : ''}" data-slide-index="${slideIndex}" aria-label="Show ${escapeHTML(slide.label || `screen ${slideIndex + 1}`)}" aria-pressed="${slideIndex === 0 ? 'true' : 'false'}"></button>`).join('');
+        const orbitCards = slides.map((slide, slideIndex) => `<figure class="cms-slider-orbit-card" data-orbit-index="${slideIndex}" aria-hidden="true">${renderImage(slide.image, '')}</figure>`).join('');
+        return `<section class="content-block cms-screen-slider-block" id="${id}">${heading}${intro}<div class="cms-screen-slider" data-screen-slider data-autoplay="${block.autoplay === false ? 'false' : 'true'}" tabindex="0" role="region" aria-roledescription="carousel" aria-label="${escapeHTML(block.heading || 'Service screens')}"><div class="cms-screen-slider-stage"><div class="cms-slider-orbit" aria-hidden="true">${orbitCards}</div><div class="cms-slider-captions">${captions}</div><div class="cms-slider-browser"><div class="cms-slider-viewport">${slideMarkup}</div></div><button type="button" class="cms-slider-arrow cms-slider-arrow-prev" data-slider-prev aria-label="Previous screen">←</button><button type="button" class="cms-slider-arrow cms-slider-arrow-next" data-slider-next aria-label="Next screen">→</button></div><div class="cms-screen-slider-controls"><div class="cms-slider-dots">${dots}</div></div></div></section>`;
+      }
+
+      case 'figma_prototype': {
+        const source = safeFigmaPrototypeUrl(block.url);
+        const title = escapeHTML(block.title || block.heading || 'Interactive Figma prototype');
+        const height = option(block.height, ['standard', 'tall'], 'tall');
+        const topCrop = option(block.topCrop, ['none', 'small', 'medium', 'large'], 'none');
+        const prototype = source
+          ? `<iframe src="${source}" title="${title}" loading="lazy" allowfullscreen allow="fullscreen" referrerpolicy="strict-origin-when-cross-origin"></iframe>`
+          : '<div class="cms-media-placeholder">Add a Figma prototype URL in the CMS</div>';
+        return `<figure class="content-block media-block cms-prototype-block" id="${id}">${heading}<div class="cms-prototype-frame cms-prototype-${height} cms-prototype-crop-${topCrop}">${prototype}</div><figcaption>${block.caption ? escapeHTML(block.caption) : 'Interactive prototype'}</figcaption></figure>`;
+      }
 
       case 'feature_grid':
         return `<section class="content-block" id="${id}">${heading}<div class="insight-grid">${(block.items || []).map((item, itemIndex) => `<article><span>${escapeHTML(item.number || String(itemIndex + 1).padStart(2, '0'))}</span><h3>${escapeHTML(item.title)}</h3><div class="cms-richtext">${markdown(item.body)}</div></article>`).join('')}</div></section>`;
@@ -229,7 +277,14 @@
     return response.json();
   };
 
-  const renderRecommendations = async recommendations => {
+  const fetchProjectIndex = async () => {
+    const response = await fetch('content/project-index.json', { cache: 'no-store' });
+    if (!response.ok) throw new Error('Project index could not be loaded');
+    const index = await response.json();
+    return Array.isArray(index.projects) ? index.projects : [];
+  };
+
+  const renderRecommendations = async (currentSlug, recommendations) => {
     const rail = document.querySelector('.next-projects-inner');
     if (!rail) return;
     const recommendationsPanel = rail.closest('.next-projects');
@@ -237,21 +292,29 @@
     const existing = rail.querySelectorAll('.next-card');
     existing.forEach(card => card.remove());
     const themes = ['green', 'orange', 'purple'];
-    const projects = await Promise.all((recommendations || []).slice(0, 3).map(async slug => {
+    let indexedProjects = [];
+    try { indexedProjects = await fetchProjectIndex(); }
+    catch { indexedProjects = recommendations || []; }
+    const projectSlugs = [...new Set([...(recommendations || []), ...indexedProjects])]
+      .filter(slug => slug && slug !== currentSlug);
+    const projects = await Promise.all(projectSlugs.map(async slug => {
       try { return await fetchProject(slug); }
       catch { return null; }
     }));
 
-    const availableProjects = projects.filter(Boolean);
+    const availableProjects = projects.filter(project => project?.showInRecommendations === true);
     const hasRecommendations = availableProjects.length > 0;
     if (recommendationsPanel) recommendationsPanel.hidden = !hasRecommendations;
     document.body.classList.toggle('has-no-recommendations', !hasRecommendations);
 
     availableProjects.forEach((project, index) => {
+      const thumbnail = safeMediaUrl(project.thumbnail);
+      const thumbnailFit = project.thumbnailFit === 'cover' ? 'cover' : 'contain';
+      const thumbnailBackground = isHex(project.thumbnailBackground) ? project.thumbnailBackground : '';
       rail.insertAdjacentHTML('beforeend', `
         <a class="next-card next-card-${themes[index % themes.length]}" href="project.html?project=${encodeURIComponent(project.slug)}" aria-label="${escapeHTML(project.title)} case study">
-          <span class="next-index">${String(index + 1).padStart(2, '0')}</span>
-          <div><p>${escapeHTML([project.client, project.category].filter(Boolean).join(' · '))}</p><h2>${escapeHTML(project.title)}</h2></div>
+          ${thumbnail ? `<span class="next-card-thumb"${thumbnailBackground ? ` style="background:${thumbnailBackground}"` : ''}><img src="${thumbnail}" alt="" style="object-fit:${thumbnailFit}" loading="lazy"><span class="next-index">${String(index + 1).padStart(2, '0')}</span></span>` : `<span class="next-index">${String(index + 1).padStart(2, '0')}</span>`}
+          <div class="next-card-copy"><p>${escapeHTML([project.client, project.category].filter(Boolean).join(' · '))}</p><h2>${escapeHTML(project.title)}</h2></div>
           <span class="next-arrow" aria-hidden="true">↗</span>
         </a>`);
     });
@@ -282,8 +345,107 @@
     const content = document.getElementById('projectContent');
     const blocks = project.blocks || [];
     if (content) content.innerHTML = blocks.map(renderBlock).join('');
+    document.querySelectorAll('.cms-scroll-shell').forEach(shell => {
+      const frame = shell.querySelector('.cms-display-scroll');
+      if (!frame) return;
+      frame.addEventListener('scroll', () => shell.classList.toggle('has-scrolled', frame.scrollTop > 12), { passive: true });
+    });
+    document.querySelectorAll('[data-screen-slider]').forEach(slider => {
+      const slides = [...slider.querySelectorAll('.cms-screen-slide')];
+      const dots = [...slider.querySelectorAll('.cms-slider-dot')];
+      const captions = [...slider.querySelectorAll('.cms-slider-caption')];
+      const orbitCards = [...slider.querySelectorAll('[data-orbit-index]')];
+      const stage = slider.querySelector('.cms-screen-slider-stage');
+      const browserFrame = slider.querySelector('.cms-slider-browser');
+      let activeIndex = 0;
+      let timer;
+
+      const sizeFrameToImage = slide => {
+        const image = slide?.querySelector('img');
+        if (!stage || !browserFrame || !image) return;
+        const applySize = () => {
+          if (!slide.classList.contains('is-active') || !image.naturalWidth || !image.naturalHeight) return;
+          const maxWidthRatio = window.matchMedia('(max-width: 720px)').matches ? .94 : .72;
+          const frameWidth = Math.min(stage.clientWidth * maxWidthRatio, 920);
+          const imageHeight = frameWidth * (image.naturalHeight / image.naturalWidth);
+          const frameHeight = imageHeight + 34;
+          browserFrame.style.width = `${frameWidth}px`;
+          browserFrame.style.height = `${frameHeight}px`;
+          stage.style.height = `${frameHeight + 46}px`;
+        };
+        if (image.complete) applySize();
+        else image.addEventListener('load', applySize, { once: true });
+      };
+
+      sizeFrameToImage(slides[activeIndex]);
+      const resizeFrames = () => sizeFrameToImage(slides[activeIndex]);
+      window.addEventListener('resize', resizeFrames, { passive: true });
+      if (slides.length < 2) return;
+
+      const updateOrbit = centerIndex => {
+        orbitCards.forEach(card => {
+          const cardIndex = Number(card.dataset.orbitIndex || 0);
+          let offset = (cardIndex - centerIndex + slides.length) % slides.length;
+          if (offset > slides.length / 2) offset -= slides.length;
+          card.classList.remove('is-prev', 'is-next', 'is-far-prev', 'is-far-next');
+          if (offset === -1) card.classList.add('is-prev');
+          if (offset === 1) card.classList.add('is-next');
+          if (offset === -2) card.classList.add('is-far-prev');
+          if (offset === 2) card.classList.add('is-far-next');
+        });
+      };
+
+      updateOrbit(activeIndex);
+
+      const showSlide = nextIndex => {
+        const normalizedIndex = (nextIndex + slides.length) % slides.length;
+        if (normalizedIndex === activeIndex) return;
+        const current = slides[activeIndex];
+        const next = slides[normalizedIndex];
+        current.classList.remove('is-active');
+        current.classList.add('is-leaving');
+        current.setAttribute('aria-hidden', 'true');
+        next.classList.remove('is-leaving');
+        next.classList.add('is-active');
+        next.setAttribute('aria-hidden', 'false');
+        sizeFrameToImage(next);
+        updateOrbit(normalizedIndex);
+        captions.forEach((caption, captionIndex) => {
+          const isActive = captionIndex === normalizedIndex;
+          caption.classList.toggle('is-active', isActive);
+          caption.setAttribute('aria-hidden', String(!isActive));
+        });
+        dots.forEach((dot, dotIndex) => {
+          const isActive = dotIndex === normalizedIndex;
+          dot.classList.toggle('is-active', isActive);
+          dot.setAttribute('aria-pressed', String(isActive));
+        });
+        window.setTimeout(() => current.classList.remove('is-leaving'), reduceMotion.matches ? 0 : 650);
+        activeIndex = normalizedIndex;
+      };
+
+      const stop = () => window.clearInterval(timer);
+      const start = () => {
+        stop();
+        if (!reduceMotion.matches && slider.dataset.autoplay !== 'false') timer = window.setInterval(() => showSlide(activeIndex + 1), 4400);
+      };
+      const step = direction => { showSlide(activeIndex + direction); start(); };
+
+      slider.querySelector('[data-slider-prev]')?.addEventListener('click', () => step(-1));
+      slider.querySelector('[data-slider-next]')?.addEventListener('click', () => step(1));
+      dots.forEach((dot, dotIndex) => dot.addEventListener('click', () => { showSlide(dotIndex); start(); }));
+      slider.addEventListener('keydown', event => {
+        if (event.key === 'ArrowLeft') { event.preventDefault(); step(-1); }
+        if (event.key === 'ArrowRight') { event.preventDefault(); step(1); }
+      });
+      slider.addEventListener('pointerenter', stop);
+      slider.addEventListener('pointerleave', start);
+      slider.addEventListener('focusin', stop);
+      slider.addEventListener('focusout', event => { if (!slider.contains(event.relatedTarget)) start(); });
+      start();
+    });
     activateToc(renderToc(blocks));
-    renderRecommendations(project.recommendations);
+    renderRecommendations(project.slug, project.recommendations);
   };
 
   const requestedSlug = new URLSearchParams(window.location.search).get('project') || 'login-revamp';

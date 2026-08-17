@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <rect width="1600" height="900" fill="#1C1C1C"/>
+  <text x="800" y="115" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="42" font-weight="700" text-anchor="middle">Verification frames</text>
+  <text x="800" y="165" fill="#A8A8A8" font-family="Arial, sans-serif" font-size="24" text-anchor="middle">Empty OTP · Entered OTP · Confirmed OTP</text>
+  <g fill="#292929" stroke="#5A5A5A" stroke-width="3">
+    <rect x="230" y="225" width="300" height="570" rx="36"/>
+    <rect x="650" y="225" width="300" height="570" rx="36"/>
+    <rect x="1070" y="225" width="300" height="570" rx="36"/>
+  </g>
+  <g fill="#777777" font-family="Arial, sans-serif" font-size="24" text-anchor="middle">
+    <text x="380" y="520">Frame 1</text>
+    <text x="800" y="520">Frame 2</text>
+    <text x="1220" y="520">Frame 3</text>
+  </g>
+</svg>

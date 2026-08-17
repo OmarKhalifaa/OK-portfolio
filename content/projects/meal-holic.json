@@ -1,5 +1,6 @@
 {
   "slug": "meal-holic",
+  "showInRecommendations": false,
   "title": "Meal-Holic",
   "heroTitle": "Meal-Holic",
   "seoDescription": "A flexible meal-subscription app with plan management, delivery tracking, and personalized selection.",

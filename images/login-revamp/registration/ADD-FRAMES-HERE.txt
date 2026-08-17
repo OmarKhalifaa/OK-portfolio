@@ -1,0 +1,12 @@
+Add the first two registration screens to this folder using these names:
+
+home.png
+mobile-number.png
+otp-empty.png
+otp-entry.png
+password.png
+splash.png
+login.png
+profile-empty.png
+
+PNG is preferred. Export each screen separately with a transparent background when possible.

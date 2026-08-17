@@ -134,6 +134,7 @@
   ],
   "deck": "A mobile commerce concept designed to make buying a camera setup simple, trustworthy, and flexible across shipping and payment options.",
   "slug": "hash-store",
+  "showInRecommendations": false,
   "client": "Interview task",
   "role": "Product Designer",
   "title": "Hash Store",

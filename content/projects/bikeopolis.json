@@ -1,5 +1,6 @@
 {
   "slug": "bikeopolis",
+  "showInRecommendations": false,
   "title": "Bikeopolis",
   "heroTitle": "Bikeopolis",
   "seoDescription": "An end-to-end shopping experience for urban cyclists, from discovery and configuration through checkout.",

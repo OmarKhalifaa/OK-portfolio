@@ -1,0 +1,295 @@
+{
+  "slug": "digital-store",
+  "showInRecommendations": true,
+  "title": "Vodafone Business Digital Store",
+  "heroTitle": "Vodafone Business\nDigital Store",
+  "seoDescription": "How Vodafone Business moved its store online so customers could explore services, take the right next step, and manage what they owned without depending on phone calls.",
+  "thumbnail": "images/digital-store/Thumbnail.png",
+  "thumbnailAlt": "Vodafone Business Digital Store project preview",
+  "thumbnailFit": "cover",
+  "thumbnailBackground": "#220607",
+  "thumbnailPixelBase": "#430a0d",
+  "thumbnailPixelAccent": "#e60000",
+  "homepageTags": [
+    "Marketplace",
+    "B2B"
+  ],
+  "client": "Vodafone",
+  "category": "Web · Business store",
+  "year": "2024",
+  "deck": "Helping business customers find, understand, buy, request, and manage services online instead of depending on phone calls.",
+  "industry": "Telecommunications",
+  "role": "Senior Product Designer",
+  "team": [
+    "Product owners",
+    "Design system team",
+    "Engineering team"
+  ],
+  "timeline": "2024",
+  "recommendations": [
+    "login-revamp"
+  ],
+  "blocks": [
+    {
+      "type": "two_column_text",
+      "sectionId": "overview",
+      "navLabel": "The problem",
+      "showInNav": true,
+      "eyebrow": "The starting point",
+      "heading": "Customers had to call before they could really explore the store.",
+      "left": "Many Vodafone Business services were sold through phone agents or enquiry forms. Customers could show interest, but they could not easily browse the full range, understand an offer, buy it, or return later to manage it in one place.",
+      "right": "We set out to bring that journey online. Customers needed a clear place to start, simple explanations, an honest next step for every service, and an account where they could see what they already owned."
+    },
+    {
+      "type": "process",
+      "sectionId": "journey",
+      "navLabel": "The journey",
+      "showInNav": true,
+      "eyebrow": "One connected journey",
+      "heading": "From the first visit to ongoing service, every step had a clear purpose.",
+      "steps": [
+        {
+          "label": "01 · Discover",
+          "title": "Find the right place to begin",
+          "body": "Customers could start with a service, an industry, a search, or an offer that matched what their business needed."
+        },
+        {
+          "label": "02 · Understand",
+          "title": "Understand what each service offers",
+          "body": "Every page explained the value, options, price, and support in a familiar order, even when the service itself was complex."
+        },
+        {
+          "label": "03 · Take action",
+          "title": "Buy online or ask for help",
+          "body": "Services that were ready could be bought online. Services that still needed checks or a tailored quote moved into a short, clear request."
+        },
+        {
+          "label": "04 · Manage",
+          "title": "Return without making another call",
+          "body": "Customers could come back to see subscriptions, orders, renewals, users, and the services available to their team."
+        }
+      ]
+    },
+    {
+      "type": "rich_text",
+      "sectionId": "storefront",
+      "navLabel": "Start exploring",
+      "showInNav": true,
+      "eyebrow": "A clear place to begin",
+      "heading": "The home page gave every customer a useful starting point.",
+      "body": "Some customers arrived knowing exactly what they wanted. Others only knew the problem their business needed to solve. The home page supported both: direct offers for people ready to act, and clear routes through services, industries, featured solutions, business tools, and advice.\n\nInstead of feeling like a long list of products, the store showed how Vodafone could help and where to go next.\n\n[Explore the live Vodafone Business Digital Store ↗](https://digitalstore.vodafone.com.eg/)",
+      "contentWidth": "wide"
+    },
+    {
+      "type": "figma_prototype",
+      "sectionId": "storefront-screen",
+      "showInNav": false,
+      "title": "Interactive Vodafone Business Digital Store homepage prototype",
+      "url": "https://www.figma.com/proto/zBlJa5Tx7b9xeoQAomrrnq/-?node-id=11-14467&scaling=fit-width&content-scaling=fixed&starting-point-node-id=11%3A14467&page-id=0%3A1",
+      "height": "tall",
+      "topCrop": "small",
+      "caption": "Explore the homepage and its moving sections."
+    },
+    {
+      "type": "screen_slider",
+      "sectionId": "page-system",
+      "navLabel": "Understand services",
+      "showInNav": true,
+      "eyebrow": "Familiar from page to page",
+      "heading": "The same rhythm across every service",
+      "body": "The store covered cloud, connectivity, IoT, professional services, communications, business tools, and more. Each area needed different information, but customers should not have to learn a new website every time they opened a page.\n\nEvery service followed the same simple rhythm: what it is, who it helps, why Vodafone, the available choices, and what to do next. Pages could be shorter or longer, but they always felt like part of the same store.",
+      "autoplay": true,
+      "slides": [
+        {
+          "label": "Business IVR",
+          "image": "images/digital-store/Inner/Business IVR.png",
+          "alt": "Vodafone Business IVR service page",
+          "caption": "Business IVR"
+        },
+        {
+          "label": "Cloud & Hosting",
+          "image": "images/digital-store/Inner/Cloud & Hosting.png",
+          "alt": "Vodafone Business Cloud and Hosting service page",
+          "caption": "Cloud & Hosting"
+        },
+        {
+          "label": "Colocation",
+          "image": "images/digital-store/Inner/Colocation.png",
+          "alt": "Vodafone Business Colocation service page",
+          "caption": "Colocation"
+        },
+        {
+          "label": "Public Cloud",
+          "image": "images/digital-store/Inner/Public Cloud.png",
+          "alt": "Vodafone Business Public Cloud service page",
+          "caption": "Public Cloud"
+        },
+        {
+          "label": "Professional Services",
+          "image": "images/digital-store/Inner/Professional Services.png",
+          "alt": "Vodafone Business Professional Services service page",
+          "caption": "Professional Services"
+        },
+        {
+          "label": "Private Cloud",
+          "image": "images/digital-store/Inner/Private Cloud.png",
+          "alt": "Vodafone Business Private Cloud service page",
+          "caption": "Private Cloud"
+        },
+        {
+          "label": "Internet of Things",
+          "image": "images/digital-store/Inner/Internet of things.png",
+          "alt": "Vodafone Business Internet of Things service page",
+          "caption": "Internet of Things"
+        },
+        {
+          "label": "Hotline",
+          "image": "images/digital-store/Inner/Hotline.png",
+          "alt": "Vodafone Business Hotline service page",
+          "caption": "Hotline"
+        },
+        {
+          "label": "Copilot",
+          "image": "images/digital-store/Inner/Copilot.png",
+          "alt": "Vodafone Business Copilot service page",
+          "caption": "Copilot"
+        },
+        {
+          "label": "Connectivity",
+          "image": "images/digital-store/Inner/Connectivity.png",
+          "alt": "Vodafone Business Connectivity service page",
+          "caption": "Connectivity"
+        }
+      ]
+    },
+    {
+      "type": "rich_text",
+      "sectionId": "discovery",
+      "navLabel": "Find a product",
+      "showInNav": true,
+      "eyebrow": "Finding the right option",
+      "heading": "Customers could search directly or narrow the list step by step.",
+      "body": "People who knew a product or provider could search for it immediately. People who were still exploring could narrow the list by industry, need, provider, or available offer.\n\nClear filters and consistent product cards made it easier to scan the results, compare choices, and decide what was worth opening.",
+      "contentWidth": "wide"
+    },
+    {
+      "type": "image_full",
+      "sectionId": "discovery-screen",
+      "showInNav": false,
+      "image": "images/digital-store/marketplace-listing.png",
+      "alt": "Desktop marketplace with search, business filters, product cards, and a partner call to action",
+      "caption": "Search, narrow the list, and compare the available choices.",
+      "width": "full",
+      "alignment": "center",
+      "aspectRatio": "auto",
+      "fit": "contain",
+      "focalPoint": "top",
+      "displayMode": "scroll",
+      "captionAlignment": "left"
+    },
+    {
+      "type": "feature_grid",
+      "sectionId": "principles",
+      "navLabel": "Clear choices",
+      "showInNav": false,
+      "eyebrow": "Keeping the store simple",
+      "heading": "Three choices made a large store easier to understand.",
+      "items": [
+        {
+          "number": "01",
+          "title": "Use the customer's language",
+          "body": "People could begin with their industry or business need instead of learning how Vodafone organised its services internally."
+        },
+        {
+          "number": "02",
+          "title": "Show detail when it helps",
+          "body": "The first pages stayed easy to scan. More detail appeared only when customers opened a service and wanted to understand it properly."
+        },
+        {
+          "number": "03",
+          "title": "Be honest about the next step",
+          "body": "Every service ended with the clearest available action: buy it, choose the options, send a request, or speak with an agent."
+        }
+      ]
+    },
+    {
+      "type": "rich_text",
+      "sectionId": "product-confidence",
+      "navLabel": "Compare and decide",
+      "showInNav": true,
+      "eyebrow": "Making a confident choice",
+      "heading": "Each page answered the questions customers were likely to ask next.",
+      "body": "The page began with a simple explanation of the product and why it mattered. From there, customers could see the available plans, compare prices, and understand the differences before choosing.\n\nFeatures, policies, documents, support, common questions, and related products were still available further down. The most important answers stayed close to the decision, while the deeper information was there for anyone who needed it.",
+      "contentWidth": "wide"
+    },
+    {
+      "type": "image_full",
+      "sectionId": "product-screen",
+      "showInNav": false,
+      "image": "images/digital-store/product-detail.png",
+      "alt": "Scrollable desktop product page showing the product overview, comparable plans, features, support, FAQs, and related products",
+      "caption": "Scroll from the first explanation and prices through to support and related products.",
+      "width": "full",
+      "alignment": "center",
+      "aspectRatio": "auto",
+      "fit": "contain",
+      "focalPoint": "top",
+      "displayMode": "scroll",
+      "captionAlignment": "center"
+    },
+    {
+      "type": "text_image",
+      "sectionId": "hybrid-fulfilment",
+      "navLabel": "Buy or request",
+      "showInNav": true,
+      "eyebrow": "A gradual move online",
+      "heading": "Some services could be bought online. Others still needed a person.",
+      "body": "Some services were ready for customers to choose and buy on their own. Others still needed an availability check, a tailored quote, or help from an agent, so a request form remained part of the journey.\n\nThe form asked only for what was needed to begin. After submission, customers received a reference number and a clear explanation of when an agent would contact them. Even when the work continued offline, the next step never felt like a dead end.",
+      "image": "images/digital-store/form.png",
+      "alt": "Service request confirmation with a request number and a clear five-day agent follow-up expectation",
+      "caption": "A clear confirmation and an honest expectation of what would happen next.",
+      "layout": "stacked",
+      "displayMode": "browser",
+      "imagePosition": "right",
+      "imageWidth": "40",
+      "verticalAlignment": "center",
+      "aspectRatio": "auto",
+      "fit": "contain",
+      "focalPoint": "center"
+    },
+    {
+      "type": "rich_text",
+      "sectionId": "account",
+      "navLabel": "Manage services",
+      "showInNav": true,
+      "eyebrow": "The relationship continues",
+      "heading": "Customers could return to see what they owned and what needed attention.",
+      "body": "The account brought subscriptions, orders, upcoming renewals, team access, and frequent tasks into one place. Customers no longer needed another phone call just to understand what they had or what was happening.\n\nThe dashboard showed the most important information at a glance and made common tasks easy to reach. The store continued to be useful long after the first visit.",
+      "contentWidth": "wide"
+    },
+    {
+      "type": "image_full",
+      "sectionId": "account-screens",
+      "showInNav": false,
+      "image": "images/digital-store/dashboard-home.png",
+      "alt": "Vodafone Business account dashboard showing subscriptions, renewals, quick access, and service recommendations",
+      "caption": "The account dashboard brought subscriptions, renewals, and frequent tasks into one view.",
+      "width": "full",
+      "alignment": "center",
+      "aspectRatio": "auto",
+      "fit": "contain",
+      "focalPoint": "top",
+      "displayMode": "scroll",
+      "captionAlignment": "center"
+    },
+    {
+      "type": "quote",
+      "sectionId": "outcome",
+      "navLabel": "The result",
+      "showInNav": true,
+      "eyebrow": "What changed",
+      "quote": "A business store customers could explore, use, and return to.",
+      "body": "Customers could now discover services, understand their choices, buy online when possible, ask for help when needed, and return later to manage what they owned. The store moved from disconnected calls and forms toward one clear relationship with Vodafone Business."
+    }
+  ]
+}

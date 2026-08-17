@@ -36,6 +36,11 @@ collections:
         widget: string
         hint: Lowercase letters, numbers, and hyphens only. This becomes the project URL.
         pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Use lowercase letters, numbers, and hyphens only.']
+      - label: Show in next projects
+        name: showInRecommendations
+        widget: boolean
+        default: false
+        hint: Enable only when this case study is ready to appear publicly.
       - label: Project title
         name: title
         widget: string
@@ -118,15 +123,17 @@ collections:
         name: timeline
         widget: string
         required: false
-      - label: Recommended / next projects
+      - label: Preferred next projects
         name: recommendations
         widget: relation
+        required: false
+        hint: These appear first; every other project is added automatically.
         collection: projects
         search_fields: [title, client, category]
         value_field: "{{slug}}"
         display_fields: ["{{title}} — {{client}}"]
         multiple: true
-        min: 1
+        min: 0
         max: 3
       - label: Page content
         name: blocks
@@ -178,6 +185,14 @@ collections:
               - { label: Image, name: image, widget: image }
               - { label: Alternative text, name: alt, widget: string }
               - { label: Caption, name: caption, widget: string, required: false }
+              - label: Display mode
+                name: displayMode
+                widget: select
+                default: static
+                options:
+                  - { label: Static image, value: static }
+                  - { label: Browser mockup, value: browser }
+                  - { label: Scrollable webpage preview, value: scroll }
               - label: Image width
                 name: width
                 widget: select
@@ -244,6 +259,20 @@ collections:
               - { label: Image, name: image, widget: image }
               - { label: Alternative text, name: alt, widget: string }
               - { label: Caption, name: caption, widget: string, required: false }
+              - label: Image presentation
+                name: displayMode
+                widget: select
+                default: static
+                options:
+                  - { label: Plain image, value: static }
+                  - { label: Browser mockup, value: browser }
+              - label: Layout
+                name: layout
+                widget: select
+                default: split
+                options:
+                  - { label: Text and image side by side, value: split }
+                  - { label: Text above image, value: stacked }
               - label: Image position
                 name: imagePosition
                 widget: select
@@ -346,6 +375,41 @@ collections:
                   - { label: Image, name: image, widget: image }
                   - { label: Alternative text, name: alt, widget: string }
                   - { label: Caption, name: caption, widget: string, required: false }
+                  - label: Crop focus
+                    name: focalPoint
+                    widget: select
+                    required: false
+                    default: center
+                    options:
+                      - { label: Top, value: top }
+                      - { label: Upper section, value: upper }
+                      - { label: Center, value: center }
+                      - { label: Lower section, value: lower }
+                      - { label: Bottom, value: bottom }
+                      - { label: Left, value: left }
+                      - { label: Right, value: right }
+
+          - label: Screen slider
+            name: screen_slider
+            widget: object
+            fields:
+              - { label: Section ID, name: sectionId, widget: string }
+              - { label: Side-menu label, name: navLabel, widget: string, required: false }
+              - { label: Show in side menu, name: showInNav, widget: boolean, default: false }
+              - { label: Eyebrow, name: eyebrow, widget: string, required: false }
+              - { label: Heading, name: heading, widget: string }
+              - { label: Introductory copy, name: body, widget: markdown, required: false }
+              - { label: Autoplay, name: autoplay, widget: boolean, default: true }
+              - label: Screens
+                name: slides
+                widget: list
+                min: 2
+                label_singular: Screen
+                fields:
+                  - { label: Label, name: label, widget: string }
+                  - { label: Image, name: image, widget: image }
+                  - { label: Alternative text, name: alt, widget: string }
+                  - { label: Caption, name: caption, widget: string, required: false }
 
           - label: Video
             name: video
@@ -357,6 +421,35 @@ collections:
               - { label: Eyebrow, name: eyebrow, widget: string, required: false }
               - { label: Heading, name: heading, widget: string, required: false }
               - { label: Video URL, name: url, widget: string, hint: 'YouTube, Vimeo, or an uploaded video path.' }
+              - { label: Caption, name: caption, widget: string, required: false }
+
+          - label: Figma prototype
+            name: figma_prototype
+            widget: object
+            fields:
+              - { label: Section ID, name: sectionId, widget: string }
+              - { label: Side-menu label, name: navLabel, widget: string, required: false }
+              - { label: Show in side menu, name: showInNav, widget: boolean, default: false }
+              - { label: Eyebrow, name: eyebrow, widget: string, required: false }
+              - { label: Heading, name: heading, widget: string, required: false }
+              - { label: Accessible title, name: title, widget: string, default: Interactive Figma prototype }
+              - { label: Prototype URL, name: url, widget: string, hint: 'Paste the regular figma.com/proto link; it will be converted to the secure embed URL.' }
+              - label: Embed height
+                name: height
+                widget: select
+                default: tall
+                options:
+                  - { label: Standard, value: standard }
+                  - { label: Tall, value: tall }
+              - label: Crop empty space from top
+                name: topCrop
+                widget: select
+                default: none
+                options:
+                  - { label: None, value: none }
+                  - { label: Small — 28px, value: small }
+                  - { label: Medium — 42px, value: medium }
+                  - { label: Large — 58px, value: large }
               - { label: Caption, name: caption, widget: string, required: false }
 
           - label: Feature / insight cards

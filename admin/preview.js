@@ -12,14 +12,15 @@
       case 'text_image':
         {
           const copy = h('div', {}, eyebrow, heading, text(block.body));
-          const media = image(block.image, `preview-ratio-${block.aspectRatio || 'auto'} preview-fit-${block.fit || 'cover'} preview-focal-${block.focalPoint || 'center'}`);
-          const children = block.imagePosition === 'left' ? [media, copy] : [copy, media];
-          return h('section', { className: `preview-block preview-text-image preview-image-${block.imagePosition || 'right'} preview-split-${block.imageWidth || '50'}`, key: index }, ...children);
+          const mediaImage = image(block.image, `preview-ratio-${block.aspectRatio || 'auto'} preview-fit-${block.fit || 'cover'} preview-focal-${block.focalPoint || 'center'}`);
+          const media = block.displayMode === 'browser' ? h('div', { className: 'preview-display-browser' }, mediaImage) : mediaImage;
+          const children = block.layout === 'stacked' || block.imagePosition !== 'left' ? [copy, media] : [media, copy];
+          return h('section', { className: `preview-block preview-text-image preview-layout-${block.layout || 'split'} preview-image-${block.imagePosition || 'right'} preview-split-${block.imageWidth || '50'}`, key: index }, ...children);
         }
       case 'image_full':
-        return h('section', { className: 'preview-block', key: index }, eyebrow, heading, h('div', { className: `preview-media preview-width-${block.width || 'full'} preview-align-${block.alignment || 'center'}` }, image(block.image, `preview-ratio-${block.aspectRatio || 'auto'} preview-fit-${block.fit || 'cover'} preview-focal-${block.focalPoint || 'center'}`)), text(block.caption));
+        return h('section', { className: 'preview-block', key: index }, eyebrow, heading, h('div', { className: `preview-media preview-width-${block.width || 'full'} preview-align-${block.alignment || 'center'} preview-display-${block.displayMode || 'static'}` }, image(block.image, `preview-ratio-${block.aspectRatio || 'auto'} preview-fit-${block.fit || 'cover'} preview-focal-${block.focalPoint || 'center'}`)), text(block.caption));
       case 'gallery':
-        return h('section', { className: 'preview-block', key: index }, eyebrow, heading, h('div', { className: `preview-gallery preview-gallery-${block.columns || 'two'}` }, ...(block.images || []).map((item, itemIndex) => h('div', { key: itemIndex }, image(item.image, `preview-ratio-${block.aspectRatio || 'auto'} preview-fit-${block.fit || 'cover'} preview-focal-${block.focalPoint || 'center'}`), text(item.caption)))));
+        return h('section', { className: 'preview-block', key: index }, eyebrow, heading, h('div', { className: `preview-gallery preview-gallery-${block.columns || 'two'}` }, ...(block.images || []).map((item, itemIndex) => h('div', { key: itemIndex }, image(item.image, `preview-ratio-${block.aspectRatio || 'auto'} preview-fit-${block.fit || 'cover'} preview-focal-${item.focalPoint || block.focalPoint || 'center'}`), text(item.caption)))));
       case 'feature_grid':
         return h('section', { className: 'preview-block', key: index }, eyebrow, heading, h('div', { className: 'preview-cards' }, ...(block.items || []).map((item, itemIndex) => h('article', { key: itemIndex }, h('small', {}, item.number), h('h3', {}, item.title), text(item.body)))));
       case 'stats':
@@ -30,6 +31,10 @@
         return h('section', { className: 'preview-block preview-quote', key: index }, eyebrow, h('blockquote', {}, block.quote), text(block.attribution), text(block.body));
       case 'video':
         return h('section', { className: 'preview-block', key: index }, eyebrow, heading, h('div', { className: 'preview-video' }, block.url || 'Add a video URL'));
+      case 'screen_slider':
+        return h('section', { className: 'preview-block', key: index }, eyebrow, heading, text(block.body), h('div', { className: 'preview-gallery preview-gallery-two' }, ...(block.slides || []).map((slide, slideIndex) => h('div', { key: slideIndex }, image(slide.image), text(slide.caption || slide.label)))));
+      case 'figma_prototype':
+        return h('section', { className: 'preview-block', key: index }, eyebrow, heading, h('div', { className: 'preview-video' }, block.url ? 'Interactive Figma prototype' : 'Add a Figma prototype URL'), text(block.caption));
       case 'divider':
         return h('div', { className: 'preview-divider', key: index }, block.label || 'Divider');
       default:
