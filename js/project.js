@@ -5,6 +5,16 @@
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   let isThemeTransitioning = false;
 
+  const smoothScroll = window.Lenis ? new window.Lenis({
+    autoRaf: true,
+    anchors: { offset: -88 },
+    lerp: .06,
+    wheelMultiplier: .95,
+    smoothWheel: true,
+    stopInertiaOnNavigate: true,
+    respectReducedMotion: true
+  }) : null;
+
   const applyTheme = theme => {
     if (theme === 'light') root.setAttribute('data-theme', 'light');
     else root.removeAttribute('data-theme');
@@ -108,12 +118,85 @@
       </div>`;
   };
 
-  const isHex = value => typeof value === 'string' && /^#[0-9a-f]{6}$/i.test(value);
+  const initialiseImageLoaders = scope => {
+    scope?.querySelectorAll('[data-image-loader]').forEach(media => {
+      const container = media.closest('.cms-scroll-shell') || media.parentElement;
+      if (!container || media.dataset.loaderReady === 'true') return;
+
+      media.dataset.loaderReady = 'true';
+      container.classList.add('is-image-loading');
+      let loaderStartedAt = null;
+      let mediaIsReady = false;
+      let hasFinished = false;
+
+      const revealWhenReady = () => {
+        if (hasFinished || !mediaIsReady || loaderStartedAt === null) return;
+        hasFinished = true;
+        const remainingDelay = Math.max(0, 1000 - (performance.now() - loaderStartedAt));
+        window.setTimeout(() => {
+          media.classList.add('is-loaded');
+          container.classList.add('is-image-revealing');
+          window.setTimeout(() => {
+            container.classList.remove('is-image-loading', 'is-image-revealing');
+          }, 320);
+        }, remainingDelay);
+      };
+
+      const markReady = () => {
+        mediaIsReady = true;
+        revealWhenReady();
+      };
+
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(entries => {
+          if (!entries.some(entry => entry.isIntersecting)) return;
+          loaderStartedAt = performance.now();
+          observer.disconnect();
+          revealWhenReady();
+        }, { threshold: .05 });
+        observer.observe(container);
+      } else {
+        loaderStartedAt = performance.now();
+      }
+
+      const isReady = media.tagName === 'IMG'
+        ? media.complete
+        : media.tagName === 'VIDEO' && media.readyState >= 2;
+      const readyEvent = media.tagName === 'VIDEO' ? 'loadeddata' : 'load';
+
+      if (isReady) window.requestAnimationFrame(markReady);
+      else {
+        media.addEventListener(readyEvent, markReady, { once: true });
+        media.addEventListener('error', markReady, { once: true });
+      }
+    });
+  };
 
   const renderImage = (image, alt, className = '') => {
     const src = safeMediaUrl(image);
     if (!src) return '<div class="cms-media-placeholder">Add an image in the CMS</div>';
-    return `<img class="${escapeHTML(className)}" src="${src}" alt="${escapeHTML(alt || '')}" loading="lazy">`;
+    return `<img class="${escapeHTML(className)}" src="${src}" alt="${escapeHTML(alt || '')}" loading="lazy" data-image-loader>`;
+  };
+
+  const setupScrollReveals = scope => {
+    const blocks = [...(scope?.querySelectorAll('.content-block') || [])];
+    if (!blocks.length) return;
+
+    blocks.forEach(block => block.classList.add('scroll-reveal'));
+    if (reduceMotion.matches || !('IntersectionObserver' in window)) {
+      blocks.forEach(block => block.classList.add('is-visible'));
+      return;
+    }
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      });
+    }, { rootMargin: '0px 0px -10% 0px', threshold: .08 });
+
+    blocks.forEach(block => observer.observe(block));
   };
 
   const renderVideo = urlValue => {
@@ -122,15 +205,15 @@
     const vimeo = value.match(/vimeo\.com\/(?:video\/)?(\d+)/);
 
     if (youtube) {
-      return `<iframe src="https://www.youtube-nocookie.com/embed/${escapeHTML(youtube[1])}" title="Project video" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+      return `<iframe src="https://www.youtube-nocookie.com/embed/${escapeHTML(youtube[1])}" title="Project video" loading="lazy" data-image-loader allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
     }
     if (vimeo) {
-      return `<iframe src="https://player.vimeo.com/video/${escapeHTML(vimeo[1])}" title="Project video" loading="lazy" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
+      return `<iframe src="https://player.vimeo.com/video/${escapeHTML(vimeo[1])}" title="Project video" loading="lazy" data-image-loader allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
     }
 
     const src = safeMediaUrl(value);
     return src
-      ? `<video src="${src}" controls preload="metadata"></video>`
+      ? `<video src="${src}" controls preload="metadata" data-image-loader></video>`
       : '<div class="cms-media-placeholder">Add a video URL in the CMS</div>';
   };
 
@@ -148,7 +231,7 @@
       case 'image_full':
         {
           const isScrollable = block.displayMode === 'scroll';
-          const frame = `<div class="cms-media-frame ${mediaClasses(block)}"${isScrollable ? ` tabindex="0" role="region" aria-label="Scrollable preview: ${escapeHTML(block.alt || block.heading || 'project screen')}"` : ''}>${renderImage(block.image, block.alt)}</div>`;
+          const frame = `<div class="cms-media-frame ${mediaClasses(block)}"${isScrollable ? ` tabindex="0" role="region" aria-label="Scrollable preview: ${escapeHTML(block.alt || block.heading || 'project screen')}" data-lenis-prevent` : ''}>${renderImage(block.image, block.alt)}</div>`;
           const media = isScrollable ? `<div class="cms-scroll-shell">${frame}<span class="cms-scroll-hint" aria-hidden="true">Scroll to explore <span>↓</span></span></div>` : frame;
           return `<figure class="content-block media-block cms-image-block" id="${id}">${heading}${media}${block.caption ? `<figcaption class="cms-caption-${option(block.captionAlignment, ['left', 'center', 'right'], 'left')}">${escapeHTML(block.caption)}</figcaption>` : ''}</figure>`;
         }
@@ -191,7 +274,7 @@
         const height = option(block.height, ['standard', 'tall'], 'tall');
         const topCrop = option(block.topCrop, ['none', 'small', 'medium', 'large'], 'none');
         const prototype = source
-          ? `<iframe src="${source}" title="${title}" loading="lazy" allowfullscreen allow="fullscreen" referrerpolicy="strict-origin-when-cross-origin"></iframe>`
+          ? `<iframe src="${source}" title="${title}" loading="lazy" data-image-loader allowfullscreen allow="fullscreen" referrerpolicy="strict-origin-when-cross-origin"></iframe>`
           : '<div class="cms-media-placeholder">Add a Figma prototype URL in the CMS</div>';
         return `<figure class="content-block media-block cms-prototype-block" id="${id}">${heading}<div class="cms-prototype-frame cms-prototype-${height} cms-prototype-crop-${topCrop}">${prototype}</div><figcaption>${block.caption ? escapeHTML(block.caption) : 'Interactive prototype'}</figcaption></figure>`;
       }
@@ -308,12 +391,8 @@
     document.body.classList.toggle('has-no-recommendations', !hasRecommendations);
 
     availableProjects.forEach((project, index) => {
-      const thumbnail = safeMediaUrl(project.thumbnail);
-      const thumbnailFit = project.thumbnailFit === 'cover' ? 'cover' : 'contain';
-      const thumbnailBackground = isHex(project.thumbnailBackground) ? project.thumbnailBackground : '';
       rail.insertAdjacentHTML('beforeend', `
         <a class="next-card next-card-${themes[index % themes.length]}" href="project.html?project=${encodeURIComponent(project.slug)}" aria-label="${escapeHTML(project.title)} case study">
-          ${thumbnail ? `<span class="next-card-thumb"${thumbnailBackground ? ` style="background:${thumbnailBackground}"` : ''}><img src="${thumbnail}" alt="" style="object-fit:${thumbnailFit}" loading="lazy"><span class="next-index">${String(index + 1).padStart(2, '0')}</span></span>` : `<span class="next-index">${String(index + 1).padStart(2, '0')}</span>`}
           <div class="next-card-copy"><p>${escapeHTML([project.client, project.category].filter(Boolean).join(' · '))}</p><h2>${escapeHTML(project.title)}</h2></div>
           <span class="next-arrow" aria-hidden="true">↗</span>
         </a>`);
@@ -321,6 +400,7 @@
   };
 
   const renderProject = project => {
+    document.body.classList.remove('project-motion-ready');
     document.title = `${project.title} — Omar Khalifa`;
     document.body.dataset.project = project.slug || '';
     const description = document.querySelector('meta[name="description"]');
@@ -345,6 +425,8 @@
     const content = document.getElementById('projectContent');
     const blocks = project.blocks || [];
     if (content) content.innerHTML = blocks.map(renderBlock).join('');
+    initialiseImageLoaders(content);
+    setupScrollReveals(content);
     document.querySelectorAll('.cms-scroll-shell').forEach(shell => {
       const frame = shell.querySelector('.cms-display-scroll');
       if (!frame) return;
@@ -446,6 +528,16 @@
     });
     activateToc(renderToc(blocks));
     renderRecommendations(project.slug, project.recommendations);
+
+    window.requestAnimationFrame(() => {
+      document.body.classList.add('project-motion-ready');
+      smoothScroll?.resize();
+      if (!window.location.hash) return;
+      const hashTarget = document.querySelector(window.location.hash);
+      if (!hashTarget) return;
+      if (smoothScroll) smoothScroll.scrollTo(hashTarget, { immediate: true, offset: -88 });
+      else window.scrollTo({ top: Math.max(0, hashTarget.offsetTop - 88), behavior: 'auto' });
+    });
   };
 
   const requestedSlug = new URLSearchParams(window.location.search).get('project') || 'login-revamp';
