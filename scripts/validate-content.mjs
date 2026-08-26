@@ -29,7 +29,7 @@ fs.writeFileSync(projectIndexPath, `${JSON.stringify(projectIndex, null, 2)}\n`)
 
 const allowedBlocks = new Set([
   'rich_text', 'two_column_text', 'image_full', 'text_image', 'gallery',
-  'video', 'screen_slider', 'figma_prototype', 'feature_grid', 'stats', 'quote', 'process', 'divider'
+  'video', 'screen_slider', 'figma_prototype', 'feature_grid', 'feature_catalog', 'motion_showcase', 'widget_showcase', 'stats', 'quote', 'process', 'divider'
 ]);
 
 for (const project of projects) {

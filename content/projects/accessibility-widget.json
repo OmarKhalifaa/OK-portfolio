@@ -1,0 +1,154 @@
+{
+  "slug": "accessibility-widget",
+  "showInRecommendations": true,
+  "title": "Accessibility Widget",
+  "heroTitle": "Accessibility,\non your terms",
+  "seoDescription": "A personalized accessibility product that helps people adapt how they read, navigate, hear, and interact with Vodafone digital services.",
+  "thumbnail": "images/accessibility-widget/thumbnail.png",
+  "thumbnailAlt": "Accessibility widget surrounded by floating accessibility profile cards",
+  "thumbnailFit": "cover",
+  "thumbnailBackground": "#f6f3f2",
+  "thumbnailPixelBase": "#240506",
+  "thumbnailPixelAccent": "#e60000",
+  "homepageTags": ["Accessibility", "Product"],
+  "client": "Vodafone",
+  "category": "Web · Accessibility product",
+  "deck": "A personalized way to read, navigate, hear, and interact with digital content.",
+  "industry": "Telecommunications",
+  "role": "Senior Product Designer",
+  "team": ["Product owners", "Design system team", "Engineering team"],
+  "recommendations": ["master-design-system", "digital-store"],
+  "blocks": [
+    {
+      "type": "rich_text",
+      "sectionId": "toolkit",
+      "navLabel": "The toolkit",
+      "showInNav": true,
+      "eyebrow": "One toolkit · Many experiences",
+      "heading": "Choose how the web works for you.",
+      "body": "Accessibility is not a single mode. The product brings text, color, reading, navigation, voice, interaction, and sign-language support into one adaptable toolkit.\n\nCustomers can begin with a ready-made profile or create their own combination of settings.",
+      "contentWidth": "wide"
+    },
+    {
+      "type": "motion_showcase",
+      "sectionId": "feature-field",
+      "showInNav": false,
+      "topItems": [
+        { "icon": "images/accessibility-widget/icons/motor-impaired.svg", "label": "Motor Impaired", "description": "Easier control and navigation." },
+        { "icon": "images/accessibility-widget/icons/blind.svg", "label": "Blind", "description": "Supports non-visual browsing." },
+        { "icon": "images/accessibility-widget/icons/color-blind.svg", "label": "Color Blind", "description": "Makes colors easier to distinguish." },
+        { "icon": "images/accessibility-widget/icons/dyslexia.svg", "label": "Dyslexia", "description": "Makes text easier to read." },
+        { "icon": "images/accessibility-widget/icons/cognitive-learning.svg", "label": "Cognitive Learning", "description": "Minimizes visual distractions." },
+        { "icon": "images/accessibility-widget/icons/seizure-epileptic.svg", "label": "Seizure Epileptic", "description": "Reduces motion and flashing." },
+        { "icon": "images/accessibility-widget/icons/adhd.svg", "label": "ADHD", "description": "Supports focus." }
+      ],
+      "bottomItems": [
+        { "icon": "images/accessibility-widget/icons/bigger-text.svg", "label": "Bigger Text", "description": "Scale text for comfortable reading." },
+        { "icon": "images/accessibility-widget/icons/text-spacing.svg", "label": "Text Spacing", "description": "Create more breathing room." },
+        { "icon": "images/accessibility-widget/icons/contrast.svg", "label": "Contrast +", "description": "Strengthen visual distinction." },
+        { "icon": "images/accessibility-widget/icons/highlight-links.svg", "label": "Highlight Links", "description": "Make actions easier to find." },
+        { "icon": "images/accessibility-widget/icons/reading-mask.svg", "label": "Reading Mask", "description": "Focus on one area at a time." },
+        { "icon": "images/accessibility-widget/icons/big-cursor.svg", "label": "Big Cursor", "description": "Improve pointer visibility." },
+        { "icon": "images/accessibility-widget/icons/sign-language.svg", "label": "Sign Language", "description": "Access information in more forms." }
+      ]
+    },
+    {
+      "type": "widget_showcase",
+      "sectionId": "explore-widget",
+      "navLabel": "Explore the widget",
+      "showInNav": true,
+      "eyebrow": "The product, up close",
+      "heading": "Explore the widget.",
+      "body": "The complete interface is recreated as a visual prototype. Explore its profiles and controls without leaving the case study.",
+      "groups": [
+        {
+          "title": "Accessibility profiles",
+          "variant": "profiles",
+          "columns": "two",
+          "items": [
+            { "icon": "images/accessibility-widget/icons/motor-impaired.svg", "label": "Motor Impaired", "description": "Easier control and navigation." },
+            { "icon": "images/accessibility-widget/icons/blind.svg", "label": "Blind", "description": "Supports non-visual browsing." },
+            { "icon": "images/accessibility-widget/icons/color-blind.svg", "label": "Color Blind", "description": "Makes colors easier to distinguish." },
+            { "icon": "images/accessibility-widget/icons/dyslexia.svg", "label": "Dyslexia", "description": "Makes text easier to read." },
+            { "icon": "images/accessibility-widget/icons/cognitive-learning.svg", "label": "Cognitive Learning", "description": "Minimizes visual distractions." },
+            { "icon": "images/accessibility-widget/icons/seizure-epileptic.svg", "label": "Seizure Epileptic", "description": "Reduces motion and flashing." },
+            { "icon": "images/accessibility-widget/icons/adhd.svg", "label": "ADHD", "description": "Reduces distractions and supports focus." }
+          ]
+        },
+        {
+          "title": "AI features",
+          "titleIcon": "images/accessibility-widget/icons/ai-sparkle.svg",
+          "variant": "controls",
+          "columns": "two",
+          "items": [
+            { "icon": "images/accessibility-widget/icons/voice-input.svg", "label": "Voice Input", "levels": 1 },
+            { "icon": "images/accessibility-widget/icons/screen-reader.svg", "label": "Screen Reader", "levels": 1 },
+            { "icon": "images/accessibility-widget/icons/voice-navigation.svg", "label": "Voice Navigation", "levels": 1 },
+            { "icon": "images/accessibility-widget/icons/ai-summary.svg", "label": "AI Summary", "levels": 1 }
+          ]
+        },
+        {
+          "title": "Text",
+          "variant": "controls",
+          "columns": "three",
+          "items": [
+            { "icon": "images/accessibility-widget/icons/bigger-text.svg", "label": "Bigger Text", "levels": 3 },
+            { "icon": "images/accessibility-widget/icons/text-spacing.svg", "label": "Text Spacing", "levels": 3 },
+            { "icon": "images/accessibility-widget/icons/text-alignment.svg", "label": "Text Alignment", "levels": 3 },
+            { "icon": "images/accessibility-widget/icons/line-height.svg", "label": "Line Height", "levels": 3 },
+            { "icon": "images/accessibility-widget/icons/bold-text.svg", "label": "Bold Text", "levels": 1 },
+            { "icon": "images/accessibility-widget/icons/dyslexia-friendly.svg", "label": "Dyslexia Friendly", "levels": 1 }
+          ]
+        },
+        {
+          "title": "Color and Contrast",
+          "variant": "controls",
+          "columns": "two",
+          "items": [
+            { "icon": "images/accessibility-widget/icons/blind.svg", "label": "Saturation", "levels": 3 },
+            { "icon": "images/accessibility-widget/icons/contrast.svg", "label": "Contrast +", "levels": 3 }
+          ]
+        },
+        {
+          "title": "Reading Aids",
+          "variant": "controls",
+          "columns": "three",
+          "items": [
+            { "icon": "images/accessibility-widget/icons/highlight-links.svg", "label": "Highlight Links", "levels": 1 },
+            { "icon": "images/accessibility-widget/icons/reading-mask.svg", "label": "Reading Mask", "levels": 1 },
+            { "icon": "images/accessibility-widget/icons/tooltips.svg", "label": "Tooltips", "levels": 1 }
+          ]
+        },
+        {
+          "title": "Interaction",
+          "variant": "controls",
+          "columns": "three",
+          "items": [
+            { "icon": "images/accessibility-widget/icons/hide-images.svg", "label": "Hide Images", "levels": 1 },
+            { "icon": "images/accessibility-widget/icons/big-cursor.svg", "label": "Big Cursor", "levels": 3 },
+            { "icon": "images/accessibility-widget/icons/pause-animations.svg", "label": "Animations", "levels": 1 }
+          ]
+        },
+        {
+          "title": "Sign Language",
+          "variant": "controls",
+          "columns": "two",
+          "items": [
+            { "icon": "images/accessibility-widget/icons/sign-language-video.svg", "label": "Sign Language Video", "levels": 1 },
+            { "icon": "images/accessibility-widget/icons/sign-language.svg", "label": "Sign Language", "levels": 1 }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "two_column_text",
+      "sectionId": "outcome",
+      "navLabel": "Built to evolve",
+      "showInNav": true,
+      "eyebrow": "Accessible by design",
+      "heading": "One adaptable product, built to keep evolving.",
+      "left": "Keyboard access, visible focus states, clear labels, language selection, predictable categories, and reversible settings make the widget itself easier to use from the beginning.",
+      "right": "The team developed the widget internally to replace a paid third-party solution. That shifted accessibility from a recurring vendor dependency into a Vodafone-owned product foundation that can evolve with customer needs and accessibility practices."
+    }
+  ]
+}
