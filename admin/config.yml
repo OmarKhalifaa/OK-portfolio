@@ -470,6 +470,104 @@ collections:
                   - { label: Title, name: title, widget: string }
                   - { label: Body, name: body, widget: richtext }
 
+          - label: Product feature catalogue
+            name: feature_catalog
+            widget: object
+            fields:
+              - { label: Section ID, name: sectionId, widget: string }
+              - { label: Side-menu label, name: navLabel, widget: string }
+              - { label: Show in side menu, name: showInNav, widget: boolean, default: true }
+              - { label: Eyebrow, name: eyebrow, widget: string, required: false }
+              - { label: Heading, name: heading, widget: string }
+              - { label: Introduction, name: body, widget: richtext, required: false }
+              - label: Feature groups
+                name: groups
+                widget: list
+                label_singular: Feature group
+                fields:
+                  - { label: Group title, name: title, widget: string }
+                  - { label: Description, name: description, widget: string, required: false }
+                  - label: Control behavior
+                    name: control
+                    widget: select
+                    options:
+                      - { label: Toggle, value: toggle }
+                      - { label: Multi-level, value: level }
+                  - label: Features
+                    name: items
+                    widget: list
+                    label_singular: Feature
+                    fields:
+                      - { label: Icon SVG, name: icon, widget: image }
+                      - { label: Feature name, name: label, widget: string }
+                      - { label: Description, name: description, widget: string, required: false }
+                      - { label: Number of levels, name: levels, widget: number, value_type: int, min: 1, max: 3, default: 3, required: false }
+                      - { label: Active initially, name: active, widget: boolean, default: false, required: false }
+                      - { label: Initial level, name: initialLevel, widget: number, value_type: int, min: 1, max: 3, default: 1, required: false }
+
+          - label: Animated feature showcase
+            name: motion_showcase
+            widget: object
+            fields:
+              - { label: Section ID, name: sectionId, widget: string }
+              - { label: Side-menu label, name: navLabel, widget: string, required: false }
+              - { label: Show in side menu, name: showInNav, widget: boolean, default: false }
+              - label: Top row
+                name: topItems
+                widget: list
+                label_singular: Feature
+                fields:
+                  - { label: Icon SVG, name: icon, widget: image }
+                  - { label: Feature name, name: label, widget: string }
+                  - { label: Description, name: description, widget: string }
+              - label: Bottom row
+                name: bottomItems
+                widget: list
+                label_singular: Feature
+                fields:
+                  - { label: Icon SVG, name: icon, widget: image }
+                  - { label: Feature name, name: label, widget: string }
+                  - { label: Description, name: description, widget: string }
+
+          - label: Live accessibility widget
+            name: widget_showcase
+            widget: object
+            fields:
+              - { label: Section ID, name: sectionId, widget: string }
+              - { label: Side-menu label, name: navLabel, widget: string }
+              - { label: Show in side menu, name: showInNav, widget: boolean, default: true }
+              - { label: Eyebrow, name: eyebrow, widget: string, required: false }
+              - { label: Heading, name: heading, widget: string }
+              - { label: Introduction, name: body, widget: richtext, required: false }
+              - label: Widget groups
+                name: groups
+                widget: list
+                label_singular: Widget group
+                fields:
+                  - { label: Group title, name: title, widget: string }
+                  - { label: Title icon, name: titleIcon, widget: image, required: false }
+                  - label: Group style
+                    name: variant
+                    widget: select
+                    options:
+                      - { label: Profiles, value: profiles }
+                      - { label: Controls, value: controls }
+                  - label: Columns
+                    name: columns
+                    widget: select
+                    options:
+                      - { label: Two, value: two }
+                      - { label: Three, value: three }
+                  - label: Features
+                    name: items
+                    widget: list
+                    label_singular: Feature
+                    fields:
+                      - { label: Icon SVG, name: icon, widget: image }
+                      - { label: Feature name, name: label, widget: string }
+                      - { label: Description, name: description, widget: string, required: false }
+                      - { label: Number of visual levels, name: levels, widget: number, value_type: int, min: 1, max: 3, default: 3, required: false }
+
           - label: Results / statistics
             name: stats
             widget: object

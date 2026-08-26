@@ -199,7 +199,7 @@
     blocks.forEach(block => observer.observe(block));
   };
 
-  const renderVideo = urlValue => {
+  const renderVideo = (urlValue, options = {}) => {
     const value = String(urlValue ?? '').trim();
     const youtube = value.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
     const vimeo = value.match(/vimeo\.com\/(?:video\/)?(\d+)/);
@@ -212,8 +212,10 @@
     }
 
     const src = safeMediaUrl(value);
+    const autoplay = options.autoplay === true;
+    const controls = options.controls !== false && !autoplay;
     return src
-      ? `<video src="${src}" controls preload="metadata" data-image-loader></video>`
+      ? `<video src="${src}"${controls ? ' controls' : ''}${autoplay ? ' autoplay muted playsinline' : ''}${options.loop === true ? ' loop' : ''} preload="${autoplay ? 'auto' : 'metadata'}" data-image-loader></video>`
       : '<div class="cms-media-placeholder">Add a video URL in the CMS</div>';
   };
 
@@ -236,6 +238,39 @@
           return `<figure class="content-block media-block cms-image-block" id="${id}">${heading}${media}${block.caption ? `<figcaption class="cms-caption-${option(block.captionAlignment, ['left', 'center', 'right'], 'left')}">${escapeHTML(block.caption)}</figcaption>` : ''}</figure>`;
         }
 
+      case 'motion_showcase': {
+        const renderMotionCards = items => (items || []).map(item => {
+          const iconSource = safeMediaUrl(item.icon);
+          return `<button type="button" class="cms-motion-card" data-motion-feature aria-pressed="false" aria-label="${escapeHTML(item.label)}, off"><span class="cms-motion-card-top"><span class="cms-motion-card-icon" aria-hidden="true">${iconSource ? `<img src="${iconSource}" alt="" loading="lazy">` : ''}</span><span class="cms-motion-switch" aria-hidden="true"><i></i></span></span><strong>${escapeHTML(item.label)}</strong><span>${escapeHTML(item.description)}</span></button>`;
+        }).join('');
+        return `<section class="content-block cms-motion-showcase-block" id="${id}">${heading}<div class="cms-motion-showcase" data-motion-showcase><div class="cms-motion-stage"><div class="cms-motion-rail cms-motion-rail-top">${renderMotionCards(block.topItems)}</div><div class="cms-motion-rail cms-motion-rail-bottom">${renderMotionCards(block.bottomItems)}</div></div><button type="button" class="cms-motion-toggle" data-motion-toggle aria-pressed="false"><span>Pause motion</span><i aria-hidden="true"></i></button><p class="cms-visually-hidden" aria-live="polite" data-motion-status></p></div></section>`;
+      }
+
+      case 'widget_showcase': {
+        const assetRoot = 'images/accessibility-widget/icons/';
+        const renderWidgetGroup = group => {
+          const isProfiles = group.variant === 'profiles';
+          const isAI = group.title?.trim().toLowerCase() === 'ai features';
+          const isCollapsed = !isAI;
+          const columns = option(group.columns, ['two', 'three'], isProfiles ? 'two' : 'three');
+          const titleIcon = safeMediaUrl(group.titleIcon);
+          const items = (group.items || []).map(item => {
+            const iconSource = safeMediaUrl(item.icon);
+            const maximumLevel = isProfiles ? 1 : Math.max(1, Math.min(3, Number(item.levels) || 3));
+            const icon = iconSource ? `<img src="${iconSource}" alt="" loading="lazy">` : '';
+            if (isProfiles) {
+              return `<button type="button" class="cms-widget-profile" data-widget-control data-level="0" data-max-level="1" aria-pressed="false" aria-label="${escapeHTML(item.label)}, off"><span class="cms-widget-profile-top"><span class="cms-widget-icon" aria-hidden="true">${icon}</span><span class="cms-widget-switch" aria-hidden="true"><i></i></span></span><strong>${escapeHTML(item.label)}</strong><span>${escapeHTML(item.description || '')}</span></button>`;
+            }
+            const pips = maximumLevel > 1 ? `<span class="cms-widget-pips" aria-hidden="true">${Array.from({ length: maximumLevel }, () => '<i></i>').join('')}</span>` : '';
+            return `<button type="button" class="cms-widget-control" data-widget-control data-level="0" data-max-level="${maximumLevel}" aria-pressed="false" aria-label="${escapeHTML(item.label)}, off"><span class="cms-widget-icon" aria-hidden="true">${icon}</span><strong>${escapeHTML(item.label)}</strong>${pips}</button>`;
+          }).join('');
+          return `<section class="cms-widget-category cms-widget-category-${isProfiles ? 'profiles' : 'controls'}${isAI ? ' cms-widget-category-ai' : ''}${isCollapsed ? ' is-collapsed' : ''}"><button type="button" class="cms-widget-category-toggle" data-widget-accordion aria-expanded="${isCollapsed ? 'false' : 'true'}">${titleIcon ? `<img src="${titleIcon}" alt="" aria-hidden="true">` : ''}<span>${escapeHTML(group.title)}</span><img class="cms-widget-chevron" src="${assetRoot}chevron-up.svg" alt="" aria-hidden="true"></button><div class="cms-widget-category-body cms-widget-columns-${columns}">${items}</div></section>`;
+        };
+        const groups = (block.groups || []).map(renderWidgetGroup).join('');
+        const intro = block.body ? `<div class="cms-richtext cms-widget-showcase-intro">${markdown(block.body)}</div>` : '';
+        return `<section class="content-block cms-live-widget-block" id="${id}">${heading}${intro}<div class="cms-widget-stage" data-widget-showcase><div class="cms-widget-product" data-widget-product><header class="cms-widget-header"><strong>Accessibility Options</strong><div class="cms-widget-header-actions"><button type="button" class="cms-widget-language" data-widget-language aria-label="Change language"><img src="${assetRoot}egypt-flag.svg" alt=""><span>AR</span><img src="${assetRoot}chevron-down.svg" alt="" aria-hidden="true"></button><button type="button" class="cms-widget-round-action" data-widget-reset aria-label="Reset settings"><img src="${assetRoot}reset.svg" alt=""></button></div></header><div class="cms-widget-scroll" data-lenis-prevent>${groups}<section class="cms-widget-reset-panel"><button type="button" data-widget-reset>Reset Settings</button></section><footer class="cms-widget-footer"><img src="${assetRoot}vodafone-logo.svg" alt="Vodafone"><span>Accessibility Statement</span></footer></div></div><p class="cms-visually-hidden" aria-live="polite" data-widget-status></p></div></section>`;
+      }
+
       case 'text_image': {
         const ratio = option(block.aspectRatio, ['auto', 'landscape', 'standard', 'square', 'portrait'], 'auto');
         const fit = option(block.fit, ['cover', 'contain'], 'cover');
@@ -256,7 +291,7 @@
         return `<section class="content-block cms-gallery-block" id="${id}">${heading}<div class="cms-gallery cms-gallery-${option(block.columns, ['two', 'three'], 'two')} cms-ratio-${option(block.aspectRatio, ['auto', 'landscape', 'standard', 'square', 'portrait'], 'auto')} cms-fit-${option(block.fit, ['cover', 'contain'], 'cover')} cms-focal-${option(block.focalPoint, ['center', 'top', 'bottom', 'left', 'right'], 'center')}">${(block.images || []).map(item => `<figure class="cms-item-focal-${option(item.focalPoint, ['center', 'top', 'bottom', 'left', 'right', 'upper', 'lower'], block.focalPoint || 'center')}">${renderImage(item.image, item.alt)}${item.caption ? `<figcaption>${escapeHTML(item.caption)}</figcaption>` : ''}</figure>`).join('')}</div></section>`;
 
       case 'video':
-        return `<figure class="content-block media-block cms-video-block" id="${id}">${heading}<div class="cms-video-frame">${renderVideo(block.url)}</div>${block.caption ? `<figcaption>${escapeHTML(block.caption)}</figcaption>` : ''}</figure>`;
+        return `<figure class="content-block media-block cms-video-block" id="${id}">${heading}<div class="cms-video-frame">${renderVideo(block.url, block)}</div>${block.caption ? `<figcaption>${escapeHTML(block.caption)}</figcaption>` : ''}</figure>`;
 
       case 'screen_slider': {
         const slides = (block.slides || []).filter(slide => slide.image);
@@ -281,6 +316,19 @@
 
       case 'feature_grid':
         return `<section class="content-block" id="${id}">${heading}<div class="insight-grid">${(block.items || []).map((item, itemIndex) => `<article><span>${escapeHTML(item.number || String(itemIndex + 1).padStart(2, '0'))}</span><h3>${escapeHTML(item.title)}</h3><div class="cms-richtext">${markdown(item.body)}</div></article>`).join('')}</div></section>`;
+
+      case 'feature_catalog':
+        return `<section class="content-block cms-feature-catalog-block" id="${id}">${heading}${block.body ? `<div class="cms-richtext cms-feature-catalog-intro">${markdown(block.body)}</div>` : ''}<div class="cms-feature-catalog">${(block.groups || []).map(group => {
+          const controlType = option(group.control, ['toggle', 'level'], 'level');
+          return `<article class="cms-feature-group cms-feature-group-${controlType}"><header><h3>${escapeHTML(group.title)}</h3>${group.description ? `<p>${escapeHTML(group.description)}</p>` : ''}</header><div class="cms-feature-tiles">${(group.items || []).map(item => {
+            const iconSource = safeMediaUrl(item.icon);
+            const maximumLevel = controlType === 'toggle' ? 1 : Math.max(1, Math.min(3, Number(item.levels) || 3));
+            const initialLevel = item.active === true ? Math.max(1, Math.min(maximumLevel, Number(item.initialLevel) || 1)) : 0;
+            const icon = iconSource ? `<img src="${iconSource}" alt="" loading="lazy">` : escapeHTML(item.icon || '•');
+            const pips = controlType === 'level' ? `<span class="cms-feature-pips" aria-hidden="true">${Array.from({ length: maximumLevel }, (_, pipIndex) => `<i class="${pipIndex < initialLevel ? 'is-filled' : ''}"></i>`).join('')}</span>` : '<span class="cms-feature-switch" aria-hidden="true"><i></i></span>';
+            return `<button type="button" class="cms-feature-tile${initialLevel ? ' is-active' : ''}" data-feature-control data-control-type="${controlType}" data-level="${initialLevel}" data-max-level="${maximumLevel}" aria-pressed="${initialLevel ? 'true' : 'false'}" aria-label="${escapeHTML(item.label)}, ${initialLevel ? controlType === 'level' ? `level ${initialLevel} of ${maximumLevel}` : 'on' : 'off'}"><span class="cms-feature-icon" aria-hidden="true">${icon}</span><span class="cms-feature-label">${escapeHTML(item.label)}</span>${item.description ? `<span class="cms-feature-description">${escapeHTML(item.description)}</span>` : ''}${pips}</button>`;
+          }).join('')}</div></article>`;
+        }).join('')}</div><p class="cms-visually-hidden" aria-live="polite" data-feature-status></p></section>`;
 
       case 'stats':
         return `<section class="content-block results-block" id="${id}">${heading}<div class="results-grid">${(block.items || []).map(item => `<div><strong>${escapeHTML(item.value)}</strong><span>${escapeHTML(item.label)}</span></div>`).join('')}</div></section>`;
@@ -431,6 +479,97 @@
       const frame = shell.querySelector('.cms-display-scroll');
       if (!frame) return;
       frame.addEventListener('scroll', () => shell.classList.toggle('has-scrolled', frame.scrollTop > 12), { passive: true });
+    });
+    document.querySelectorAll('.cms-feature-catalog-block').forEach(catalog => {
+      const status = catalog.querySelector('[data-feature-status]');
+      catalog.querySelectorAll('[data-feature-control]').forEach(control => {
+        control.addEventListener('click', () => {
+          const maximumLevel = Number(control.dataset.maxLevel || 1);
+          const nextLevel = (Number(control.dataset.level || 0) + 1) % (maximumLevel + 1);
+          const label = control.querySelector('.cms-feature-label')?.textContent?.trim() || 'Feature';
+          const isActive = nextLevel > 0;
+          control.dataset.level = String(nextLevel);
+          control.classList.toggle('is-active', isActive);
+          control.setAttribute('aria-pressed', String(isActive));
+          const state = control.dataset.controlType === 'level' && isActive ? `level ${nextLevel} of ${maximumLevel}` : isActive ? 'on' : 'off';
+          control.setAttribute('aria-label', `${label}, ${state}`);
+          control.querySelectorAll('.cms-feature-pips i').forEach((pip, pipIndex) => pip.classList.toggle('is-filled', pipIndex < nextLevel));
+          if (status) status.textContent = `${label}: ${state}`;
+        });
+      });
+    });
+    document.querySelectorAll('[data-motion-showcase]').forEach(showcase => {
+      const motionToggle = showcase.querySelector('[data-motion-toggle]');
+      const motionStatus = showcase.querySelector('[data-motion-status]');
+      motionToggle?.addEventListener('click', () => {
+        const paused = !showcase.classList.contains('is-paused');
+        showcase.classList.toggle('is-paused', paused);
+        motionToggle.setAttribute('aria-pressed', String(paused));
+        const label = paused ? 'Resume motion' : 'Pause motion';
+        const labelElement = motionToggle.querySelector('span');
+        if (labelElement) labelElement.textContent = label;
+        if (motionStatus) motionStatus.textContent = paused ? 'Feature animation paused.' : 'Feature animation playing.';
+      });
+      showcase.querySelectorAll('[data-motion-feature]').forEach(control => {
+        control.addEventListener('click', () => {
+          const active = !control.classList.contains('is-active');
+          const label = control.querySelector('strong')?.textContent?.trim() || 'Feature';
+          control.classList.toggle('is-active', active);
+          control.setAttribute('aria-pressed', String(active));
+          control.setAttribute('aria-label', `${label}, ${active ? 'on' : 'off'}`);
+          if (motionStatus) motionStatus.textContent = `${label}: ${active ? 'on' : 'off'}.`;
+        });
+      });
+    });
+    document.querySelectorAll('[data-widget-showcase]').forEach(showcase => {
+      const product = showcase.querySelector('[data-widget-product]');
+      const status = showcase.querySelector('[data-widget-status]');
+      const setWidgetOpen = open => {
+        if (product) product.hidden = !open;
+        if (status) status.textContent = open ? 'Accessibility widget opened.' : 'Accessibility widget closed.';
+      };
+      const resetWidget = () => {
+        showcase.querySelectorAll('[data-widget-control]').forEach(control => {
+          control.dataset.level = '0';
+          control.classList.remove('is-active');
+          control.setAttribute('aria-pressed', 'false');
+          const label = control.querySelector('strong')?.textContent?.trim() || 'Feature';
+          control.setAttribute('aria-label', `${label}, off`);
+          control.querySelectorAll('.cms-widget-pips i').forEach(pip => pip.classList.remove('is-filled'));
+        });
+        if (status) status.textContent = 'All visual settings reset.';
+      };
+      showcase.querySelectorAll('[data-widget-accordion]').forEach(toggle => toggle.addEventListener('click', () => {
+        const category = toggle.closest('.cms-widget-category');
+        const expanded = toggle.getAttribute('aria-expanded') !== 'false';
+        toggle.setAttribute('aria-expanded', String(!expanded));
+        category?.classList.toggle('is-collapsed', expanded);
+      }));
+      showcase.querySelectorAll('[data-widget-control]').forEach(control => control.addEventListener('click', () => {
+        const maximumLevel = Number(control.dataset.maxLevel || 1);
+        const nextLevel = (Number(control.dataset.level || 0) + 1) % (maximumLevel + 1);
+        const label = control.querySelector('strong')?.textContent?.trim() || 'Feature';
+        const active = nextLevel > 0;
+        control.dataset.level = String(nextLevel);
+        control.classList.toggle('is-active', active);
+        control.setAttribute('aria-pressed', String(active));
+        const state = active ? maximumLevel > 1 ? `level ${nextLevel} of ${maximumLevel}` : 'on' : 'off';
+        control.setAttribute('aria-label', `${label}, ${state}`);
+        control.querySelectorAll('.cms-widget-pips i').forEach((pip, index) => pip.classList.toggle('is-filled', index < nextLevel));
+        if (status) status.textContent = `${label}: ${state}.`;
+      }));
+      showcase.querySelectorAll('[data-widget-reset]').forEach(button => button.addEventListener('click', resetWidget));
+      showcase.querySelector('[data-widget-language]')?.addEventListener('click', event => {
+        const label = event.currentTarget.querySelector('span');
+        if (!label) return;
+        label.textContent = label.textContent === 'AR' ? 'EN' : 'AR';
+        if (status) status.textContent = `Widget language changed to ${label.textContent}.`;
+      });
+      document.addEventListener('keydown', event => {
+        if (!event.shiftKey || event.key.toLowerCase() !== 'c') return;
+        event.preventDefault();
+        setWidgetOpen(Boolean(product?.hidden));
+      });
     });
     document.querySelectorAll('[data-screen-slider]').forEach(slider => {
       const slides = [...slider.querySelectorAll('.cms-screen-slide')];

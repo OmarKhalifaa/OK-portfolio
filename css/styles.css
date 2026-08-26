@@ -1551,6 +1551,17 @@ html::-webkit-scrollbar,
 
 .concept-card-stack > .concept-card:only-child { grid-column: 1 / -1; }
 
+.concept-card-stack:has(> .concept-card:last-child:nth-child(odd):not(:only-child))::before {
+  content: "";
+  order: 999;
+  grid-column: 2;
+  min-width: 0;
+  min-height: 100%;
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+  pointer-events: none;
+}
+
 .concept-card .card-body { padding: 16px 10px 10px; }
 .concept-card .card-title { font-size: clamp(17px, 1.35vw, 22px); }
 .concept-card .card-desc { max-width: 620px; }
@@ -1916,6 +1927,7 @@ html::-webkit-scrollbar,
   .concept-statement { font-size: clamp(17px, 4.3vw, 34px); }
   .concept-ribbon { margin-top: 34px; }
   .concept-card-stack { grid-template-columns: 1fr; }
+  .concept-card-stack:has(> .concept-card:last-child:nth-child(odd):not(:only-child))::before { display: none; }
   .concept-card { min-height: auto; }
   .concept-card + .concept-card { border-left: 0; border-top: 1px solid var(--border); }
   .concept-card .card-thumb { height: auto; aspect-ratio: 4 / 3; }

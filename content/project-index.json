@@ -1,5 +1,6 @@
 {
   "projects": [
+    "accessibility-widget",
     "digital-store",
     "login-revamp"
   ]
