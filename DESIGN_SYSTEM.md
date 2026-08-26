@@ -172,6 +172,14 @@ When `prefers-reduced-motion: reduce` is active:
 
 ## Maintenance rules
 
+### About page
+
+- `about.html` reuses the homepage's `26 / 48 / 26` desktop column proportions.
+- The left introduction and right profile rail stay viewport-height and sticky while the editorial story scrolls through the center column.
+- The center column mixes an oversized personal statement, paired narrative copy, a bordered software-stack matrix, and a bold moving connection strip; the right rail focuses on the portrait and education.
+- At `≤1180px`, the profile rail becomes a two-column full-width section. At `≤820px`, the full page becomes one continuous column.
+- The dotted field, separator rain, typography, border treatment, theme behavior, and reduced-motion handling match the homepage system.
+
 - Update this file whenever layout proportions, tokens, motion durations, breakpoints, or component behaviours change.
 - Keep cache-busting query versions in `index.html` aligned for CSS and JavaScript.
 - Preserve dark mode as the default unless the product direction explicitly changes.

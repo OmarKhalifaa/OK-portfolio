@@ -8,8 +8,8 @@
   "thumbnailAlt": "Accessibility widget surrounded by floating accessibility profile cards",
   "thumbnailFit": "cover",
   "thumbnailBackground": "#f6f3f2",
-  "thumbnailPixelBase": "#240506",
-  "thumbnailPixelAccent": "#e60000",
+  "thumbnailPixelBase": "#f3dedc",
+  "thumbnailPixelAccent": "#dda6a3",
   "homepageTags": ["Accessibility", "Product"],
   "client": "Vodafone",
   "category": "Web · Accessibility product",
@@ -22,10 +22,10 @@
     {
       "type": "rich_text",
       "sectionId": "toolkit",
-      "navLabel": "The toolkit",
+      "navLabel": "What it does",
       "showInNav": true,
-      "eyebrow": "One toolkit · Many experiences",
-      "heading": "Choose how the web works for you.",
+      "eyebrow": "What it does",
+      "heading": "Make the web work for you.",
       "body": "Accessibility is not a single mode. The product brings text, color, reading, navigation, voice, interaction, and sign-language support into one adaptable toolkit.\n\nCustomers can begin with a ready-made profile or create their own combination of settings.",
       "contentWidth": "wide"
     },
@@ -57,7 +57,7 @@
       "sectionId": "explore-widget",
       "navLabel": "Explore the widget",
       "showInNav": true,
-      "eyebrow": "The product, up close",
+      "eyebrow": "Try it yourself",
       "heading": "Explore the widget.",
       "body": "The complete interface is recreated as a visual prototype. Explore its profiles and controls without leaving the case study.",
       "groups": [
@@ -145,8 +145,8 @@
       "sectionId": "outcome",
       "navLabel": "Built to evolve",
       "showInNav": true,
-      "eyebrow": "Accessible by design",
-      "heading": "One adaptable product, built to keep evolving.",
+      "eyebrow": "Why we built it",
+      "heading": "Built in-house to grow with our needs.",
       "left": "Keyboard access, visible focus states, clear labels, language selection, predictable categories, and reversible settings make the widget itself easier to use from the beginning.",
       "right": "The team developed the widget internally to replace a paid third-party solution. That shifted accessibility from a recurring vendor dependency into a Vodafone-owned product foundation that can evolve with customer needs and accessibility practices."
     }
