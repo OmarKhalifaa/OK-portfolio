@@ -1469,10 +1469,17 @@ html::-webkit-scrollbar,
   font-family: 'Syne', sans-serif;
   font-size: clamp(17px, 2.2vw, 34px);
   font-weight: 500;
-  line-height: 1.05;
+  line-height: 1.08;
   letter-spacing: -.045em;
-  text-wrap: nowrap;
+}
+
+.concept-statement > span {
+  display: block;
   white-space: nowrap;
+}
+
+.concept-statement-muted {
+  color: var(--text-2);
 }
 
 .concept-ribbon {

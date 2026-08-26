@@ -31,11 +31,6 @@
   --header-bg: rgba(245, 243, 236, 0.88);
 }
 
-body[data-project="accessibility-widget"] {
-  --accent: #e60000;
-  --accent-soft: rgba(230, 0, 0, 0.11);
-}
-
 body[data-project="accessibility-widget"] .project-hero h1 {
   max-width: 720px;
   font-size: clamp(42px, 4.4vw, 68px);
@@ -52,11 +47,6 @@ body[data-project="accessibility-widget"] .section-heading h2 {
 body[data-project="accessibility-widget"] .learning-block blockquote {
   max-width: 700px;
   font-size: clamp(28px, 2.75vw, 43px);
-}
-
-html[data-theme="light"] body[data-project="accessibility-widget"] {
-  --accent: #c90000;
-  --accent-soft: rgba(201, 0, 0, 0.09);
 }
 
 ::view-transition-old(root),
