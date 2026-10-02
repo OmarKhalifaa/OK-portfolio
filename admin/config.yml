@@ -119,6 +119,13 @@ collections:
         widget: list
         label_singular: Team member or group
         field: { label: Name, name: name, widget: string }
+      - label: Team links
+        name: teamLinks
+        widget: list
+        required: false
+        fields:
+          - { label: Team name, name: name, widget: string }
+          - { label: Website URL, name: url, widget: string }
       - label: Timeline
         name: timeline
         widget: string
@@ -173,6 +180,48 @@ collections:
               - { label: Left column, name: left, widget: richtext }
               - { label: Right column, name: right, widget: richtext }
 
+          - label: Before / after comparison
+            name: before_after
+            widget: object
+            fields:
+              - { label: Section ID, name: sectionId, widget: string }
+              - { label: Side-menu label, name: navLabel, widget: string, required: false }
+              - { label: Show in side menu, name: showInNav, widget: boolean, default: false }
+              - { label: Eyebrow, name: eyebrow, widget: string, required: false }
+              - { label: Heading, name: heading, widget: string, required: false }
+              - { label: Comparison name, name: label, widget: string }
+              - { label: Before image, name: beforeImage, widget: image, required: false }
+              - { label: Before image description, name: beforeAlt, widget: string, required: false }
+              - { label: Before label, name: beforeLabel, widget: string, default: Before }
+              - { label: Before placeholder text, name: beforePlaceholder, widget: string, required: false }
+              - { label: After image, name: afterImage, widget: image, required: false }
+              - { label: After image description, name: afterAlt, widget: string, required: false }
+              - { label: After label, name: afterLabel, widget: string, default: After }
+              - { label: After placeholder text, name: afterPlaceholder, widget: string, required: false }
+              - label: Shape
+                name: aspectRatio
+                widget: select
+                default: landscape
+                options:
+                  - { label: Wide — 16:9, value: landscape }
+                  - { label: Full pages — no cropping, value: full_page }
+                  - { label: Standard — 4:3, value: standard }
+                  - { label: Square, value: square }
+                  - { label: Portrait — 4:5, value: portrait }
+              - label: Image fit
+                name: fit
+                widget: select
+                default: contain
+                options:
+                  - { label: Show complete image, value: contain }
+                  - { label: Crop to fill, value: cover }
+              - label: Image focus
+                name: focalPoint
+                widget: select
+                default: top
+                options: [top, center, bottom]
+              - { label: Caption, name: caption, widget: string, required: false }
+
           - label: Full-width image
             name: image_full
             widget: object
@@ -182,7 +231,8 @@ collections:
               - { label: Show in side menu, name: showInNav, widget: boolean, default: false }
               - { label: Eyebrow, name: eyebrow, widget: string, required: false }
               - { label: Heading, name: heading, widget: string, required: false }
-              - { label: Image, name: image, widget: image }
+              - { label: Image, name: image, widget: image, required: false }
+              - { label: Placeholder text, name: placeholderLabel, widget: string, required: false }
               - { label: Alternative text, name: alt, widget: string }
               - { label: Caption, name: caption, widget: string, required: false }
               - label: Display mode
@@ -328,6 +378,16 @@ collections:
             name: gallery
             widget: object
             fields:
+              - label: Presentation
+                name: displayMode
+                widget: select
+                required: false
+                default: gallery
+                options:
+                  - { label: Images side by side, value: gallery }
+                  - { label: Full pages with tabs and scrolling, value: page_preview }
+              - { label: Preview name, name: label, widget: string, required: false }
+              - { label: Preview caption, name: caption, widget: string, required: false }
               - { label: Section ID, name: sectionId, widget: string }
               - { label: Side-menu label, name: navLabel, widget: string, required: false }
               - { label: Show in side menu, name: showInNav, widget: boolean, default: false }
@@ -372,7 +432,9 @@ collections:
                 widget: list
                 label_singular: Gallery image
                 fields:
-                  - { label: Image, name: image, widget: image }
+                  - { label: Tab label, name: label, widget: string, required: false }
+                  - { label: Image, name: image, widget: image, required: false }
+                  - { label: Placeholder text, name: placeholderLabel, widget: string, required: false }
                   - { label: Alternative text, name: alt, widget: string }
                   - { label: Caption, name: caption, widget: string, required: false }
                   - label: Crop focus

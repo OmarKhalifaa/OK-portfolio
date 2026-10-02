@@ -172,8 +172,9 @@
     });
   };
 
-  const renderImage = (image, alt, className = '') => {
+  const renderImage = (image, alt, className = '', placeholderLabel = '') => {
     const src = safeMediaUrl(image);
+    if (!src && placeholderLabel) return `<div class="cms-media-placeholder cms-media-planned"><span>Image placeholder</span><strong>${escapeHTML(placeholderLabel)}</strong></div>`;
     if (!src) return '<div class="cms-media-placeholder">Add an image in the CMS</div>';
     return `<img class="${escapeHTML(className)}" src="${src}" alt="${escapeHTML(alt || '')}" loading="lazy" data-image-loader>`;
   };
@@ -230,10 +231,18 @@
       case 'two_column_text':
         return `<section class="content-block content-copy" id="${id}">${heading}<div class="copy-columns"><div class="cms-richtext">${markdown(block.left)}</div><div class="cms-richtext">${markdown(block.right)}</div></div></section>`;
 
+      case 'before_after': {
+        const label = block.label || 'Design comparison';
+        const beforeLabel = block.beforeLabel || 'Before';
+        const afterLabel = block.afterLabel || 'After';
+        const layer = (side, image, alt, placeholder) => `<div class="cms-compare-layer cms-compare-${side}">${renderImage(image, alt, '', placeholder || `${label} · ${side}`)}</div>`;
+        return `<figure class="content-block media-block cms-comparison-block" id="${id}">${heading}<div class="cms-compare cms-compare-${option(block.aspectRatio, ['landscape', 'standard', 'square', 'portrait', 'full_page'], 'landscape')} cms-fit-${option(block.fit, ['contain', 'cover'], 'contain')} cms-focal-${option(block.focalPoint, ['center', 'top', 'bottom'], 'top')}" data-before-after style="--compare-position:50%">${layer('after', block.afterImage, block.afterAlt, block.afterPlaceholder)}${layer('before', block.beforeImage, block.beforeAlt, block.beforePlaceholder)}<span class="cms-compare-label cms-compare-label-before" data-compare-label-before>${escapeHTML(beforeLabel)}</span><span class="cms-compare-label cms-compare-label-after" data-compare-label-after>${escapeHTML(afterLabel)}</span><div class="cms-compare-divider" aria-hidden="true"><span>↔</span></div><input class="cms-compare-input" type="range" min="0" max="100" step="1" value="50" aria-label="${escapeHTML(label)}: before and after" aria-describedby="${id}-hint" aria-valuetext="${escapeHTML(beforeLabel)} 50%, ${escapeHTML(afterLabel)} 50%" data-before-label="${escapeHTML(beforeLabel)}" data-after-label="${escapeHTML(afterLabel)}"></div><figcaption class="cms-compare-caption" id="${id}-hint">${escapeHTML(block.caption || 'Drag to compare the two designs.')}<span>Drag the handle · or use arrow keys</span></figcaption></figure>`;
+      }
+
       case 'image_full':
         {
           const isScrollable = block.displayMode === 'scroll';
-          const frame = `<div class="cms-media-frame ${mediaClasses(block)}"${isScrollable ? ` tabindex="0" role="region" aria-label="Scrollable preview: ${escapeHTML(block.alt || block.heading || 'project screen')}" data-lenis-prevent` : ''}>${renderImage(block.image, block.alt)}</div>`;
+          const frame = `<div class="cms-media-frame ${mediaClasses(block)}"${isScrollable ? ` tabindex="0" role="region" aria-label="Scrollable preview: ${escapeHTML(block.alt || block.heading || 'project screen')}" data-lenis-prevent` : ''}>${renderImage(block.image, block.alt, '', block.placeholderLabel)}</div>`;
           const media = isScrollable ? `<div class="cms-scroll-shell">${frame}<span class="cms-scroll-hint" aria-hidden="true">Scroll to explore <span>↓</span></span></div>` : frame;
           return `<figure class="content-block media-block cms-image-block" id="${id}">${heading}${media}${block.caption ? `<figcaption class="cms-caption-${option(block.captionAlignment, ['left', 'center', 'right'], 'left')}">${escapeHTML(block.caption)}</figcaption>` : ''}</figure>`;
         }
@@ -287,8 +296,15 @@
         return `<section class="content-block cms-text-image cms-layout-${layout} image-${imagePosition} cms-split-${imageWidth} cms-vertical-${verticalAlignment}" id="${id}">${layout === 'stacked' || imagePosition === 'right' ? copy + media : media + copy}</section>`;
       }
 
-      case 'gallery':
-        return `<section class="content-block cms-gallery-block" id="${id}">${heading}<div class="cms-gallery cms-gallery-${option(block.columns, ['two', 'three'], 'two')} cms-ratio-${option(block.aspectRatio, ['auto', 'landscape', 'standard', 'square', 'portrait'], 'auto')} cms-fit-${option(block.fit, ['cover', 'contain'], 'cover')} cms-focal-${option(block.focalPoint, ['center', 'top', 'bottom', 'left', 'right'], 'center')}">${(block.images || []).map(item => `<figure class="cms-item-focal-${option(item.focalPoint, ['center', 'top', 'bottom', 'left', 'right', 'upper', 'lower'], block.focalPoint || 'center')}">${renderImage(item.image, item.alt)}${item.caption ? `<figcaption>${escapeHTML(item.caption)}</figcaption>` : ''}</figure>`).join('')}</div></section>`;
+      case 'gallery': {
+        if (block.displayMode === 'page_preview') {
+          const items = block.images || [];
+          const tabs = items.map((item, i) => `<button type="button" role="tab" id="${id}-tab-${i}" aria-controls="${id}-page-${i}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}" data-page-tab="${i}">${escapeHTML(item.label || item.caption || `Page ${i + 1}`)}</button>`).join('');
+          const panels = items.map((item, i) => `<div class="cms-page-preview-panel" role="tabpanel" id="${id}-page-${i}" aria-labelledby="${id}-tab-${i}" tabindex="0" data-page-panel="${i}" data-lenis-prevent${i ? ' hidden' : ''}>${renderImage(item.image, item.alt, '', item.placeholderLabel)}</div>`).join('');
+          return `<section class="content-block media-block cms-page-preview-block" id="${id}">${heading}<div class="cms-page-preview" data-page-preview><div class="cms-page-preview-tabs" role="tablist" aria-label="${escapeHTML(block.label || 'Full page previews')}">${tabs}<span aria-hidden="true">Scroll to explore ↓</span></div>${panels}</div><p class="cms-caption">${escapeHTML(block.caption || 'Choose a version, then scroll inside the preview.')}</p></section>`;
+        }
+        return `<section class="content-block cms-gallery-block" id="${id}">${heading}<div class="cms-gallery cms-gallery-${option(block.columns, ['two', 'three'], 'two')} cms-ratio-${option(block.aspectRatio, ['auto', 'landscape', 'standard', 'square', 'portrait'], 'auto')} cms-fit-${option(block.fit, ['cover', 'contain'], 'cover')} cms-focal-${option(block.focalPoint, ['center', 'top', 'bottom', 'left', 'right'], 'center')}">${(block.images || []).map(item => `<figure class="cms-item-focal-${option(item.focalPoint, ['center', 'top', 'bottom', 'left', 'right', 'upper', 'lower'], block.focalPoint || 'center')}">${renderImage(item.image, item.alt, '', item.placeholderLabel)}${item.caption ? `<figcaption>${escapeHTML(item.caption)}</figcaption>` : ''}</figure>`).join('')}</div></section>`;
+      }
 
       case 'video':
         return `<figure class="content-block media-block cms-video-block" id="${id}">${heading}<div class="cms-video-frame">${renderVideo(block.url, block)}</div>${block.caption ? `<figcaption>${escapeHTML(block.caption)}</figcaption>` : ''}</figure>`;
@@ -468,11 +484,87 @@
     document.querySelector('.project-meta')?.classList.toggle('has-no-timeline', !timelineValue);
 
     const team = document.getElementById('projectTeam');
-    if (team) team.innerHTML = (project.team || []).map(escapeHTML).join('<br>');
+    if (team) team.innerHTML = (project.team || []).map(name => {
+      const link = (project.teamLinks || []).find(item => item.name === name);
+      if (!link || !/^https?:\/\//i.test(link.url || '')) return escapeHTML(name);
+      return `<a href="${escapeHTML(link.url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(name)}</a>`;
+    }).join('<br>');
 
     const content = document.getElementById('projectContent');
     const blocks = project.blocks || [];
     if (content) content.innerHTML = blocks.map(renderBlock).join('');
+    content?.querySelectorAll('[data-page-preview]').forEach(preview => {
+      const tabs = [...preview.querySelectorAll('[data-page-tab]')];
+      const panels = [...preview.querySelectorAll('[data-page-panel]')];
+      const scrollPositions = panels.map(() => 0);
+      const select = index => {
+        panels.forEach((panel, i) => {
+          if (!panel.hidden) scrollPositions[i] = panel.scrollTop;
+        });
+        tabs.forEach((tab, i) => {
+          tab.setAttribute('aria-selected', String(i === index));
+          tab.tabIndex = i === index ? 0 : -1;
+          panels[i].hidden = i !== index;
+        });
+        panels[index].scrollTop = scrollPositions[index];
+      };
+      tabs.forEach((tab, i) => {
+        tab.addEventListener('click', () => select(i));
+        tab.addEventListener('keydown', event => {
+          let next;
+          if (event.key === 'ArrowRight') next = (i + 1) % tabs.length;
+          if (event.key === 'ArrowLeft') next = (i + tabs.length - 1) % tabs.length;
+          if (event.key === 'Home') next = 0;
+          if (event.key === 'End') next = tabs.length - 1;
+          if (next === undefined) return;
+          event.preventDefault();
+          select(next);
+          tabs[next].focus();
+        });
+      });
+    });
+    content?.querySelectorAll('[data-before-after]').forEach(comparison => {
+      const input = comparison.querySelector('input');
+      if (comparison.classList.contains('cms-compare-full_page')) {
+        const images = [...comparison.querySelectorAll('img')];
+        const resize = () => {
+          const ratios = images.filter(image => image.naturalHeight).map(image => image.naturalWidth / image.naturalHeight);
+          if (ratios.length) comparison.style.setProperty('--compare-page-ratio', Math.min(...ratios));
+        };
+        images.forEach(image => image.addEventListener('load', resize));
+        resize();
+      }
+      const update = value => {
+        const percent = Math.max(0, Math.min(100, Number(value) || 0));
+        input.value = String(percent);
+        comparison.style.setProperty('--compare-position', `${percent}%`);
+        input.setAttribute('aria-valuetext', `${input.dataset.beforeLabel} ${Math.round(percent)}%, ${input.dataset.afterLabel} ${Math.round(100 - percent)}%`);
+        comparison.querySelector('[data-compare-label-before]').style.opacity = percent < 12 ? '0' : '1';
+        comparison.querySelector('[data-compare-label-after]').style.opacity = percent > 88 ? '0' : '1';
+      };
+      const updateFromPointer = event => {
+        const bounds = comparison.getBoundingClientRect();
+        update(Math.round((event.clientX - bounds.left) / bounds.width * 100));
+      };
+      input.addEventListener('input', () => update(input.value));
+      let activePointer = null;
+      input.addEventListener('pointerdown', event => {
+        if (!event.isPrimary || (event.pointerType === 'mouse' && event.button !== 0)) return;
+        event.preventDefault();
+        input.focus({ preventScroll: true });
+        activePointer = event.pointerId;
+        input.setPointerCapture(event.pointerId);
+        updateFromPointer(event);
+      });
+      input.addEventListener('pointermove', event => {
+        if (event.pointerId === activePointer) updateFromPointer(event);
+      });
+      const endDrag = () => { activePointer = null; };
+      input.addEventListener('pointerup', endDrag);
+      input.addEventListener('pointercancel', endDrag);
+      input.addEventListener('lostpointercapture', endDrag);
+      update(input.value);
+    });
     initialiseImageLoaders(content);
     setupScrollReveals(content);
     document.querySelectorAll('.cms-scroll-shell').forEach(shell => {

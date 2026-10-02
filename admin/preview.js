@@ -4,7 +4,7 @@
     const heading = block.heading ? h('h2', {}, block.heading) : null;
     const eyebrow = block.eyebrow ? h('p', { className: 'preview-eyebrow' }, block.eyebrow) : null;
     const text = value => value ? h('p', { className: 'preview-copy' }, value) : null;
-    const image = (value, className = '') => value ? h('img', { src: getAsset(value).toString(), alt: '', className }) : null;
+    const image = (value, className = '', placeholder = '') => value ? h('img', { src: getAsset(value).toString(), alt: '', className }) : placeholder ? h('div', { className: 'preview-placeholder' }, h('small', {}, 'Image placeholder'), h('span', {}, placeholder)) : null;
 
     switch (block.type) {
       case 'two_column_text':
@@ -18,9 +18,24 @@
           return h('section', { className: `preview-block preview-text-image preview-layout-${block.layout || 'split'} preview-image-${block.imagePosition || 'right'} preview-split-${block.imageWidth || '50'}`, key: index }, ...children);
         }
       case 'image_full':
-        return h('section', { className: 'preview-block', key: index }, eyebrow, heading, h('div', { className: `preview-media preview-width-${block.width || 'full'} preview-align-${block.alignment || 'center'} preview-display-${block.displayMode || 'static'}` }, image(block.image, `preview-ratio-${block.aspectRatio || 'auto'} preview-fit-${block.fit || 'cover'} preview-focal-${block.focalPoint || 'center'}`)), text(block.caption));
+        return h('section', { className: 'preview-block', key: index }, eyebrow, heading, h('div', { className: `preview-media preview-width-${block.width || 'full'} preview-align-${block.alignment || 'center'} preview-display-${block.displayMode || 'static'}` }, image(block.image, `preview-ratio-${block.aspectRatio || 'auto'} preview-fit-${block.fit || 'cover'} preview-focal-${block.focalPoint || 'center'}`, block.placeholderLabel)), text(block.caption));
       case 'gallery':
-        return h('section', { className: 'preview-block', key: index }, eyebrow, heading, h('div', { className: `preview-gallery preview-gallery-${block.columns || 'two'}` }, ...(block.images || []).map((item, itemIndex) => h('div', { key: itemIndex }, image(item.image, `preview-ratio-${block.aspectRatio || 'auto'} preview-fit-${block.fit || 'cover'} preview-focal-${item.focalPoint || block.focalPoint || 'center'}`), text(item.caption)))));
+        if (block.displayMode === 'page_preview') return h('section', { className: 'preview-block', key: index }, eyebrow, heading,
+          h('div', { className: 'preview-full-pages' },
+            h('div', { className: 'preview-page-tabs' }, ...(block.images || []).map((item, i) => h('button', { type: 'button', key: i, onClick: event => { const root = event.currentTarget.closest('.preview-full-pages'); root.querySelectorAll('.preview-page-panel').forEach((panel, index) => { panel.hidden = index !== i; }); } }, item.label || item.caption || `Page ${i + 1}`))),
+            ...(block.images || []).map((item, i) => h('div', { className: 'preview-page-panel', hidden: i > 0, key: i }, image(item.image, '', item.placeholderLabel)))
+          ), text(block.caption));
+        return h('section', { className: 'preview-block', key: index }, eyebrow, heading, h('div', { className: `preview-gallery preview-gallery-${block.columns || 'two'}` }, ...(block.images || []).map((item, itemIndex) => h('div', { key: itemIndex }, image(item.image, `preview-ratio-${block.aspectRatio || 'auto'} preview-fit-${block.fit || 'cover'} preview-focal-${item.focalPoint || block.focalPoint || 'center'}`, item.placeholderLabel), text(item.caption)))));
+      case 'before_after':
+        return h('section', { className: 'preview-block', key: index }, eyebrow, heading,
+          h('div', { className: `preview-compare preview-ratio-${block.aspectRatio || 'landscape'} preview-fit-${block.fit || 'contain'} preview-focal-${block.focalPoint || 'top'}`, style: { '--position': '50%' } },
+            h('div', { className: 'preview-compare-after' }, image(block.afterImage, '', block.afterPlaceholder || 'After image')),
+            h('div', { className: 'preview-compare-before' }, image(block.beforeImage, '', block.beforePlaceholder || 'Before image')),
+            h('span', { className: 'preview-compare-label preview-label-before' }, block.beforeLabel || 'Before'),
+            h('span', { className: 'preview-compare-label preview-label-after' }, block.afterLabel || 'After'),
+            h('span', { className: 'preview-compare-handle', 'aria-hidden': true }, '↔'),
+            h('input', { type: 'range', min: 0, max: 100, defaultValue: 50, 'aria-label': `${block.label || 'Design'}: before and after`, onInput: event => event.currentTarget.parentElement.style.setProperty('--position', `${event.currentTarget.value}%`) })
+          ), text(block.caption));
       case 'feature_grid':
         return h('section', { className: 'preview-block', key: index }, eyebrow, heading, h('div', { className: 'preview-cards' }, ...(block.items || []).map((item, itemIndex) => h('article', { key: itemIndex }, h('small', {}, item.number), h('h3', {}, item.title), text(item.body)))));
       case 'stats':

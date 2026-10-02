@@ -1605,9 +1605,11 @@ html::-webkit-scrollbar,
 }
 
 .concept-card .card-body { padding: 16px 10px 10px; }
-.concept-card .card-title { font-size: clamp(17px, 1.35vw, 22px); }
+.concept-card .card-title { font-size: clamp(17px, 1.35vw, 22px); padding-right: 36px; }
+.concept-card .card-body > .card-arrow { position: absolute; top: 34px; right: 10px; }
 .concept-card .card-desc { max-width: 620px; }
 .concept-card .card-footer { padding-inline: 10px; }
+.concept-card .card-footer .card-arrow { margin-left: auto; }
 .concept-card .card-tags { flex-wrap: wrap; }
 
 .concept-profile {
@@ -2081,3 +2083,4 @@ html::-webkit-scrollbar,
   .mobile-menu-toggle::before,
   .mobile-menu-toggle::after { transition: none; }
 }
+.concept-card[data-project-card="plekundig"] .cms-card-thumb-image { object-position: center; }

@@ -1,0 +1,107 @@
+{
+  "slug": "plekundig",
+  "showInRecommendations": true,
+  "title": "Plekundig",
+  "heroTitle": "Plekundig",
+  "seoDescription": "A product design case study on Plekundig’s landing-page redesign and clearer property insights for homebuyers.",
+  "client": "Plekundig",
+  "category": "Web · Property insights",
+  "homepageTags": [
+    "Product design",
+    "Design system"
+  ],
+  "deck": "Helping homebuyers understand a property before they buy it.",
+  "industry": "Property technology",
+  "role": "Product Designer",
+  "team": [
+    "Middl Men",
+    "Plekundig team"
+  ],
+  "recommendations": [
+    "digital-store",
+    "login-revamp"
+  ],
+  "blocks": [
+    {
+      "type": "two_column_text",
+      "sectionId": "overview",
+      "navLabel": "Overview",
+      "showInNav": true,
+      "eyebrow": "About the project",
+      "heading": "Know what you are buying.",
+      "left": "A house listing tells only part of the story. Buyers also need to understand the area, energy performance, documents, ownership, and possible risks. Plekundig brings this information into one place for people buying a home in the Netherlands.",
+      "right": "As Product Designer, I worked with [Middl Men](https://www.instagram.com/middl_men/) and the Plekundig team on the landing page, property reports, pricing, and purchase popups. The goal was to explain the service clearly, help buyers find the important information, and show what they would get before paying. I also created the entire design system, keeping the visual design consistent across every page of the website."
+    },
+    {
+      "type": "feature_grid",
+      "sectionId": "design-problems",
+      "navLabel": "The problems",
+      "showInNav": true,
+      "eyebrow": "What needed work",
+      "heading": "Three things to make clearer.",
+      "items": [
+        {
+          "number": "01",
+          "title": "Why use Plekundig?",
+          "body": "The old landing page explained the AI and its features. It needed a clearer message about how the service helps someone buying a house."
+        },
+        {
+          "number": "02",
+          "title": "What matters in the report?",
+          "body": "The report showed a lot of information at once. The key findings needed more space, with details available when the buyer wanted to explore them."
+        },
+        {
+          "number": "03",
+          "title": "What am I paying for?",
+          "body": "Using a credit, buying more credits, and adding ownership information are different decisions. Each needed a clear explanation."
+        }
+      ]
+    },
+    {
+      "type": "rich_text",
+      "sectionId": "landing",
+      "navLabel": "Landing page",
+      "showInNav": true,
+      "eyebrow": "The landing page",
+      "heading": "Understand the value at a glance.",
+      "body": "The original page introduced Plekundig through AI and a list of features. The redesign brought the buyer’s question forward: **what should I know about this house before I buy it?**\n\nI reorganized the story around the answers Plekundig can help uncover—property details, potential risks, documents, and ownership. A stronger visual identity tied these sections together, with checking a property as the main action.\n\nThe pages below show the change in message and layout.",
+      "contentWidth": "wide"
+    },
+    {
+      "type": "before_after",
+      "sectionId": "landing-full-pages",
+      "showInNav": false,
+      "label": "Full landing pages",
+      "beforeImage": "images/plekundig/landing-before.png",
+      "afterImage": "images/plekundig/landing-after-updated.png",
+      "beforeAlt": "Original full landing page",
+      "afterAlt": "Redesigned full landing page",
+      "beforeLabel": "Before",
+      "afterLabel": "After",
+      "aspectRatio": "full_page",
+      "fit": "contain",
+      "focalPoint": "top",
+      "caption": "Drag anywhere across the pages to compare. Both designs are shown in full."
+    },
+    {
+      "type": "rich_text",
+      "sectionId": "live-site",
+      "navLabel": "Live website",
+      "showInNav": true,
+      "body": "[Visit the live site ↗](https://www.plekundig.nl/)",
+      "contentWidth": "wide"
+    }
+  ],
+  "thumbnail": "images/plekundig/thumbnail-1600.png",
+  "thumbnailAlt": "Plekundig logo on a burgundy property illustration",
+  "thumbnailFit": "contain",
+  "thumbnailBackground": "#190202",
+  "thumbnailPixelBase": "#360b0b",
+  "thumbnailPixelAccent": "#a1251b",
+  "teamLinks": [
+    {
+      "name": "Middl Men",
+      "url": "https://www.instagram.com/middl_men/"
+    }
+  ]
+}

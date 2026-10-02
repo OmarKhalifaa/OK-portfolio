@@ -41,6 +41,7 @@ Available content blocks:
 - Full-width image
 - Text + image
 - Image gallery
+- Before / after comparison (draggable divider, with optional images and placeholders)
 - Video
 - Feature / insight cards
 - Results / statistics
@@ -62,6 +63,10 @@ The **Full-width image** block includes:
 The **Text + image** block additionally controls the image side, image-column width, and vertical alignment. Galleries control their column count, common aspect ratio, fit, and crop focus. Smaller image widths automatically become full width on mobile so they remain readable.
 
 Every content block can have a section ID. Blocks with a side-menu label and **Show in side menu** enabled automatically appear in the sticky project navigation.
+
+The **Before / after comparison** block overlays two images in the same frame. Visitors can drag the divider with a mouse or touch, or use arrow keys while it is focused. Upload the before and after images independently, set their labels and descriptions, and choose their fit and shape. Use images aligned to the same viewport for a meaningful comparison. Empty image fields show the named placeholders while the case study is being prepared. Full-width images and galleries also support optional placeholder text.
+
+For tall pages with different lengths, use an **Image gallery** with **Full pages with tabs and scrolling** selected. Each image is shown at the full preview width, with its own scroll position and a named tab. This keeps text readable and avoids forcing unrelated sections into an overlay.
 
 ## Project URLs
 

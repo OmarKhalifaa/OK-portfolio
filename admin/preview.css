@@ -25,6 +25,30 @@ body { margin: 0; background: #0c0c0b; color: #f5f4ee; font-family: 'DM Sans', s
 .preview-ratio-landscape{aspect-ratio:16/9}.preview-ratio-standard{aspect-ratio:4/3}.preview-ratio-square{aspect-ratio:1}.preview-ratio-portrait{aspect-ratio:4/5}
 .preview-fit-cover{object-fit:cover}.preview-fit-contain{object-fit:contain}.preview-focal-center{object-position:center}.preview-focal-top{object-position:center top}.preview-focal-bottom{object-position:center bottom}.preview-focal-left{object-position:left center}.preview-focal-right{object-position:right center}
 .preview-focal-upper{object-position:center 34%}.preview-focal-lower{object-position:center 72%}
+.preview-full-pages { border:1px solid #ffffff24; border-radius:10px; overflow:hidden; }
+.preview-page-tabs { display:flex; gap:8px; padding:12px; background:#181817; }
+.preview-page-tabs button { padding:8px 16px; border:1px solid #ffffff24; border-radius:6px; background:#111; color:#f5f4ee; cursor:pointer; }
+.preview-page-panel { max-height:600px; overflow-y:auto; }
+.preview-page-panel[hidden] { display:none; }
+.preview-page-panel img { display:block; width:100%; height:auto; }
+.preview-placeholder { min-height:240px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:24px; text-align:center; border:1px dashed #ffffff24; background:#111110; color:#b8b8b1; }
+.preview-placeholder small { font-size:10px; text-transform:uppercase; color:#7a7a73; }
+.preview-compare { position:relative; overflow:hidden; border:1px solid #ffffff24; border-radius:10px; }
+.preview-compare-before,.preview-compare-after { position:absolute; inset:0; }
+.preview-compare-before { clip-path:inset(0 calc(100% - var(--position)) 0 0); }
+.preview-compare img { width:100%; height:100%; margin:0; object-fit:contain; }
+.preview-compare.preview-fit-cover img { object-fit:cover; }
+.preview-compare.preview-focal-top img { object-position:center top; }
+.preview-compare.preview-focal-bottom img { object-position:center bottom; }
+.preview-compare .preview-placeholder { min-height:0; height:100%; border:0; }
+.preview-compare-before .preview-placeholder { padding-right:52%; background:#181817; }
+.preview-compare-after .preview-placeholder { padding-left:52%; background:#14221c; }
+.preview-compare-label { position:absolute; top:12px; padding:6px 10px; border-radius:99px; background:#0c0c0bdd; font-size:12px; }
+.preview-label-before { left:12px; }.preview-label-after { right:12px; }
+.preview-compare-handle { position:absolute; left:var(--position); top:0; bottom:0; width:2px; background:#5dcaa5; }
+.preview-compare-handle::after { content:'↔'; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); display:grid; place-items:center; width:40px; height:40px; border-radius:50%; background:#0c0c0b; border:1px solid #5dcaa5; }
+.preview-compare input { position:absolute; inset:0; width:100%; height:100%; margin:0; opacity:0; cursor:ew-resize; }
+.preview-compare:focus-within { outline:2px solid #5dcaa5; outline-offset:4px; }
 .preview-gallery-three{grid-template-columns:repeat(3,1fr)}
 .preview-cards,.preview-stats { gap:0; border:1px solid rgba(255,255,255,.1); }
 .preview-cards article,.preview-stats div { min-height:170px; padding:24px; border-right:1px solid rgba(255,255,255,.1); }
@@ -34,3 +58,7 @@ body { margin: 0; background: #0c0c0b; color: #f5f4ee; font-family: 'DM Sans', s
 .preview-video { aspect-ratio:16/9; display:grid; place-items:center; background:#000; color:#7a7a73; }
 .preview-divider { padding:26px 7%; border-bottom:1px solid rgba(255,255,255,.08); color:#7a7a73; text-transform:uppercase; font-size:10px; letter-spacing:.08em; }
 @media(max-width:700px){.preview-meta,.preview-columns,.preview-text-image,.preview-cards,.preview-stats,.preview-gallery{grid-template-columns:1fr}.preview-meta div{border-bottom:1px solid rgba(255,255,255,.08)}.preview-hero,.preview-block{padding:42px 22px}}
+.preview-ratio-full_page{aspect-ratio:auto;background:#fff}
+.preview-ratio-full_page .preview-compare-after{position:relative}
+.preview-ratio-full_page img{height:auto!important}
+.preview-ratio-full_page .preview-compare-before{background:#fff}
