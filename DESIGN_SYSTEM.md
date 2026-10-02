@@ -126,6 +126,7 @@ Vertical borders are structural grid lines. The middle card stack uses a two-col
 - Thumbnail ratio is `4 / 3`.
 - Category pills are intentionally removed from thumbnail tops.
 - Project titles sit directly above their descriptions.
+- A cream “Read case study” pill follows the cursor on hover, staying inside the card edges. Keyboard focus and reduced motion use a fixed thumbnail corner position.
 - Cursor halo remains available on hover-capable devices.
 
 ### Experience and profile rail

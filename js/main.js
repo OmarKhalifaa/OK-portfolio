@@ -134,7 +134,7 @@
   field.appendChild(glints);
 })();
 
-/* ── HALO CARDS ── */
+/* ── CARD POINTER EFFECTS ── */
 (() => {
   const cards = document.querySelectorAll('.halo-card');
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
@@ -143,6 +143,7 @@
   let activeCard;
   let x, y;
   cards.forEach(card => {
+    const cta = card.querySelector('.card-cta');
     card.addEventListener('pointermove', event => {
       if (event.pointerType === 'touch' || reduceMotion.matches) return;
       activeCard = card;
@@ -150,12 +151,28 @@
       y = event.clientY;
       if (animationFrame !== null) return;
       animationFrame = requestAnimationFrame(() => {
-        const rect = activeCard.getBoundingClientRect();
-        activeCard.style.setProperty('--mx', `${x - rect.left}px`);
-        activeCard.style.setProperty('--my', `${y - rect.top}px`);
+        if (!activeCard) { animationFrame = null; return; }
+        const currentCard = activeCard;
+        const rect = currentCard.getBoundingClientRect();
+        const currentCta = currentCard.querySelector('.card-cta');
+        const localX = x - rect.left;
+        const localY = y - rect.top;
+        const pillX = currentCta && Math.max(8, Math.min(localX + 12, rect.width - currentCta.offsetWidth - 8));
+        const pillY = currentCta && Math.max(8, Math.min(localY + 12, rect.height - currentCta.offsetHeight - 8));
+        currentCard.style.setProperty('--mx', `${localX}px`);
+        currentCard.style.setProperty('--my', `${localY}px`);
+        if (currentCta) {
+          currentCard.style.setProperty('--cta-x', `${pillX}px`);
+          currentCard.style.setProperty('--cta-y', `${pillY}px`);
+          currentCard.classList.add('card-pointer-active');
+        }
         animationFrame = null;
       });
     }, { passive: true });
+    if (cta) card.addEventListener('pointerleave', () => {
+      card.classList.remove('card-pointer-active');
+      if (activeCard === card) activeCard = null;
+    });
   });
 })();
 

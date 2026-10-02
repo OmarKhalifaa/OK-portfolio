@@ -391,24 +391,38 @@ section {
   font-weight: 300;
 }
 
-.card-arrow {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-3);
-  transition: color 0.2s, border-color 0.2s, background 0.2s, transform 0.2s;
-  flex-shrink: 0;
+.card-cta {
+  position: absolute;
+  right: 24px;
+  top: 24px;
+  z-index: 8;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #F5F3EC;
+  color: #111110;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 16px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity .2s ease;
 }
 
-.halo-card:hover .card-arrow {
-  color: var(--accent);
-  border-color: rgba(93,202,165,0.3);
-  background: rgba(93,202,165,0.06);
-  transform: translate(2px, -2px);
+.halo-card:hover .card-cta,
+.halo-card:focus-visible .card-cta {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .halo-card.card-pointer-active .card-cta {
+    top: 0;
+    right: auto;
+    left: 0;
+    transform: translate3d(var(--cta-x), var(--cta-y), 0);
+  }
 }
 
 /* ── FOOTER ── */
@@ -825,9 +839,12 @@ html::-webkit-scrollbar,
   pointer-events: none;
 }
 
-.concept-card .card-body { padding: 16px 10px 10px; }
-.concept-card .card-title { font-size: clamp(17px, 1.35vw, 22px); padding-right: 36px; }
-.concept-card .card-body > .card-arrow { position: absolute; top: 34px; right: 10px; }
+.concept-card .card-body {
+  padding: 16px 10px 10px;
+}
+.concept-card .card-title {
+  font-size: clamp(17px, 1.35vw, 22px);
+}
 .concept-card .card-desc { max-width: 620px; }
 
 .concept-profile {
@@ -1131,6 +1148,7 @@ html::-webkit-scrollbar,
     min-height: 0;
   }
   .concept-card-stack::after { display: none; }
+  .concept-page #work::after { display: none; }
   .concept-page #hero::after,
   .concept-work-heading::after {
     content: '';
@@ -1292,7 +1310,7 @@ html::-webkit-scrollbar,
 
 @media (prefers-reduced-motion: reduce) {
   body, .theme-toggle, .halo-card, .halo-card::before, .halo-card::after,
-  .card-arrow, .nav-pill { transition: none; }
+  .card-cta, .nav-pill { transition: none; }
   .concept-page .available-badge { opacity: 1; animation: none; }
   .badge-dot, .marquee-track { animation: none; }
   .marquee-track { width: auto; flex-wrap: wrap; will-change: auto; }
