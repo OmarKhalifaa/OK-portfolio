@@ -1,6 +1,6 @@
 # Portfolio CMS
 
-The portfolio uses Decap CMS as a Git-backed editor. Project pages read structured JSON files from `content/projects`, so CMS edits become visible without a database or application server.
+The portfolio uses Decap CMS as a Git-backed editor. A static build turns structured JSON files from `content/projects` into complete HTML pages. Publishing a CMS edit triggers Cloudflare's build; visitors and search engines receive the content immediately without browser-side JSON requests.
 
 ## Start the CMS locally
 
@@ -64,25 +64,24 @@ The **Text + image** block additionally controls the image side, image-column wi
 
 Every content block can have a section ID. Blocks with a side-menu label and **Show in side menu** enabled automatically appear in the sticky project navigation.
 
+Enable **Published on website** to include a project on the homepage, in recommendations, and in the sitemap. Disabled projects remain editable CMS drafts and are excluded from the public build. Local changes rebuild automatically while `npm run dev` is running.
+
 The **Before / after comparison** block overlays two images in the same frame. Visitors can drag the divider with a mouse or touch, or use arrow keys while it is focused. Upload the before and after images independently, set their labels and descriptions, and choose their fit and shape. Use images aligned to the same viewport for a meaningful comparison. Empty image fields show the named placeholders while the case study is being prepared. Full-width images and galleries also support optional placeholder text.
 
 For tall pages with different lengths, use an **Image gallery** with **Full pages with tabs and scrolling** selected. Each image is shown at the full preview width, with its own scroll position and a named tab. This keeps text readable and avoids forcing unrelated sections into an overlay.
 
 ## Project URLs
 
-The default project opens at:
+Published projects have their own permanent URLs:
 
 ```text
-/project.html
+/projects/login-revamp/
+/projects/digital-store/
+/projects/accessibility-widget/
+/projects/plekundig/
 ```
 
-Other projects use their slug:
-
-```text
-/project.html?project=login-revamp
-/project.html?project=bikeopolis
-/project.html?project=meal-holic
-```
+Old `/project.html?project=...` and `/project?project=...` links redirect permanently through Cloudflare Pages Functions. Unpublished project URLs return the site's 404 page.
 
 ## Enable the hosted CMS
 
@@ -91,12 +90,12 @@ The production configuration uses Decap's GitHub backend with OAuth handled by C
 Hosted CMS: `https://ok-portfolio.pages.dev/admin/`
 
 1. In Cloudflare, create a Pages project connected to `OmarKhalifaa/OK-portfolio`.
-2. Use `main` as the production branch, no build command, and the repository root (`.`) as the output directory.
+2. Use `main` as the production branch, `npm run build` as the build command, and `dist` as the output directory. Use Node.js 22.12 or newer. Deploy the build output rather than the source directory.
 3. In GitHub, open **Settings → Developer settings → OAuth Apps** and register a new OAuth application.
 4. Use `https://ok-portfolio.pages.dev` as the application homepage.
 5. Use `https://ok-portfolio.pages.dev/callback` as the authorization callback URL.
 6. Make sure the OAuth application's Client ID matches `GITHUB_CLIENT_ID` in `functions/auth.js` and `functions/callback.js`.
-7. In the Cloudflare Pages project settings, add `GITHUB_CLIENT_SECRET` as an encrypted secret for Production. Add it to Preview too if CMS sign-in must work on preview deployments.
+7. In the Cloudflare Pages project settings, add `GITHUB_CLIENT_SECRET` as an encrypted secret for Production. Hosted editing uses the production `/admin/` origin; the OAuth popup only sends credentials to a window on that same origin. Use the local backend for local editing.
 8. Redeploy the Pages project so the secret is available to the Functions.
 9. Open `https://ok-portfolio.pages.dev/admin/` and sign in with the GitHub account that has write access to the repository.
 

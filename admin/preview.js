@@ -60,7 +60,12 @@
   const ProjectPreview = window.createClass({
     render() {
       const data = this.props.entry.getIn(['data']).toJS();
-      const getAsset = this.props.getAsset;
+      const getAsset = value => {
+        const original = this.props.getAsset(value);
+        const resolved = original?.toString() || '';
+        if (/^(?:blob:|data:)/.test(resolved)) return original;
+        return window.PORTFOLIO_ASSETS?.[String(value).replace(/^\//, '')] || original;
+      };
       return h('main', { className: 'cms-project-preview' },
         data.thumbnail ? h('section', { className: 'preview-thumbnail' },
           h('p', { className: 'preview-eyebrow' }, 'Project card thumbnail'),

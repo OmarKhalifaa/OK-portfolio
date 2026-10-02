@@ -5,7 +5,7 @@ This document is the source of truth for the portfolio’s visual language, layo
 ## Principles
 
 - Calm editorial structure with visible grid logic.
-- Light-first presentation with a fully supported dark theme.
+- Dark is the default theme; light remains fully supported.
 - Green is an interaction accent, not a surface colour.
 - Motion should feel deliberate, physical, and continuous.
 - Information density comes from alignment and hierarchy rather than decoration.
@@ -17,7 +17,7 @@ This document is the source of truth for the portfolio’s visual language, layo
 | Role | Family | Weight | Current use |
 |---|---|---:|---|
 | Display | Syne | 500–800 | Hero, section titles, card titles, logo, counters |
-| Body and UI | DM Sans | 300–500 | Navigation, body copy, metadata, tags, timeline |
+| Body and UI | DM Sans | 300–500 | Navigation, body copy, metadata, timeline |
 
 Key concept sizes:
 
@@ -69,7 +69,7 @@ Project pages use a three-column editorial shell on desktop:
 
 At `960px` the recommendation rail moves below the case study. At `720px` the section navigation becomes a sticky horizontal strip and all content follows a single-column flow. The project metadata remains fixed in structure while the content blocks are intended to become reorderable through Decap CMS.
 
-Project content is stored as JSON in `content/projects`. `project.html` renders each block at runtime, builds the side navigation from block labels, and resolves the three recommended-project cards. Decap CMS is available at `/admin/`; its schema and allowed block types live in `admin/config.yml`.
+Project content is stored as JSON in `content/projects`. The build uses `templates/project.html` and `scripts/project-renderer.mjs` to generate complete case-study pages at `/projects/<slug>/`, with section navigation and published recommendations. Browser JavaScript enhances the existing content. Decap CMS is available at `/admin/`; its schema and allowed block types live in `admin/config.yml`.
 
 The project-page header reuses the homepage navigation geometry, typography, link structure, theme control, and mobile `+` menu. Image blocks expose controlled width, alignment, aspect-ratio, fit, focal-point, and caption settings; text-image blocks also expose column proportion and vertical alignment.
 
@@ -100,7 +100,7 @@ Vertical borders are structural grid lines. The middle card stack uses a two-col
 
 - Fixed, full-width bar with a flat bottom rule and subtle `12px` backdrop blur.
 - Bold uppercase “OMAR KHALIFA” wordmark begins at the middle-column grid line.
-- “About | Profile” links and the theme control align to the right edge of that same middle column.
+- The About link and theme control align to the right edge of that same middle column.
 - The bar does not collapse or change shape while scrolling.
 - On mobile, a `+` control reveals the links in a compact dropdown sheet below the wordmark; it rotates into a close icon while open.
 
@@ -108,7 +108,7 @@ Vertical borders are structural grid lines. The middle card stack uses a two-col
 
 - Availability badge at the top.
 - Two-line greeting: “Hey,” followed by the unbroken “I’m Omar!” line.
-- Cairo location includes map, globe, and small CSS-rendered Egyptian-flag details.
+- Cairo location includes map, globe, and an Egyptian-flag SVG.
 - Social and resume links use dedicated icons and anchor the bottom-left; location sits opposite them.
 - Dot field, fluid trail, and independent glints share the column without blocking input.
 
@@ -125,7 +125,7 @@ Vertical borders are structural grid lines. The middle card stack uses a two-col
 - Zero outer radius and no standalone surface; hierarchy comes from grid separators.
 - Thumbnail ratio is `4 / 3`.
 - Category pills are intentionally removed from thumbnail tops.
-- Metadata tags remain below the project description.
+- Project titles sit directly above their descriptions.
 - Cursor halo remains available on hover-capable devices.
 
 ### Experience and profile rail
@@ -141,8 +141,8 @@ Vertical borders are structural grid lines. The middle card stack uses a two-col
 | Pattern | Behaviour |
 |---|---|
 | Column entrance | Columns fade in with opacity only; delays are `.03s`, `.1s`, `.18s`. Thumbnails reveal through the original 8 × 5 colored pixel mosaic, then blur to sharp. Pixel opacity fades over `1s` after a `.45s` hold; the fixed blurred layer fades over `.9s` after `.8s`. Each reveal waits for image decode, homepage entry, and viewport visibility; this applies on refresh and project-logo returns. Native scrolling replaces the intercepted wheel loop. |
-| Portfolio introduction | Automatic three-sticker sequence on the first homepage visit per tab session (5s after artwork readiness). Its `.5s` fade starts 250ms before the page and thumbnail entrances resume. Visible thumbnail images decode during the intro; the original colored pixel overlays are preserved; full-column animated blur stays removed. A shared readiness gate coordinates normal homepage entries as well as the intro. No progress or playback controls. Escape skips; reduced motion bypasses the intro. `loader-preview.html` opens `index.html?intro=1` to replay it. Loading waits are bounded so the page remains accessible on a slow connection. |
-| Hero trail | Inertial green cursor trail with collision fragments; continues within the active hero session |
+| Portfolio introduction | Automatic three-sticker sequence on the first homepage visit per tab session (5s after artwork readiness). Its `.5s` fade starts 250ms before the page and thumbnail entrances resume. Visible thumbnail images decode during the intro; the colored pixel overlays are preserved. A shared readiness gate coordinates homepage entries. A visible Skip intro button and Escape dismiss it; reduced motion bypasses it. `/?intro=1` replays the sequence. Loading waits are bounded. |
+| Hero trail | Inertial green cursor trail with collision fragments; stops when idle, hidden, or outside the viewport |
 | Dot glints | Random positions, `3.5–7.5s` independent pulse cycles |
 | Grid rain | Green light pulses travel down the three primary vertical separators every `4.6s` |
 | Mobile line rain | Green pulses travel horizontally across the hero and work-heading dividers every `4.8s` |
@@ -160,16 +160,17 @@ When `prefers-reduced-motion: reduce` is active:
 - Grid rain and random glints are removed.
 - Counter reels immediately show their final values.
 - Theme changes apply immediately without the bottom-up wipe.
+- The capability ribbon wraps into a static list with duplicate labels hidden.
 - Touch devices do not render the custom cursor or fluid trail.
 
 ## Asset palettes
 
 | Work thumbnail | Palette |
 |---|---|
-| Master Design System Kit | Deep navy with violet icon |
-| Login Revamp | Deep red with Vodafone red icon |
-| Bikeopolis | Warm near-black with orange icon |
-| Meal-Holic | Aubergine near-black with purple icon |
+| Ana Vodafone Login | Light grey with a mobile-app preview |
+| Vodafone Business Digital Store | Deep red with the storefront identity |
+| Accessibility Widget | Light interface with accessibility profile cards |
+| Plekundig | Burgundy property illustration |
 
 ## Maintenance rules
 
@@ -182,6 +183,6 @@ When `prefers-reduced-motion: reduce` is active:
 - The dotted field, separator rain, typography, border treatment, theme behavior, and reduced-motion handling match the homepage system.
 
 - Update this file whenever layout proportions, tokens, motion durations, breakpoints, or component behaviours change.
-- Keep cache-busting query versions in `index.html` aligned for CSS and JavaScript.
+- The build fingerprints CSS, JavaScript, and generated images; source references do not need cache-busting query versions.
 - Preserve dark mode as the default unless the product direction explicitly changes.
 - Every new continuous animation must include a reduced-motion treatment.

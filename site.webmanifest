@@ -1,5 +1,5 @@
 {
-  "name": "Omar Khalifa - Full Badge",
+  "name": "Omar Khalifa — Senior Product Designer",
   "short_name": "Omar Khalifa",
   "icons": [
     {
@@ -15,5 +15,6 @@
   ],
   "theme_color": "#2C6274",
   "background_color": "#ffffff",
-  "display": "standalone"
+  "display": "standalone",
+  "start_url": "/"
 }

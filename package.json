@@ -1,18 +1,30 @@
 {
   "name": "omar-khalifa-portfolio",
   "private": true,
+  "type": "module",
+  "engines": { "node": ">=22.12" },
   "version": "1.0.0",
   "description": "Omar Khalifa portfolio and local Decap CMS workflow",
   "scripts": {
-    "serve": "http-server . -p 4173 -c-1",
+    "build": "node scripts/build.mjs",
+    "watch": "node scripts/build.mjs --watch",
+    "serve": "http-server dist -p 4173 -c-1",
     "cms": "decap-server",
-    "dev": "concurrently --kill-others --names SITE,CMS --prefix-colors cyan,green \"npm:serve\" \"npm:cms\"",
-    "validate": "node scripts/validate-content.mjs"
+    "predev": "npm run build",
+    "dev": "concurrently --kill-others --names BUILD,SITE,CMS --prefix-colors yellow,cyan,green \"npm:watch\" \"npm:serve\" \"npm:cms\"",
+    "validate": "node scripts/validate-content.mjs",
+    "test": "node --test",
+    "check": "npm test && npm run build && node scripts/validate-site.mjs"
   },
   "devDependencies": {
-    "concurrently": "10.0.3",
+    "cheerio": "^1.2.0",
+    "concurrently": "^10.0.5",
     "decap-server": "3.9.1",
+    "esbuild": "^0.28.2",
     "http-server": "14.1.1",
-    "js-yaml": "5.2.1"
+    "js-yaml": "^5.4.2",
+    "marked": "^18.0.14",
+    "sanitize-html": "^2.18.0",
+    "sharp": "^0.35.5"
   }
 }

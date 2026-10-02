@@ -4,20 +4,21 @@
 .intro-pending .concept-page .nav-pill,
 .intro-pending .concept-page #hero,
 .intro-pending .concept-page #work,
-.intro-pending .concept-profile,
-.intro-pending .concept-card .card-thumb { animation-play-state: paused; }
+.intro-pending .concept-profile { animation-play-state: paused; }
 .home-enter-pending .concept-page .nav-pill,
 .home-enter-pending .concept-page #hero,
 .home-enter-pending .concept-page #work,
 .home-enter-pending .concept-profile { animation-play-state: paused; }
 .intro-pending #cursor { visibility: hidden; }
 
-.portfolio-intro { --intro-paper: #f5f4ee; --intro-muted: #92928b; --intro-accent: #5dcaa5; position: fixed; inset: 0; z-index: 10000; display: flex; flex-direction: column; overflow: auto; background: #0c0c0b; color: var(--intro-paper); font-family: 'DM Sans', sans-serif; opacity: 1; transition: opacity .5s ease-in-out; }
+.portfolio-intro { --intro-paper: #f5f4ee; --intro-muted: #92928b; --intro-accent: #5dcaa5; position: fixed; inset: 0; z-index: 10000; display: flex; flex-direction: column; overflow: auto; padding: 0; background: #0c0c0b; color: var(--intro-paper); font-family: 'DM Sans', sans-serif; opacity: 1; transition: opacity .5s ease-in-out; }
 .portfolio-intro [hidden] { display: none !important; }
-.portfolio-intro { padding: 0; }
 .portfolio-intro::before { content: ''; position: absolute; inset: 12% 10%; pointer-events: none; background-image: radial-gradient(#77776b40 .8px, transparent .8px); background-size: 20px 20px; mask-image: radial-gradient(ellipse at center, #000, transparent 68%); }
 .portfolio-intro.is-leaving { opacity: 0; pointer-events: none; }
-.portfolio-intro .intro-header { position: relative; padding: 34px 42px; flex: 0 0 auto; }
+.portfolio-intro .intro-header { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 34px 42px; flex: 0 0 auto; }
+.intro-skip { padding: 8px 12px; border: 1px solid #ffffff24; border-radius: 6px; background: transparent; color: var(--intro-paper); font: 11px 'DM Sans', sans-serif; cursor: pointer; }
+.intro-skip:hover { background: #ffffff0a; }
+.intro-skip:focus-visible { outline: 2px solid var(--intro-accent); outline-offset: 4px; }
 .intro-wordmark { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800; letter-spacing: -.03em; }
 .intro-wordmark span { display: block; margin-top: 6px; font: 9px 'DM Sans', sans-serif; letter-spacing: .16em; color: var(--intro-muted); }
 .portfolio-intro .intro-center { position: relative; width: 100%; margin: auto; padding: 8px 24px 30px; text-align: center; transition: opacity .3s ease, transform .4s cubic-bezier(.22,.75,.25,1); }
@@ -38,9 +39,8 @@
 .intro-caption { font-family: 'Syne', sans-serif; font-size: clamp(30px, 4.4vw, 48px); letter-spacing: -.055em; line-height: 1.12; font-weight: 600; margin: 0; }
 .intro-dots { display: inline-flex; }.intro-dots i { font-style: normal; animation: intro-dot-pulse .9s infinite; }.intro-dots i:nth-child(2) { animation-delay: .15s; }.intro-dots i:nth-child(3) { animation-delay: .3s; }
 .intro-subtitle { margin: 14px 0 0; color: var(--intro-muted); font-size: 13px; line-height: 1.6; }
-.portfolio-intro .intro-footer { position: relative; padding: 20px 42px 34px; flex: 0 0 auto; }
+.portfolio-intro .intro-footer { position: relative; display: block; padding: 20px 42px 34px; flex: 0 0 auto; border: 0; background: transparent; text-align: left; }
 .portfolio-intro .intro-footer p { margin: 0; font-size: 11px; line-height: 1.7; color: var(--intro-muted); }.portfolio-intro .intro-footer p span { color: #595953; }
-.portfolio-intro .intro-footer { display: block; border: 0; background: transparent; text-align: left; }
 .intro-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
 @keyframes intro-typing { 0%, 100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(2px) rotate(0); } }
 @keyframes intro-thinking { 0%, 100% { transform: rotate(-5deg) translateY(0); } 50% { transform: rotate(4deg) translateY(-5px); } }

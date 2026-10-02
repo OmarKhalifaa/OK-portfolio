@@ -36,7 +36,7 @@ collections:
         widget: string
         hint: Lowercase letters, numbers, and hyphens only. This becomes the project URL.
         pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 'Use lowercase letters, numbers, and hyphens only.']
-      - label: Show in next projects
+      - label: Published on website
         name: showInRecommendations
         widget: boolean
         default: false

@@ -1,24 +1,15 @@
 (() => {
   const root = document.documentElement;
   const themeButton = document.getElementById('themeToggle');
-  const savedTheme = localStorage.getItem('theme');
+  let savedTheme = 'dark';
+  try { savedTheme = localStorage.getItem('theme') || 'dark'; } catch { /* Storage may be disabled. */ }
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   let isThemeTransitioning = false;
-
-  const smoothScroll = window.Lenis ? new window.Lenis({
-    autoRaf: true,
-    anchors: { offset: -88 },
-    lerp: .06,
-    wheelMultiplier: .95,
-    smoothWheel: true,
-    stopInertiaOnNavigate: true,
-    respectReducedMotion: true
-  }) : null;
 
   const applyTheme = theme => {
     if (theme === 'light') root.setAttribute('data-theme', 'light');
     else root.removeAttribute('data-theme');
-    localStorage.setItem('theme', theme);
+    try { localStorage.setItem('theme', theme); } catch { /* Keep the theme usable without storage. */ }
     themeButton?.setAttribute('aria-label', theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode');
     themeButton?.setAttribute('aria-pressed', String(theme === 'light'));
   };
@@ -53,131 +44,7 @@
   primaryLinks?.querySelectorAll('a').forEach(link => link.addEventListener('click', () => setMenuOpen(false)));
   document.addEventListener('keydown', event => { if (event.key === 'Escape') setMenuOpen(false); });
   window.matchMedia('(min-width: 621px)').addEventListener('change', event => { if (event.matches) setMenuOpen(false); });
-
-  const escapeHTML = value => String(value ?? '')
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#039;');
-
-  const markdown = value => {
-    if (!value) return '';
-    if (!window.marked || !window.DOMPurify) {
-      return `<p>${escapeHTML(value).replace(/\n\n+/g, '</p><p>').replace(/\n/g, '<br>')}</p>`;
-    }
-    return window.DOMPurify.sanitize(window.marked.parse(String(value)));
-  };
-
-  const safeMediaUrl = value => {
-    const url = String(value ?? '').trim();
-    if (!url || url.startsWith('javascript:') || url.startsWith('data:text/html')) return '';
-    return escapeHTML(url);
-  };
-
-  const safeFigmaPrototypeUrl = value => {
-    try {
-      const url = new URL(String(value ?? '').trim());
-      const host = url.hostname.toLowerCase();
-      if (url.protocol !== 'https:' || !['figma.com', 'www.figma.com', 'embed.figma.com'].includes(host) || !url.pathname.startsWith('/proto/')) return '';
-      url.hostname = 'embed.figma.com';
-      url.searchParams.set('embed-host', 'omar-khalifa-portfolio');
-      url.searchParams.delete('t');
-      url.searchParams.delete('viewport');
-      return escapeHTML(url.toString());
-    } catch {
-      return '';
-    }
-  };
-
-  const option = (value, allowed, fallback) => allowed.includes(value) ? value : fallback;
-  const mediaClasses = block => [
-    `cms-width-${option(block.width, ['full', 'wide', 'medium', 'narrow'], 'full')}`,
-    `cms-align-${option(block.alignment, ['left', 'center', 'right'], 'center')}`,
-    `cms-ratio-${option(block.aspectRatio, ['auto', 'landscape', 'standard', 'square', 'portrait'], 'auto')}`,
-    `cms-fit-${option(block.fit, ['cover', 'contain'], 'cover')}`,
-    `cms-focal-${option(block.focalPoint, ['center', 'top', 'bottom', 'left', 'right'], 'center')}`,
-    `cms-display-${option(block.displayMode, ['static', 'browser', 'scroll'], 'static')}`
-  ].join(' ');
-
-  const blockId = (block, index) => {
-    const candidate = String(block.sectionId || block.navLabel || `section-${index + 1}`)
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '');
-    return candidate || `section-${index + 1}`;
-  };
-
-  const blockHeading = block => {
-    if (!block.eyebrow && !block.heading) return '';
-    return `
-      <div class="section-heading ${block.compactHeading ? 'compact-heading' : ''}">
-        ${block.eyebrow ? `<p class="block-eyebrow">${escapeHTML(block.eyebrow)}</p>` : ''}
-        ${block.heading ? `<h2>${escapeHTML(block.heading)}</h2>` : ''}
-      </div>`;
-  };
-
-  const initialiseImageLoaders = scope => {
-    scope?.querySelectorAll('[data-image-loader]').forEach(media => {
-      const container = media.closest('.cms-scroll-shell') || media.parentElement;
-      if (!container || media.dataset.loaderReady === 'true') return;
-
-      media.dataset.loaderReady = 'true';
-      container.classList.add('is-image-loading');
-      let loaderStartedAt = null;
-      let mediaIsReady = false;
-      let hasFinished = false;
-
-      const revealWhenReady = () => {
-        if (hasFinished || !mediaIsReady || loaderStartedAt === null) return;
-        hasFinished = true;
-        const remainingDelay = Math.max(0, 1000 - (performance.now() - loaderStartedAt));
-        window.setTimeout(() => {
-          media.classList.add('is-loaded');
-          container.classList.add('is-image-revealing');
-          window.setTimeout(() => {
-            container.classList.remove('is-image-loading', 'is-image-revealing');
-          }, 320);
-        }, remainingDelay);
-      };
-
-      const markReady = () => {
-        mediaIsReady = true;
-        revealWhenReady();
-      };
-
-      if ('IntersectionObserver' in window) {
-        const observer = new IntersectionObserver(entries => {
-          if (!entries.some(entry => entry.isIntersecting)) return;
-          loaderStartedAt = performance.now();
-          observer.disconnect();
-          revealWhenReady();
-        }, { threshold: .05 });
-        observer.observe(container);
-      } else {
-        loaderStartedAt = performance.now();
-      }
-
-      const isReady = media.tagName === 'IMG'
-        ? media.complete
-        : media.tagName === 'VIDEO' && media.readyState >= 2;
-      const readyEvent = media.tagName === 'VIDEO' ? 'loadeddata' : 'load';
-
-      if (isReady) window.requestAnimationFrame(markReady);
-      else {
-        media.addEventListener(readyEvent, markReady, { once: true });
-        media.addEventListener('error', markReady, { once: true });
-      }
-    });
-  };
-
-  const renderImage = (image, alt, className = '', placeholderLabel = '') => {
-    const src = safeMediaUrl(image);
-    if (!src && placeholderLabel) return `<div class="cms-media-placeholder cms-media-planned"><span>Image placeholder</span><strong>${escapeHTML(placeholderLabel)}</strong></div>`;
-    if (!src) return '<div class="cms-media-placeholder">Add an image in the CMS</div>';
-    return `<img class="${escapeHTML(className)}" src="${src}" alt="${escapeHTML(alt || '')}" loading="lazy" data-image-loader>`;
-  };
+  nav?.classList.add('is-enhanced');
 
   const setupScrollReveals = scope => {
     const blocks = [...(scope?.querySelectorAll('.content-block') || [])];
@@ -200,192 +67,8 @@
     blocks.forEach(block => observer.observe(block));
   };
 
-  const renderVideo = (urlValue, options = {}) => {
-    const value = String(urlValue ?? '').trim();
-    const youtube = value.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
-    const vimeo = value.match(/vimeo\.com\/(?:video\/)?(\d+)/);
-
-    if (youtube) {
-      return `<iframe src="https://www.youtube-nocookie.com/embed/${escapeHTML(youtube[1])}" title="Project video" loading="lazy" data-image-loader allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-    }
-    if (vimeo) {
-      return `<iframe src="https://player.vimeo.com/video/${escapeHTML(vimeo[1])}" title="Project video" loading="lazy" data-image-loader allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`;
-    }
-
-    const src = safeMediaUrl(value);
-    const autoplay = options.autoplay === true;
-    const controls = options.controls !== false && !autoplay;
-    return src
-      ? `<video src="${src}"${controls ? ' controls' : ''}${autoplay ? ' autoplay muted playsinline' : ''}${options.loop === true ? ' loop' : ''} preload="${autoplay ? 'auto' : 'metadata'}" data-image-loader></video>`
-      : '<div class="cms-media-placeholder">Add a video URL in the CMS</div>';
-  };
-
-  const renderBlock = (block, index) => {
-    const id = blockId(block, index);
-    const heading = blockHeading(block);
-
-    switch (block.type) {
-      case 'rich_text':
-        return `<section class="content-block content-copy" id="${id}">${heading}<div class="cms-richtext cms-richtext-${escapeHTML(block.contentWidth || 'wide')}">${markdown(block.body)}</div></section>`;
-
-      case 'two_column_text':
-        return `<section class="content-block content-copy" id="${id}">${heading}<div class="copy-columns"><div class="cms-richtext">${markdown(block.left)}</div><div class="cms-richtext">${markdown(block.right)}</div></div></section>`;
-
-      case 'before_after': {
-        const label = block.label || 'Design comparison';
-        const beforeLabel = block.beforeLabel || 'Before';
-        const afterLabel = block.afterLabel || 'After';
-        const layer = (side, image, alt, placeholder) => `<div class="cms-compare-layer cms-compare-${side}">${renderImage(image, alt, '', placeholder || `${label} · ${side}`)}</div>`;
-        return `<figure class="content-block media-block cms-comparison-block" id="${id}">${heading}<div class="cms-compare cms-compare-${option(block.aspectRatio, ['landscape', 'standard', 'square', 'portrait', 'full_page'], 'landscape')} cms-fit-${option(block.fit, ['contain', 'cover'], 'contain')} cms-focal-${option(block.focalPoint, ['center', 'top', 'bottom'], 'top')}" data-before-after style="--compare-position:50%">${layer('after', block.afterImage, block.afterAlt, block.afterPlaceholder)}${layer('before', block.beforeImage, block.beforeAlt, block.beforePlaceholder)}<span class="cms-compare-label cms-compare-label-before" data-compare-label-before>${escapeHTML(beforeLabel)}</span><span class="cms-compare-label cms-compare-label-after" data-compare-label-after>${escapeHTML(afterLabel)}</span><div class="cms-compare-divider" aria-hidden="true"><span>↔</span></div><input class="cms-compare-input" type="range" min="0" max="100" step="1" value="50" aria-label="${escapeHTML(label)}: before and after" aria-describedby="${id}-hint" aria-valuetext="${escapeHTML(beforeLabel)} 50%, ${escapeHTML(afterLabel)} 50%" data-before-label="${escapeHTML(beforeLabel)}" data-after-label="${escapeHTML(afterLabel)}"></div><figcaption class="cms-compare-caption" id="${id}-hint">${escapeHTML(block.caption || 'Drag to compare the two designs.')}<span>Drag the handle · or use arrow keys</span></figcaption></figure>`;
-      }
-
-      case 'image_full':
-        {
-          const isScrollable = block.displayMode === 'scroll';
-          const frame = `<div class="cms-media-frame ${mediaClasses(block)}"${isScrollable ? ` tabindex="0" role="region" aria-label="Scrollable preview: ${escapeHTML(block.alt || block.heading || 'project screen')}" data-lenis-prevent` : ''}>${renderImage(block.image, block.alt, '', block.placeholderLabel)}</div>`;
-          const media = isScrollable ? `<div class="cms-scroll-shell">${frame}<span class="cms-scroll-hint" aria-hidden="true">Scroll to explore <span>↓</span></span></div>` : frame;
-          return `<figure class="content-block media-block cms-image-block" id="${id}">${heading}${media}${block.caption ? `<figcaption class="cms-caption-${option(block.captionAlignment, ['left', 'center', 'right'], 'left')}">${escapeHTML(block.caption)}</figcaption>` : ''}</figure>`;
-        }
-
-      case 'motion_showcase': {
-        const renderMotionCards = items => (items || []).map(item => {
-          const iconSource = safeMediaUrl(item.icon);
-          return `<button type="button" class="cms-motion-card" data-motion-feature aria-pressed="false" aria-label="${escapeHTML(item.label)}, off"><span class="cms-motion-card-top"><span class="cms-motion-card-icon" aria-hidden="true">${iconSource ? `<img src="${iconSource}" alt="" loading="lazy">` : ''}</span><span class="cms-motion-switch" aria-hidden="true"><i></i></span></span><strong>${escapeHTML(item.label)}</strong><span>${escapeHTML(item.description)}</span></button>`;
-        }).join('');
-        return `<section class="content-block cms-motion-showcase-block" id="${id}">${heading}<div class="cms-motion-showcase" data-motion-showcase><div class="cms-motion-stage"><div class="cms-motion-rail cms-motion-rail-top">${renderMotionCards(block.topItems)}</div><div class="cms-motion-rail cms-motion-rail-bottom">${renderMotionCards(block.bottomItems)}</div></div><button type="button" class="cms-motion-toggle" data-motion-toggle aria-pressed="false"><span>Pause motion</span><i aria-hidden="true"></i></button><p class="cms-visually-hidden" aria-live="polite" data-motion-status></p></div></section>`;
-      }
-
-      case 'widget_showcase': {
-        const assetRoot = 'images/accessibility-widget/icons/';
-        const renderWidgetGroup = group => {
-          const isProfiles = group.variant === 'profiles';
-          const isAI = group.title?.trim().toLowerCase() === 'ai features';
-          const isCollapsed = !isAI;
-          const columns = option(group.columns, ['two', 'three'], isProfiles ? 'two' : 'three');
-          const titleIcon = safeMediaUrl(group.titleIcon);
-          const items = (group.items || []).map(item => {
-            const iconSource = safeMediaUrl(item.icon);
-            const maximumLevel = isProfiles ? 1 : Math.max(1, Math.min(3, Number(item.levels) || 3));
-            const icon = iconSource ? `<img src="${iconSource}" alt="" loading="lazy">` : '';
-            if (isProfiles) {
-              return `<button type="button" class="cms-widget-profile" data-widget-control data-level="0" data-max-level="1" aria-pressed="false" aria-label="${escapeHTML(item.label)}, off"><span class="cms-widget-profile-top"><span class="cms-widget-icon" aria-hidden="true">${icon}</span><span class="cms-widget-switch" aria-hidden="true"><i></i></span></span><strong>${escapeHTML(item.label)}</strong><span>${escapeHTML(item.description || '')}</span></button>`;
-            }
-            const pips = maximumLevel > 1 ? `<span class="cms-widget-pips" aria-hidden="true">${Array.from({ length: maximumLevel }, () => '<i></i>').join('')}</span>` : '';
-            return `<button type="button" class="cms-widget-control" data-widget-control data-level="0" data-max-level="${maximumLevel}" aria-pressed="false" aria-label="${escapeHTML(item.label)}, off"><span class="cms-widget-icon" aria-hidden="true">${icon}</span><strong>${escapeHTML(item.label)}</strong>${pips}</button>`;
-          }).join('');
-          return `<section class="cms-widget-category cms-widget-category-${isProfiles ? 'profiles' : 'controls'}${isAI ? ' cms-widget-category-ai' : ''}${isCollapsed ? ' is-collapsed' : ''}"><button type="button" class="cms-widget-category-toggle" data-widget-accordion aria-expanded="${isCollapsed ? 'false' : 'true'}">${titleIcon ? `<img src="${titleIcon}" alt="" aria-hidden="true">` : ''}<span>${escapeHTML(group.title)}</span><img class="cms-widget-chevron" src="${assetRoot}chevron-up.svg" alt="" aria-hidden="true"></button><div class="cms-widget-category-body cms-widget-columns-${columns}">${items}</div></section>`;
-        };
-        const groups = (block.groups || []).map(renderWidgetGroup).join('');
-        const intro = block.body ? `<div class="cms-richtext cms-widget-showcase-intro">${markdown(block.body)}</div>` : '';
-        return `<section class="content-block cms-live-widget-block" id="${id}">${heading}${intro}<div class="cms-widget-stage" data-widget-showcase><div class="cms-widget-product" data-widget-product><header class="cms-widget-header"><strong>Accessibility Options</strong><div class="cms-widget-header-actions"><button type="button" class="cms-widget-language" data-widget-language aria-label="Change language"><img src="${assetRoot}egypt-flag.svg" alt=""><span>AR</span><img src="${assetRoot}chevron-down.svg" alt="" aria-hidden="true"></button><button type="button" class="cms-widget-round-action" data-widget-reset aria-label="Reset settings"><img src="${assetRoot}reset.svg" alt=""></button></div></header><div class="cms-widget-scroll" data-lenis-prevent>${groups}<section class="cms-widget-reset-panel"><button type="button" data-widget-reset>Reset Settings</button></section><footer class="cms-widget-footer"><img src="${assetRoot}vodafone-logo.svg" alt="Vodafone"><span>Accessibility Statement</span></footer></div></div><p class="cms-visually-hidden" aria-live="polite" data-widget-status></p></div></section>`;
-      }
-
-      case 'text_image': {
-        const ratio = option(block.aspectRatio, ['auto', 'landscape', 'standard', 'square', 'portrait'], 'auto');
-        const fit = option(block.fit, ['cover', 'contain'], 'cover');
-        const focal = option(block.focalPoint, ['center', 'top', 'bottom', 'left', 'right'], 'center');
-        const displayMode = option(block.displayMode, ['static', 'browser'], 'static');
-        const image = `<div class="cms-text-image-media cms-display-${displayMode} cms-ratio-${ratio} cms-fit-${fit} cms-focal-${focal}">${renderImage(block.image, block.alt)}</div>`;
-        const caption = block.caption ? `<p class="cms-caption">${escapeHTML(block.caption)}</p>` : '';
-        const layout = option(block.layout, ['split', 'stacked'], 'split');
-        const copy = `<div class="cms-text-image-copy">${heading}<div class="cms-richtext">${markdown(block.body)}</div>${layout === 'split' ? caption : ''}</div>`;
-        const media = layout === 'stacked' ? `<div class="cms-text-image-media-group">${image}${caption}</div>` : image;
-        const imagePosition = option(block.imagePosition, ['left', 'right'], 'right');
-        const imageWidth = option(block.imageWidth, ['40', '50', '60'], '50');
-        const verticalAlignment = option(block.verticalAlignment, ['top', 'center', 'bottom'], 'center');
-        return `<section class="content-block cms-text-image cms-layout-${layout} image-${imagePosition} cms-split-${imageWidth} cms-vertical-${verticalAlignment}" id="${id}">${layout === 'stacked' || imagePosition === 'right' ? copy + media : media + copy}</section>`;
-      }
-
-      case 'gallery': {
-        if (block.displayMode === 'page_preview') {
-          const items = block.images || [];
-          const tabs = items.map((item, i) => `<button type="button" role="tab" id="${id}-tab-${i}" aria-controls="${id}-page-${i}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}" data-page-tab="${i}">${escapeHTML(item.label || item.caption || `Page ${i + 1}`)}</button>`).join('');
-          const panels = items.map((item, i) => `<div class="cms-page-preview-panel" role="tabpanel" id="${id}-page-${i}" aria-labelledby="${id}-tab-${i}" tabindex="0" data-page-panel="${i}" data-lenis-prevent${i ? ' hidden' : ''}>${renderImage(item.image, item.alt, '', item.placeholderLabel)}</div>`).join('');
-          return `<section class="content-block media-block cms-page-preview-block" id="${id}">${heading}<div class="cms-page-preview" data-page-preview><div class="cms-page-preview-tabs" role="tablist" aria-label="${escapeHTML(block.label || 'Full page previews')}">${tabs}<span aria-hidden="true">Scroll to explore ↓</span></div>${panels}</div><p class="cms-caption">${escapeHTML(block.caption || 'Choose a version, then scroll inside the preview.')}</p></section>`;
-        }
-        return `<section class="content-block cms-gallery-block" id="${id}">${heading}<div class="cms-gallery cms-gallery-${option(block.columns, ['two', 'three'], 'two')} cms-ratio-${option(block.aspectRatio, ['auto', 'landscape', 'standard', 'square', 'portrait'], 'auto')} cms-fit-${option(block.fit, ['cover', 'contain'], 'cover')} cms-focal-${option(block.focalPoint, ['center', 'top', 'bottom', 'left', 'right'], 'center')}">${(block.images || []).map(item => `<figure class="cms-item-focal-${option(item.focalPoint, ['center', 'top', 'bottom', 'left', 'right', 'upper', 'lower'], block.focalPoint || 'center')}">${renderImage(item.image, item.alt, '', item.placeholderLabel)}${item.caption ? `<figcaption>${escapeHTML(item.caption)}</figcaption>` : ''}</figure>`).join('')}</div></section>`;
-      }
-
-      case 'video':
-        return `<figure class="content-block media-block cms-video-block" id="${id}">${heading}<div class="cms-video-frame">${renderVideo(block.url, block)}</div>${block.caption ? `<figcaption>${escapeHTML(block.caption)}</figcaption>` : ''}</figure>`;
-
-      case 'screen_slider': {
-        const slides = (block.slides || []).filter(slide => slide.image);
-        const intro = block.body ? `<div class="cms-screen-slider-intro cms-richtext">${markdown(block.body)}</div>` : '';
-        const slideMarkup = slides.map((slide, slideIndex) => `<figure class="cms-screen-slide${slideIndex === 0 ? ' is-active' : ''}" aria-hidden="${slideIndex === 0 ? 'false' : 'true'}">${renderImage(slide.image, slide.alt)}</figure>`).join('');
-        const captions = slides.map((slide, slideIndex) => `<span class="cms-slider-caption${slideIndex === 0 ? ' is-active' : ''}" aria-hidden="${slideIndex === 0 ? 'false' : 'true'}">${escapeHTML(slide.caption || slide.label || '')}</span>`).join('');
-        const dots = slides.map((slide, slideIndex) => `<button type="button" class="cms-slider-dot${slideIndex === 0 ? ' is-active' : ''}" data-slide-index="${slideIndex}" aria-label="Show ${escapeHTML(slide.label || `screen ${slideIndex + 1}`)}" aria-pressed="${slideIndex === 0 ? 'true' : 'false'}"></button>`).join('');
-        const orbitCards = slides.map((slide, slideIndex) => `<figure class="cms-slider-orbit-card" data-orbit-index="${slideIndex}" aria-hidden="true">${renderImage(slide.image, '')}</figure>`).join('');
-        return `<section class="content-block cms-screen-slider-block" id="${id}">${heading}${intro}<div class="cms-screen-slider" data-screen-slider data-autoplay="${block.autoplay === false ? 'false' : 'true'}" tabindex="0" role="region" aria-roledescription="carousel" aria-label="${escapeHTML(block.heading || 'Service screens')}"><div class="cms-screen-slider-stage"><div class="cms-slider-orbit" aria-hidden="true">${orbitCards}</div><div class="cms-slider-captions">${captions}</div><div class="cms-slider-browser"><div class="cms-slider-viewport">${slideMarkup}</div></div><button type="button" class="cms-slider-arrow cms-slider-arrow-prev" data-slider-prev aria-label="Previous screen">←</button><button type="button" class="cms-slider-arrow cms-slider-arrow-next" data-slider-next aria-label="Next screen">→</button></div><div class="cms-screen-slider-controls"><div class="cms-slider-dots">${dots}</div></div></div></section>`;
-      }
-
-      case 'figma_prototype': {
-        const source = safeFigmaPrototypeUrl(block.url);
-        const title = escapeHTML(block.title || block.heading || 'Interactive Figma prototype');
-        const height = option(block.height, ['standard', 'tall'], 'tall');
-        const topCrop = option(block.topCrop, ['none', 'small', 'medium', 'large'], 'none');
-        const prototype = source
-          ? `<iframe src="${source}" title="${title}" loading="lazy" data-image-loader allowfullscreen allow="fullscreen" referrerpolicy="strict-origin-when-cross-origin"></iframe>`
-          : '<div class="cms-media-placeholder">Add a Figma prototype URL in the CMS</div>';
-        return `<figure class="content-block media-block cms-prototype-block" id="${id}">${heading}<div class="cms-prototype-frame cms-prototype-${height} cms-prototype-crop-${topCrop}">${prototype}</div><figcaption>${block.caption ? escapeHTML(block.caption) : 'Interactive prototype'}</figcaption></figure>`;
-      }
-
-      case 'feature_grid':
-        return `<section class="content-block" id="${id}">${heading}<div class="insight-grid">${(block.items || []).map((item, itemIndex) => `<article><span>${escapeHTML(item.number || String(itemIndex + 1).padStart(2, '0'))}</span><h3>${escapeHTML(item.title)}</h3><div class="cms-richtext">${markdown(item.body)}</div></article>`).join('')}</div></section>`;
-
-      case 'feature_catalog':
-        return `<section class="content-block cms-feature-catalog-block" id="${id}">${heading}${block.body ? `<div class="cms-richtext cms-feature-catalog-intro">${markdown(block.body)}</div>` : ''}<div class="cms-feature-catalog">${(block.groups || []).map(group => {
-          const controlType = option(group.control, ['toggle', 'level'], 'level');
-          return `<article class="cms-feature-group cms-feature-group-${controlType}"><header><h3>${escapeHTML(group.title)}</h3>${group.description ? `<p>${escapeHTML(group.description)}</p>` : ''}</header><div class="cms-feature-tiles">${(group.items || []).map(item => {
-            const iconSource = safeMediaUrl(item.icon);
-            const maximumLevel = controlType === 'toggle' ? 1 : Math.max(1, Math.min(3, Number(item.levels) || 3));
-            const initialLevel = item.active === true ? Math.max(1, Math.min(maximumLevel, Number(item.initialLevel) || 1)) : 0;
-            const icon = iconSource ? `<img src="${iconSource}" alt="" loading="lazy">` : escapeHTML(item.icon || '•');
-            const pips = controlType === 'level' ? `<span class="cms-feature-pips" aria-hidden="true">${Array.from({ length: maximumLevel }, (_, pipIndex) => `<i class="${pipIndex < initialLevel ? 'is-filled' : ''}"></i>`).join('')}</span>` : '<span class="cms-feature-switch" aria-hidden="true"><i></i></span>';
-            return `<button type="button" class="cms-feature-tile${initialLevel ? ' is-active' : ''}" data-feature-control data-control-type="${controlType}" data-level="${initialLevel}" data-max-level="${maximumLevel}" aria-pressed="${initialLevel ? 'true' : 'false'}" aria-label="${escapeHTML(item.label)}, ${initialLevel ? controlType === 'level' ? `level ${initialLevel} of ${maximumLevel}` : 'on' : 'off'}"><span class="cms-feature-icon" aria-hidden="true">${icon}</span><span class="cms-feature-label">${escapeHTML(item.label)}</span>${item.description ? `<span class="cms-feature-description">${escapeHTML(item.description)}</span>` : ''}${pips}</button>`;
-          }).join('')}</div></article>`;
-        }).join('')}</div><p class="cms-visually-hidden" aria-live="polite" data-feature-status></p></section>`;
-
-      case 'stats':
-        return `<section class="content-block results-block" id="${id}">${heading}<div class="results-grid">${(block.items || []).map(item => `<div><strong>${escapeHTML(item.value)}</strong><span>${escapeHTML(item.label)}</span></div>`).join('')}</div></section>`;
-
-      case 'quote':
-        return `<section class="content-block learning-block" id="${id}">${block.eyebrow ? `<p class="block-eyebrow">${escapeHTML(block.eyebrow)}</p>` : ''}<blockquote>${escapeHTML(block.quote)}</blockquote>${block.attribution ? `<p class="cms-quote-attribution">${escapeHTML(block.attribution)}</p>` : ''}${block.body ? `<div class="cms-richtext">${markdown(block.body)}</div>` : ''}</section>`;
-
-      case 'process':
-        return `<section class="content-block cms-process-block" id="${id}">${heading}<div class="cms-process">${(block.steps || []).map((step, stepIndex) => `<article><span>${escapeHTML(step.label || `Step ${stepIndex + 1}`)}</span><h3>${escapeHTML(step.title)}</h3><div class="cms-richtext">${markdown(step.body)}</div></article>`).join('')}</div></section>`;
-
-      case 'divider':
-        return `<div class="cms-divider" id="${id}" aria-hidden="true"><span>${escapeHTML(block.label || '')}</span></div>`;
-
-      default:
-        return '';
-    }
-  };
-
-  const setText = (id, value) => {
-    const element = document.getElementById(id);
-    if (element) element.textContent = value || '';
-  };
-
-  const renderToc = blocks => {
-    const toc = document.getElementById('projectTocLinks');
-    if (!toc) return [];
-
-    const navigable = blocks
-      .map((block, index) => ({ ...block, resolvedId: blockId(block, index) }))
-      .filter(block => block.navLabel && block.showInNav !== false && block.type !== 'divider');
-
-    toc.innerHTML = navigable.map((block, index) => `
-      <a class="${index === 0 ? 'is-active' : ''}" href="#${block.resolvedId}" ${index === 0 ? 'aria-current="location"' : ''}>
-        <span class="toc-marker" aria-hidden="true">→</span>${escapeHTML(block.navLabel)}
-      </a>`).join('');
-
-    return [...toc.querySelectorAll('a')];
-  };
-
   const activateToc = links => {
-    const sections = links.map(link => document.querySelector(link.getAttribute('href'))).filter(Boolean);
+    const sections = links.map(link => document.getElementById(link.hash.slice(1))).filter(Boolean);
     const setActive = id => links.forEach(link => {
       const active = link.getAttribute('href') === `#${id}`;
       link.classList.toggle('is-active', active);
@@ -409,375 +92,344 @@
       if (atPageEnd && sections.length) setActive(sections.at(-1).id);
     }, { passive: true });
 
+    activateHash();
+    if (!('IntersectionObserver' in window)) return;
+
     const observer = new IntersectionObserver(entries => {
       const visible = entries.filter(entry => entry.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
       if (visible[0]) setActive(visible[0].target.id);
     }, { rootMargin: '-18% 0px -68% 0px', threshold: 0 });
 
     sections.forEach(section => observer.observe(section));
-    activateHash();
   };
 
-  const fetchProject = async slug => {
-    const response = await fetch(`content/projects/${encodeURIComponent(slug)}.json`, { cache: 'no-store' });
-    if (!response.ok) throw new Error(`Project ${slug} could not be loaded`);
-    return response.json();
-  };
 
-  const fetchProjectIndex = async () => {
-    const response = await fetch('content/project-index.json', { cache: 'no-store' });
-    if (!response.ok) throw new Error('Project index could not be loaded');
-    const index = await response.json();
-    return Array.isArray(index.projects) ? index.projects : [];
-  };
-
-  const renderRecommendations = async (currentSlug, recommendations) => {
-    const rail = document.querySelector('.next-projects-inner');
-    if (!rail) return;
-    const recommendationsPanel = rail.closest('.next-projects');
-
-    const existing = rail.querySelectorAll('.next-card');
-    existing.forEach(card => card.remove());
-    const themes = ['green', 'orange', 'purple'];
-    let indexedProjects = [];
-    try { indexedProjects = await fetchProjectIndex(); }
-    catch { indexedProjects = recommendations || []; }
-    const projectSlugs = [...new Set([...(recommendations || []), ...indexedProjects])]
-      .filter(slug => slug && slug !== currentSlug);
-    const projects = await Promise.all(projectSlugs.map(async slug => {
-      try { return await fetchProject(slug); }
-      catch { return null; }
-    }));
-
-    const availableProjects = projects.filter(project => project?.showInRecommendations === true);
-    const hasRecommendations = availableProjects.length > 0;
-    if (recommendationsPanel) recommendationsPanel.hidden = !hasRecommendations;
-    document.body.classList.toggle('has-no-recommendations', !hasRecommendations);
-
-    availableProjects.forEach((project, index) => {
-      rail.insertAdjacentHTML('beforeend', `
-        <a class="next-card next-card-${themes[index % themes.length]}" href="project.html?project=${encodeURIComponent(project.slug)}" aria-label="${escapeHTML(project.title)} case study">
-          <div class="next-card-copy"><p>${escapeHTML([project.client, project.category].filter(Boolean).join(' · '))}</p><h2>${escapeHTML(project.title)}</h2></div>
-          <span class="next-arrow" aria-hidden="true">↗</span>
-        </a>`);
-    });
-  };
-
-  const renderProject = project => {
-    document.body.classList.remove('project-motion-ready');
-    document.title = `${project.title} — Omar Khalifa`;
-    document.body.dataset.project = project.slug || '';
-    const description = document.querySelector('meta[name="description"]');
-    if (description) description.setAttribute('content', project.seoDescription || project.deck || project.title);
-
-    const title = document.getElementById('projectTitle');
-    if (title) title.innerHTML = escapeHTML(project.heroTitle || project.title).replace(/\n/g, '<br>');
-    setText('projectKicker', [project.client, project.category, project.year].filter(Boolean).join(' · '));
-    setText('projectDeck', project.deck);
-    setText('projectIndustry', project.industry);
-    setText('projectRole', project.role);
-    const timeline = document.getElementById('projectTimeline');
-    const timelineValue = String(project.timeline || '').trim();
-    const timelineItem = timeline?.closest('div');
-    if (timeline) timeline.textContent = timelineValue;
-    if (timelineItem) timelineItem.hidden = !timelineValue;
-    document.querySelector('.project-meta')?.classList.toggle('has-no-timeline', !timelineValue);
-
-    const team = document.getElementById('projectTeam');
-    if (team) team.innerHTML = (project.team || []).map(name => {
-      const link = (project.teamLinks || []).find(item => item.name === name);
-      if (!link || !/^https?:\/\//i.test(link.url || '')) return escapeHTML(name);
-      return `<a href="${escapeHTML(link.url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(name)}</a>`;
-    }).join('<br>');
-
-    const content = document.getElementById('projectContent');
-    const blocks = project.blocks || [];
-    if (content) content.innerHTML = blocks.map(renderBlock).join('');
-    content?.querySelectorAll('[data-page-preview]').forEach(preview => {
-      const tabs = [...preview.querySelectorAll('[data-page-tab]')];
-      const panels = [...preview.querySelectorAll('[data-page-panel]')];
-      const scrollPositions = panels.map(() => 0);
-      const select = index => {
-        panels.forEach((panel, i) => {
-          if (!panel.hidden) scrollPositions[i] = panel.scrollTop;
-        });
-        tabs.forEach((tab, i) => {
-          tab.setAttribute('aria-selected', String(i === index));
-          tab.tabIndex = i === index ? 0 : -1;
-          panels[i].hidden = i !== index;
-        });
-        panels[index].scrollTop = scrollPositions[index];
-      };
+  const content = document.getElementById('projectContent');
+  content?.querySelectorAll('[data-page-preview]').forEach(preview => {
+    const tabs = [...preview.querySelectorAll('[data-page-tab]')];
+    const panels = [...preview.querySelectorAll('[data-page-panel]')];
+    const scrollPositions = panels.map(() => 0);
+    const select = index => {
+      panels.forEach((panel, i) => {
+        if (!panel.hidden) scrollPositions[i] = panel.scrollTop;
+      });
       tabs.forEach((tab, i) => {
-        tab.addEventListener('click', () => select(i));
-        tab.addEventListener('keydown', event => {
-          let next;
-          if (event.key === 'ArrowRight') next = (i + 1) % tabs.length;
-          if (event.key === 'ArrowLeft') next = (i + tabs.length - 1) % tabs.length;
-          if (event.key === 'Home') next = 0;
-          if (event.key === 'End') next = tabs.length - 1;
-          if (next === undefined) return;
-          event.preventDefault();
-          select(next);
-          tabs[next].focus();
-        });
+        tab.setAttribute('aria-selected', String(i === index));
+        tab.tabIndex = i === index ? 0 : -1;
+        panels[i].hidden = i !== index;
       });
-    });
-    content?.querySelectorAll('[data-before-after]').forEach(comparison => {
-      const input = comparison.querySelector('input');
-      if (comparison.classList.contains('cms-compare-full_page')) {
-        const images = [...comparison.querySelectorAll('img')];
-        const resize = () => {
-          const ratios = images.filter(image => image.naturalHeight).map(image => image.naturalWidth / image.naturalHeight);
-          if (ratios.length) comparison.style.setProperty('--compare-page-ratio', Math.min(...ratios));
-        };
-        images.forEach(image => image.addEventListener('load', resize));
-        resize();
-      }
-      const update = value => {
-        const percent = Math.max(0, Math.min(100, Number(value) || 0));
-        input.value = String(percent);
-        comparison.style.setProperty('--compare-position', `${percent}%`);
-        input.setAttribute('aria-valuetext', `${input.dataset.beforeLabel} ${Math.round(percent)}%, ${input.dataset.afterLabel} ${Math.round(100 - percent)}%`);
-        comparison.querySelector('[data-compare-label-before]').style.opacity = percent < 12 ? '0' : '1';
-        comparison.querySelector('[data-compare-label-after]').style.opacity = percent > 88 ? '0' : '1';
-      };
-      const updateFromPointer = event => {
-        const bounds = comparison.getBoundingClientRect();
-        update(Math.round((event.clientX - bounds.left) / bounds.width * 100));
-      };
-      input.addEventListener('input', () => update(input.value));
-      let activePointer = null;
-      input.addEventListener('pointerdown', event => {
-        if (!event.isPrimary || (event.pointerType === 'mouse' && event.button !== 0)) return;
+      panels[index].scrollTop = scrollPositions[index];
+    };
+    if (!tabs.length || tabs.length !== panels.length) return;
+    preview.classList.add('is-enhanced');
+    select(0);
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => select(i));
+      tab.addEventListener('keydown', event => {
+        let next;
+        if (event.key === 'ArrowRight') next = (i + 1) % tabs.length;
+        if (event.key === 'ArrowLeft') next = (i + tabs.length - 1) % tabs.length;
+        if (event.key === 'Home') next = 0;
+        if (event.key === 'End') next = tabs.length - 1;
+        if (next === undefined) return;
         event.preventDefault();
-        input.focus({ preventScroll: true });
-        activePointer = event.pointerId;
-        input.setPointerCapture(event.pointerId);
-        updateFromPointer(event);
-      });
-      input.addEventListener('pointermove', event => {
-        if (event.pointerId === activePointer) updateFromPointer(event);
-      });
-      const endDrag = () => { activePointer = null; };
-      input.addEventListener('pointerup', endDrag);
-      input.addEventListener('pointercancel', endDrag);
-      input.addEventListener('lostpointercapture', endDrag);
-      update(input.value);
-    });
-    initialiseImageLoaders(content);
-    setupScrollReveals(content);
-    document.querySelectorAll('.cms-scroll-shell').forEach(shell => {
-      const frame = shell.querySelector('.cms-display-scroll');
-      if (!frame) return;
-      frame.addEventListener('scroll', () => shell.classList.toggle('has-scrolled', frame.scrollTop > 12), { passive: true });
-    });
-    document.querySelectorAll('.cms-feature-catalog-block').forEach(catalog => {
-      const status = catalog.querySelector('[data-feature-status]');
-      catalog.querySelectorAll('[data-feature-control]').forEach(control => {
-        control.addEventListener('click', () => {
-          const maximumLevel = Number(control.dataset.maxLevel || 1);
-          const nextLevel = (Number(control.dataset.level || 0) + 1) % (maximumLevel + 1);
-          const label = control.querySelector('.cms-feature-label')?.textContent?.trim() || 'Feature';
-          const isActive = nextLevel > 0;
-          control.dataset.level = String(nextLevel);
-          control.classList.toggle('is-active', isActive);
-          control.setAttribute('aria-pressed', String(isActive));
-          const state = control.dataset.controlType === 'level' && isActive ? `level ${nextLevel} of ${maximumLevel}` : isActive ? 'on' : 'off';
-          control.setAttribute('aria-label', `${label}, ${state}`);
-          control.querySelectorAll('.cms-feature-pips i').forEach((pip, pipIndex) => pip.classList.toggle('is-filled', pipIndex < nextLevel));
-          if (status) status.textContent = `${label}: ${state}`;
-        });
+        select(next);
+        tabs[next].focus();
       });
     });
-    document.querySelectorAll('[data-motion-showcase]').forEach(showcase => {
-      const motionToggle = showcase.querySelector('[data-motion-toggle]');
-      const motionStatus = showcase.querySelector('[data-motion-status]');
-      motionToggle?.addEventListener('click', () => {
-        const paused = !showcase.classList.contains('is-paused');
-        showcase.classList.toggle('is-paused', paused);
-        motionToggle.setAttribute('aria-pressed', String(paused));
-        const label = paused ? 'Resume motion' : 'Pause motion';
-        const labelElement = motionToggle.querySelector('span');
-        if (labelElement) labelElement.textContent = label;
-        if (motionStatus) motionStatus.textContent = paused ? 'Feature animation paused.' : 'Feature animation playing.';
-      });
-      showcase.querySelectorAll('[data-motion-feature]').forEach(control => {
-        control.addEventListener('click', () => {
-          const active = !control.classList.contains('is-active');
-          const label = control.querySelector('strong')?.textContent?.trim() || 'Feature';
-          control.classList.toggle('is-active', active);
-          control.setAttribute('aria-pressed', String(active));
-          control.setAttribute('aria-label', `${label}, ${active ? 'on' : 'off'}`);
-          if (motionStatus) motionStatus.textContent = `${label}: ${active ? 'on' : 'off'}.`;
-        });
-      });
-    });
-    document.querySelectorAll('[data-widget-showcase]').forEach(showcase => {
-      const product = showcase.querySelector('[data-widget-product]');
-      const status = showcase.querySelector('[data-widget-status]');
-      const setWidgetOpen = open => {
-        if (product) product.hidden = !open;
-        if (status) status.textContent = open ? 'Accessibility widget opened.' : 'Accessibility widget closed.';
+  });
+  content?.querySelectorAll('[data-before-after]').forEach(comparison => {
+    const input = comparison.querySelector('input');
+    if (!input) return;
+    comparison.classList.add('is-enhanced');
+    if (comparison.classList.contains('cms-compare-full_page')) {
+      const images = [...comparison.querySelectorAll('img')];
+      const resize = () => {
+        const ratios = images.filter(image => image.naturalHeight).map(image => image.naturalWidth / image.naturalHeight);
+        if (ratios.length) comparison.style.setProperty('--compare-page-ratio', Math.min(...ratios));
       };
-      const resetWidget = () => {
-        showcase.querySelectorAll('[data-widget-control]').forEach(control => {
-          control.dataset.level = '0';
-          control.classList.remove('is-active');
-          control.setAttribute('aria-pressed', 'false');
-          const label = control.querySelector('strong')?.textContent?.trim() || 'Feature';
-          control.setAttribute('aria-label', `${label}, off`);
-          control.querySelectorAll('.cms-widget-pips i').forEach(pip => pip.classList.remove('is-filled'));
-        });
-        if (status) status.textContent = 'All visual settings reset.';
-      };
-      showcase.querySelectorAll('[data-widget-accordion]').forEach(toggle => toggle.addEventListener('click', () => {
+      images.forEach(image => image.addEventListener('load', resize));
+      resize();
+    }
+    const update = value => {
+      const percent = Math.max(0, Math.min(100, Number(value) || 0));
+      input.value = String(percent);
+      comparison.style.setProperty('--compare-position', `${percent}%`);
+      input.setAttribute('aria-valuetext', `${input.dataset.beforeLabel} ${Math.round(percent)}%, ${input.dataset.afterLabel} ${Math.round(100 - percent)}%`);
+      comparison.querySelector('[data-compare-label-before]').style.opacity = percent < 12 ? '0' : '1';
+      comparison.querySelector('[data-compare-label-after]').style.opacity = percent > 88 ? '0' : '1';
+    };
+    const updateFromPointer = event => {
+      const bounds = comparison.getBoundingClientRect();
+      update(Math.round((event.clientX - bounds.left) / bounds.width * 100));
+    };
+    input.addEventListener('input', () => update(input.value));
+    let activePointer = null;
+    input.addEventListener('pointerdown', event => {
+      if (!event.isPrimary || (event.pointerType === 'mouse' && event.button !== 0)) return;
+      event.preventDefault();
+      input.focus({ preventScroll: true });
+      activePointer = event.pointerId;
+      input.setPointerCapture(event.pointerId);
+      updateFromPointer(event);
+    });
+    input.addEventListener('pointermove', event => {
+      if (event.pointerId === activePointer) updateFromPointer(event);
+    });
+    const endDrag = () => { activePointer = null; };
+    input.addEventListener('pointerup', endDrag);
+    input.addEventListener('pointercancel', endDrag);
+    input.addEventListener('lostpointercapture', endDrag);
+    update(input.value);
+  });
+  setupScrollReveals(content);
+  document.querySelectorAll('.cms-scroll-shell').forEach(shell => {
+    const frame = shell.querySelector('.cms-display-scroll');
+    if (!frame) return;
+    frame.addEventListener('scroll', () => shell.classList.toggle('has-scrolled', frame.scrollTop > 12), { passive: true });
+  });
+  document.querySelectorAll('.cms-feature-catalog-block').forEach(catalog => {
+    const status = catalog.querySelector('[data-feature-status]');
+    catalog.querySelectorAll('[data-feature-control]').forEach(control => {
+      control.addEventListener('click', () => {
+        const maximumLevel = Number(control.dataset.maxLevel || 1);
+        const nextLevel = (Number(control.dataset.level || 0) + 1) % (maximumLevel + 1);
+        const label = control.querySelector('.cms-feature-label')?.textContent?.trim() || 'Feature';
+        const isActive = nextLevel > 0;
+        control.dataset.level = String(nextLevel);
+        control.classList.toggle('is-active', isActive);
+        control.setAttribute('aria-pressed', String(isActive));
+        const state = control.dataset.controlType === 'level' && isActive ? `level ${nextLevel} of ${maximumLevel}` : isActive ? 'on' : 'off';
+        control.setAttribute('aria-label', `${label}, ${state}`);
+        control.querySelectorAll('.cms-feature-pips i').forEach((pip, pipIndex) => pip.classList.toggle('is-filled', pipIndex < nextLevel));
+        if (status) status.textContent = `${label}: ${state}`;
+      });
+    });
+  });
+  document.querySelectorAll('[data-motion-showcase]').forEach(showcase => {
+    showcase.classList.add('is-enhanced');
+    const motionToggle = showcase.querySelector('[data-motion-toggle]');
+    const motionStatus = showcase.querySelector('[data-motion-status]');
+    motionToggle?.addEventListener('click', () => {
+      const paused = !showcase.classList.contains('is-paused');
+      showcase.classList.toggle('is-paused', paused);
+      motionToggle.setAttribute('aria-pressed', String(paused));
+      const label = paused ? 'Resume motion' : 'Pause motion';
+      const labelElement = motionToggle.querySelector('span');
+      if (labelElement) labelElement.textContent = label;
+      if (motionStatus) motionStatus.textContent = paused ? 'Feature animation paused.' : 'Feature animation playing.';
+    });
+    showcase.querySelectorAll('[data-motion-feature]').forEach(control => {
+      control.addEventListener('click', () => {
+        const active = !control.classList.contains('is-active');
+        const label = control.querySelector('strong')?.textContent?.trim() || 'Feature';
+        control.classList.toggle('is-active', active);
+        control.setAttribute('aria-pressed', String(active));
+        control.setAttribute('aria-label', `${label}, ${active ? 'on' : 'off'}`);
+        if (motionStatus) motionStatus.textContent = `${label}: ${active ? 'on' : 'off'}.`;
+      });
+    });
+  });
+  document.querySelectorAll('[data-widget-showcase]').forEach(showcase => {
+    showcase.classList.add('is-enhanced');
+    const product = showcase.querySelector('[data-widget-product]');
+    const status = showcase.querySelector('[data-widget-status]');
+    const setWidgetOpen = open => {
+      if (product) product.hidden = !open;
+      if (status) status.textContent = open ? 'Accessibility widget opened.' : 'Accessibility widget closed.';
+    };
+    const resetWidget = () => {
+      showcase.querySelectorAll('[data-widget-control]').forEach(control => {
+        control.dataset.level = '0';
+        control.classList.remove('is-active');
+        control.setAttribute('aria-pressed', 'false');
+        const label = control.querySelector('strong')?.textContent?.trim() || 'Feature';
+        control.setAttribute('aria-label', `${label}, off`);
+        control.querySelectorAll('.cms-widget-pips i').forEach(pip => pip.classList.remove('is-filled'));
+      });
+      if (status) status.textContent = 'All visual settings reset.';
+    };
+    showcase.querySelectorAll('[data-widget-accordion]').forEach(toggle => {
+      const collapsed = toggle.dataset.initiallyCollapsed === 'true';
+      toggle.setAttribute('aria-expanded', String(!collapsed));
+      toggle.closest('.cms-widget-category')?.classList.toggle('is-collapsed', collapsed);
+      toggle.addEventListener('click', () => {
         const category = toggle.closest('.cms-widget-category');
         const expanded = toggle.getAttribute('aria-expanded') !== 'false';
         toggle.setAttribute('aria-expanded', String(!expanded));
         category?.classList.toggle('is-collapsed', expanded);
-      }));
-      showcase.querySelectorAll('[data-widget-control]').forEach(control => control.addEventListener('click', () => {
-        const maximumLevel = Number(control.dataset.maxLevel || 1);
-        const nextLevel = (Number(control.dataset.level || 0) + 1) % (maximumLevel + 1);
-        const label = control.querySelector('strong')?.textContent?.trim() || 'Feature';
-        const active = nextLevel > 0;
-        control.dataset.level = String(nextLevel);
-        control.classList.toggle('is-active', active);
-        control.setAttribute('aria-pressed', String(active));
-        const state = active ? maximumLevel > 1 ? `level ${nextLevel} of ${maximumLevel}` : 'on' : 'off';
-        control.setAttribute('aria-label', `${label}, ${state}`);
-        control.querySelectorAll('.cms-widget-pips i').forEach((pip, index) => pip.classList.toggle('is-filled', index < nextLevel));
-        if (status) status.textContent = `${label}: ${state}.`;
-      }));
-      showcase.querySelectorAll('[data-widget-reset]').forEach(button => button.addEventListener('click', resetWidget));
-      showcase.querySelector('[data-widget-language]')?.addEventListener('click', event => {
-        const label = event.currentTarget.querySelector('span');
-        if (!label) return;
-        label.textContent = label.textContent === 'AR' ? 'EN' : 'AR';
-        if (status) status.textContent = `Widget language changed to ${label.textContent}.`;
-      });
-      document.addEventListener('keydown', event => {
-        if (!event.shiftKey || event.key.toLowerCase() !== 'c') return;
-        event.preventDefault();
-        setWidgetOpen(Boolean(product?.hidden));
       });
     });
-    document.querySelectorAll('[data-screen-slider]').forEach(slider => {
-      const slides = [...slider.querySelectorAll('.cms-screen-slide')];
-      const dots = [...slider.querySelectorAll('.cms-slider-dot')];
-      const captions = [...slider.querySelectorAll('.cms-slider-caption')];
-      const orbitCards = [...slider.querySelectorAll('[data-orbit-index]')];
-      const stage = slider.querySelector('.cms-screen-slider-stage');
-      const browserFrame = slider.querySelector('.cms-slider-browser');
-      let activeIndex = 0;
-      let timer;
+    showcase.querySelectorAll('[data-widget-control]').forEach(control => control.addEventListener('click', () => {
+      const maximumLevel = Number(control.dataset.maxLevel || 1);
+      const nextLevel = (Number(control.dataset.level || 0) + 1) % (maximumLevel + 1);
+      const label = control.querySelector('strong')?.textContent?.trim() || 'Feature';
+      const active = nextLevel > 0;
+      control.dataset.level = String(nextLevel);
+      control.classList.toggle('is-active', active);
+      control.setAttribute('aria-pressed', String(active));
+      const state = active ? maximumLevel > 1 ? `level ${nextLevel} of ${maximumLevel}` : 'on' : 'off';
+      control.setAttribute('aria-label', `${label}, ${state}`);
+      control.querySelectorAll('.cms-widget-pips i').forEach((pip, index) => pip.classList.toggle('is-filled', index < nextLevel));
+      if (status) status.textContent = `${label}: ${state}.`;
+    }));
+    showcase.querySelectorAll('[data-widget-reset]').forEach(button => button.addEventListener('click', resetWidget));
+    showcase.querySelector('[data-widget-language]')?.addEventListener('click', event => {
+      const label = event.currentTarget.querySelector('span');
+      if (!label) return;
+      label.textContent = label.textContent === 'AR' ? 'EN' : 'AR';
+      if (status) status.textContent = `Widget language changed to ${label.textContent}.`;
+    });
+    document.addEventListener('keydown', event => {
+      if (!event.shiftKey || event.key.toLowerCase() !== 'c') return;
+      event.preventDefault();
+      setWidgetOpen(Boolean(product?.hidden));
+    });
+  });
+  document.querySelectorAll('[data-screen-slider]').forEach(slider => {
+    const slides = [...slider.querySelectorAll('.cms-screen-slide')];
+    const dots = [...slider.querySelectorAll('.cms-slider-dot')];
+    const captions = [...slider.querySelectorAll('.cms-slider-caption')];
+    const orbitCards = [...slider.querySelectorAll('[data-orbit-index]')];
+    const stage = slider.querySelector('.cms-screen-slider-stage');
+    const browserFrame = slider.querySelector('.cms-slider-browser');
+    const playback = slider.querySelector('[data-slider-playback]');
+    let activeIndex = 0;
+    let timer;
+    let manuallyPaused = slider.dataset.autoplay === 'false';
+    let hovered = false;
+    let inViewport = false;
 
-      const sizeFrameToImage = slide => {
-        const image = slide?.querySelector('img');
-        if (!stage || !browserFrame || !image) return;
-        const applySize = () => {
-          if (!slide.classList.contains('is-active') || !image.naturalWidth || !image.naturalHeight) return;
-          const maxWidthRatio = window.matchMedia('(max-width: 720px)').matches ? .94 : .72;
-          const frameWidth = Math.min(stage.clientWidth * maxWidthRatio, 920);
-          const imageHeight = frameWidth * (image.naturalHeight / image.naturalWidth);
-          const frameHeight = imageHeight + 34;
-          browserFrame.style.width = `${frameWidth}px`;
-          browserFrame.style.height = `${frameHeight}px`;
-          stage.style.height = `${frameHeight + 46}px`;
-        };
-        if (image.complete) applySize();
-        else image.addEventListener('load', applySize, { once: true });
+    if (!slides.length) return;
+    slider.classList.add('is-enhanced');
+    slides.forEach((slide, index) => slide.setAttribute('aria-hidden', String(index !== 0)));
+    captions.forEach((caption, index) => caption.setAttribute('aria-hidden', String(index !== 0)));
+
+    const sizeFrameToImage = slide => {
+      const image = slide?.querySelector('img');
+      if (!stage || !browserFrame || !image) return;
+      const applySize = () => {
+        if (!slide.classList.contains('is-active')) return;
+        const imageWidth = image.naturalWidth || Number(image.getAttribute('width'));
+        const imageHeight = image.naturalHeight || Number(image.getAttribute('height'));
+        if (!imageWidth || !imageHeight) return;
+        const maxWidthRatio = window.matchMedia('(max-width: 720px)').matches ? .94 : .72;
+        const frameWidth = Math.min(stage.clientWidth * maxWidthRatio, 920);
+        const frameHeight = frameWidth * (imageHeight / imageWidth) + 34;
+        browserFrame.style.width = `${frameWidth}px`;
+        browserFrame.style.height = `${frameHeight}px`;
+        stage.style.height = `${frameHeight + 46}px`;
       };
+      applySize();
+      if (!image.complete) image.addEventListener('load', applySize, { once: true });
+    };
 
-      sizeFrameToImage(slides[activeIndex]);
-      const resizeFrames = () => sizeFrameToImage(slides[activeIndex]);
-      window.addEventListener('resize', resizeFrames, { passive: true });
-      if (slides.length < 2) return;
+    sizeFrameToImage(slides[activeIndex]);
+    const resizeFrames = () => sizeFrameToImage(slides[activeIndex]);
+    window.addEventListener('resize', resizeFrames, { passive: true });
+    if (slides.length < 2) {
+      slider.querySelector('.cms-screen-slider-controls')?.setAttribute('hidden', '');
+      slider.querySelectorAll('.cms-slider-arrow').forEach(arrow => { arrow.hidden = true; });
+      return;
+    }
 
-      const updateOrbit = centerIndex => {
-        orbitCards.forEach(card => {
-          const cardIndex = Number(card.dataset.orbitIndex || 0);
-          let offset = (cardIndex - centerIndex + slides.length) % slides.length;
-          if (offset > slides.length / 2) offset -= slides.length;
-          card.classList.remove('is-prev', 'is-next', 'is-far-prev', 'is-far-next');
-          if (offset === -1) card.classList.add('is-prev');
-          if (offset === 1) card.classList.add('is-next');
-          if (offset === -2) card.classList.add('is-far-prev');
-          if (offset === 2) card.classList.add('is-far-next');
-        });
-      };
-
-      updateOrbit(activeIndex);
-
-      const showSlide = nextIndex => {
-        const normalizedIndex = (nextIndex + slides.length) % slides.length;
-        if (normalizedIndex === activeIndex) return;
-        const current = slides[activeIndex];
-        const next = slides[normalizedIndex];
-        current.classList.remove('is-active');
-        current.classList.add('is-leaving');
-        current.setAttribute('aria-hidden', 'true');
-        next.classList.remove('is-leaving');
-        next.classList.add('is-active');
-        next.setAttribute('aria-hidden', 'false');
-        sizeFrameToImage(next);
-        updateOrbit(normalizedIndex);
-        captions.forEach((caption, captionIndex) => {
-          const isActive = captionIndex === normalizedIndex;
-          caption.classList.toggle('is-active', isActive);
-          caption.setAttribute('aria-hidden', String(!isActive));
-        });
-        dots.forEach((dot, dotIndex) => {
-          const isActive = dotIndex === normalizedIndex;
-          dot.classList.toggle('is-active', isActive);
-          dot.setAttribute('aria-pressed', String(isActive));
-        });
-        window.setTimeout(() => current.classList.remove('is-leaving'), reduceMotion.matches ? 0 : 650);
-        activeIndex = normalizedIndex;
-      };
-
-      const stop = () => window.clearInterval(timer);
-      const start = () => {
-        stop();
-        if (!reduceMotion.matches && slider.dataset.autoplay !== 'false') timer = window.setInterval(() => showSlide(activeIndex + 1), 4400);
-      };
-      const step = direction => { showSlide(activeIndex + direction); start(); };
-
-      slider.querySelector('[data-slider-prev]')?.addEventListener('click', () => step(-1));
-      slider.querySelector('[data-slider-next]')?.addEventListener('click', () => step(1));
-      dots.forEach((dot, dotIndex) => dot.addEventListener('click', () => { showSlide(dotIndex); start(); }));
-      slider.addEventListener('keydown', event => {
-        if (event.key === 'ArrowLeft') { event.preventDefault(); step(-1); }
-        if (event.key === 'ArrowRight') { event.preventDefault(); step(1); }
+    const updateOrbit = centerIndex => {
+      orbitCards.forEach(card => {
+        const cardIndex = Number(card.dataset.orbitIndex || 0);
+        let offset = (cardIndex - centerIndex + slides.length) % slides.length;
+        if (offset > slides.length / 2) offset -= slides.length;
+        card.classList.remove('is-prev', 'is-next', 'is-far-prev', 'is-far-next');
+        if (offset === -1) card.classList.add('is-prev');
+        if (offset === 1) card.classList.add('is-next');
+        if (offset === -2) card.classList.add('is-far-prev');
+        if (offset === 2) card.classList.add('is-far-next');
       });
-      slider.addEventListener('pointerenter', stop);
-      slider.addEventListener('pointerleave', start);
-      slider.addEventListener('focusin', stop);
-      slider.addEventListener('focusout', event => { if (!slider.contains(event.relatedTarget)) start(); });
+    };
+
+    updateOrbit(activeIndex);
+
+    const showSlide = nextIndex => {
+      const normalizedIndex = (nextIndex + slides.length) % slides.length;
+      if (normalizedIndex === activeIndex) return;
+      const current = slides[activeIndex];
+      const next = slides[normalizedIndex];
+      current.classList.remove('is-active');
+      current.classList.add('is-leaving');
+      current.setAttribute('aria-hidden', 'true');
+      next.classList.remove('is-leaving');
+      next.classList.add('is-active');
+      next.setAttribute('aria-hidden', 'false');
+      sizeFrameToImage(next);
+      updateOrbit(normalizedIndex);
+      captions.forEach((caption, captionIndex) => {
+        const isActive = captionIndex === normalizedIndex;
+        caption.classList.toggle('is-active', isActive);
+        caption.setAttribute('aria-hidden', String(!isActive));
+      });
+      dots.forEach((dot, dotIndex) => {
+        const isActive = dotIndex === normalizedIndex;
+        dot.classList.toggle('is-active', isActive);
+        dot.setAttribute('aria-pressed', String(isActive));
+      });
+      window.setTimeout(() => current.classList.remove('is-leaving'), reduceMotion.matches ? 0 : 650);
+      activeIndex = normalizedIndex;
+    };
+
+    const stop = () => window.clearInterval(timer);
+    const start = () => {
+      stop();
+      if (!reduceMotion.matches && !manuallyPaused && !hovered && inViewport && !document.hidden && !slider.contains(document.activeElement)) {
+        timer = window.setInterval(() => showSlide(activeIndex + 1), 4400);
+      }
+    };
+    const step = direction => { showSlide(activeIndex + direction); start(); };
+    const updatePlayback = () => {
+      if (!playback) return;
+      playback.textContent = manuallyPaused ? 'Play slideshow' : 'Pause slideshow';
+      playback.setAttribute('aria-pressed', String(manuallyPaused));
+      playback.hidden = reduceMotion.matches;
+    };
+
+    playback?.addEventListener('click', () => {
+      manuallyPaused = !manuallyPaused;
+      updatePlayback();
       start();
     });
-    activateToc(renderToc(blocks));
-    renderRecommendations(project.slug, project.recommendations);
+    updatePlayback();
 
-    window.requestAnimationFrame(() => {
-      document.body.classList.add('project-motion-ready');
-      smoothScroll?.resize();
-      if (!window.location.hash) return;
-      const hashTarget = document.querySelector(window.location.hash);
-      if (!hashTarget) return;
-      if (smoothScroll) smoothScroll.scrollTo(hashTarget, { immediate: true, offset: -88 });
-      else window.scrollTo({ top: Math.max(0, hashTarget.offsetTop - 88), behavior: 'auto' });
+    slider.querySelector('[data-slider-prev]')?.addEventListener('click', () => step(-1));
+    slider.querySelector('[data-slider-next]')?.addEventListener('click', () => step(1));
+    dots.forEach((dot, dotIndex) => dot.addEventListener('click', () => { showSlide(dotIndex); start(); }));
+    slider.addEventListener('keydown', event => {
+      if (event.key === 'ArrowLeft') { event.preventDefault(); step(-1); }
+      if (event.key === 'ArrowRight') { event.preventDefault(); step(1); }
     });
-  };
+    slider.addEventListener('pointerenter', () => { hovered = true; stop(); });
+    slider.addEventListener('pointerleave', () => { hovered = false; start(); });
+    slider.addEventListener('focusin', stop);
+    slider.addEventListener('focusout', event => { if (!slider.contains(event.relatedTarget)) start(); });
+    document.addEventListener('visibilitychange', start);
+    reduceMotion.addEventListener('change', () => { updatePlayback(); start(); });
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(entries => {
+        inViewport = entries.some(entry => entry.isIntersecting);
+        start();
+      });
+      observer.observe(slider);
+    } else {
+      inViewport = true;
+      start();
+    }
+  });
 
-  const requestedSlug = new URLSearchParams(window.location.search).get('project') || 'login-revamp';
-  const slug = /^[a-z0-9-]+$/.test(requestedSlug) ? requestedSlug : 'login-revamp';
-
-  fetchProject(slug)
-    .then(renderProject)
-    .catch(error => {
-      console.warn(error.message);
-      activateToc([...document.querySelectorAll('.toc-links a')]);
+  const animatedPanels = [...document.querySelectorAll('.cms-motion-showcase, .cms-widget-stage')];
+  if ('IntersectionObserver' in window && animatedPanels.length) {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => entry.target.classList.toggle('is-offscreen', !entry.isIntersecting));
     });
+    animatedPanels.forEach(panel => { panel.classList.add('is-offscreen'); observer.observe(panel); });
+  }
+
+  activateToc([...document.querySelectorAll('#projectTocLinks a')]);
+  window.requestAnimationFrame(() => document.body.classList.add('project-motion-ready'));
 })();

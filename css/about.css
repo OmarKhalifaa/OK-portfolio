@@ -1,15 +1,3 @@
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
 .about-page {
   --about-title: clamp(62px, 5.5vw, 104px);
   --about-gutter: clamp(20px, 2vw, 34px);
@@ -75,9 +63,7 @@
 
 .about-intro-top { position: relative; z-index: 1; }
 
-.about-index,
 .about-eyebrow,
-.about-section-heading,
 .about-profile-heading {
   color: var(--text-3);
   font-size: 10px;
@@ -440,9 +426,9 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .about-intro { animation: columnBlend .9s .03s cubic-bezier(.22,.75,.25,1) both; }
-  .about-story { animation: columnBlend .9s .2s cubic-bezier(.22,.75,.25,1) both; }
-  .about-profile { animation: columnBlend .9s .38s cubic-bezier(.22,.75,.25,1) both; }
+  .about-intro { animation: columnReveal .9s .03s cubic-bezier(.22,.75,.25,1) both; }
+  .about-story { animation: columnReveal .9s .2s cubic-bezier(.22,.75,.25,1) both; }
+  .about-profile { animation: columnReveal .9s .38s cubic-bezier(.22,.75,.25,1) both; }
 }
 
 @media (prefers-reduced-motion: reduce) {

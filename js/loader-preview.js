@@ -13,7 +13,7 @@
   if (!reducedMotion.matches) root.classList.add('home-enter-pending');
   document.addEventListener('DOMContentLoaded', async () => {
     await Promise.race([
-      Promise.allSettled([window.homepageAssetsReady, document.fonts.ready]),
+      Promise.allSettled([window.homepageAssetsReady, document.fonts?.ready]),
       new Promise(resolve => setTimeout(resolve, 1800))
     ]);
     if (!root.classList.contains('intro-pending')) window.startHomepageEntrance();
@@ -31,6 +31,7 @@
   let intro;
   let finished = false;
   let pageContent = [];
+  let previousFocus;
   const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
   const pageReady = new Promise(resolve => {
     if (document.readyState === 'complete') resolve();
@@ -48,6 +49,7 @@
       return;
     }
     finished = true;
+    const restoreFocus = intro?.contains(document.activeElement);
     clearTimeout(failsafe);
     try { sessionStorage.setItem(sessionKey, '1'); } catch { /* Optional session memory. */ }
     // Let the sticker leave first, then bring in the already-decoded portfolio.
@@ -62,6 +64,11 @@
       root.classList.remove('intro-pending');
       pageContent.forEach(node => { node.inert = false; });
       window.startHomepageEntrance();
+      if (restoreFocus) {
+        const target = previousFocus?.isConnected && previousFocus !== document.body
+          ? previousFocus : document.querySelector('.nav-logo');
+        target?.focus({ preventScroll: true });
+      }
     };
     if (immediate) enterPortfolio();
     else setTimeout(enterPortfolio, 250);
@@ -69,6 +76,7 @@
   function onKeyDown(event) { if (event.key === 'Escape') reveal(); }
   const failsafe = setTimeout(() => reveal(true), 9000);
   window.addEventListener('pagehide', () => reveal(true), { once: true });
+  reducedMotion.addEventListener('change', event => { if (event.matches) reveal(true); });
 
   document.addEventListener('DOMContentLoaded', async () => {
     if (finished) return;
@@ -76,9 +84,12 @@
     intro.id = 'portfolioIntro';
     intro.className = 'portfolio-intro';
     intro.setAttribute('aria-label', 'Portfolio introduction');
+    intro.setAttribute('role', 'dialog');
+    intro.setAttribute('aria-modal', 'true');
     intro.innerHTML = `
       <header class="intro-header">
         <div class="intro-wordmark">OMAR KHALIFA<span>PRODUCT DESIGNER</span></div>
+        <button class="intro-skip" type="button">Skip intro ↗</button>
       </header>
       <div class="intro-center">
         <div class="intro-stage" aria-hidden="true">
@@ -91,19 +102,25 @@
         </div>
         <div class="intro-copy">
           <p class="intro-eyebrow">A GOOD IDEA STARTS SOMEWHERE</p>
-          <h1 class="intro-caption">Opening Figma<span class="intro-dots" aria-hidden="true"><i>.</i><i>.</i><i>.</i></span></h1>
+          <p class="intro-caption">Opening Figma<span class="intro-dots" aria-hidden="true"><i>.</i><i>.</i><i>.</i></span></p>
           <p class="intro-subtitle">Making a little room for good ideas.</p>
         </div>
         <p class="intro-sr-only" role="status">Omar’s portfolio is opening. Press Escape to skip the introduction.</p>
       </div>
       <footer class="intro-footer"><p>A few pixels.<br><span>A lot of personality.</span></p></footer>`;
     document.body.append(intro);
+    previousFocus = document.activeElement;
     pageContent = [...document.querySelectorAll('body > nav, body > main')];
     pageContent.forEach(node => { node.inert = true; });
     document.addEventListener('keydown', onKeyDown);
+    const skip = intro.querySelector('.intro-skip');
+    skip.addEventListener('click', () => reveal());
+    skip.focus({ preventScroll: true });
 
     const stickers = [...intro.querySelectorAll('.intro-sticker-slot')];
     const caption = intro.querySelector('.intro-caption');
+    const eyebrow = intro.querySelector('.intro-eyebrow');
+    const subtitle = intro.querySelector('.intro-subtitle');
     const states = [
       { caption: 'Opening Figma', eyebrow: 'A GOOD IDEA STARTS SOMEWHERE', subtitle: 'Making a little room for good ideas.', duration: 1750 },
       { caption: 'One pixel to the left', eyebrow: 'IT’S ALWAYS THE LITTLE THINGS', subtitle: 'Yep. That’s the one.', duration: 1750 },
@@ -124,11 +141,11 @@
         dots.innerHTML = '<i>.</i><i>.</i><i>.</i>';
         caption.append(dots);
       }
-      intro.querySelector('.intro-eyebrow').textContent = state.eyebrow;
-      intro.querySelector('.intro-subtitle').textContent = state.subtitle;
+      eyebrow.textContent = state.eyebrow;
+      subtitle.textContent = state.subtitle;
       await wait(state.duration);
     }
-    await Promise.race([Promise.allSettled([pageReady, document.fonts.ready, window.homepageAssetsReady]), wait(1200)]);
+    await Promise.race([Promise.allSettled([pageReady, document.fonts?.ready, window.homepageAssetsReady]), wait(1200)]);
     reveal();
   }, { once: true });
 })();

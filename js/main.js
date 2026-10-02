@@ -1,6 +1,7 @@
 /* ── THEME TOGGLE ── */
 (() => {
-  const saved = localStorage.getItem('theme');
+  let saved;
+  try { saved = localStorage.getItem('theme'); } catch { /* The theme still works without storage. */ }
   const theme = saved || 'dark';
   if (theme === 'light') {
     document.documentElement.setAttribute('data-theme', 'light');
@@ -12,16 +13,15 @@
   let isTransitioning = false;
 
   const applyTheme = isLight => {
-    if (isLight) {
-      document.documentElement.removeAttribute('data-theme');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.setAttribute('data-theme', 'light');
-      localStorage.setItem('theme', 'light');
-    }
+    const nextTheme = isLight ? 'dark' : 'light';
+    if (isLight) document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', 'light');
+    try { localStorage.setItem('theme', nextTheme); } catch { /* Optional preference persistence. */ }
+    btn?.setAttribute('aria-label', isLight ? 'Switch to light theme' : 'Switch to dark theme');
   };
 
   if (btn) {
+    btn.setAttribute('aria-label', theme === 'light' ? 'Switch to dark theme' : 'Switch to light theme');
     btn.addEventListener('click', () => {
       if (isTransitioning) return;
       const isLight = document.documentElement.getAttribute('data-theme') === 'light';
@@ -33,7 +33,10 @@
 
       isTransitioning = true;
       const transition = document.startViewTransition(() => applyTheme(isLight));
-      transition.finished.finally(() => { isTransitioning = false; });
+      transition.finished.then(
+        () => { isTransitioning = false; },
+        () => { isTransitioning = false; }
+      );
     });
   }
 })();
@@ -44,6 +47,7 @@
   const toggle = document.getElementById('mobileMenuToggle');
   const links = document.getElementById('primaryLinks');
   if (!nav || !toggle || !links) return;
+  nav.classList.add('has-mobile-menu');
 
   const setOpen = open => {
     nav.classList.toggle('mobile-menu-open', open);
@@ -55,12 +59,15 @@
     setOpen(!nav.classList.contains('mobile-menu-open'));
   });
 
-  links.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => setOpen(false));
+  links.addEventListener('click', event => {
+    if (event.target.closest('a')) setOpen(false);
   });
 
   document.addEventListener('keydown', event => {
-    if (event.key === 'Escape') setOpen(false);
+    if (event.key === 'Escape' && nav.classList.contains('mobile-menu-open')) {
+      setOpen(false);
+      toggle.focus();
+    }
   });
 
   window.matchMedia('(min-width: 621px)').addEventListener('change', event => {
@@ -69,49 +76,88 @@
 })();
 
 /* ── CUSTOM CURSOR ── */
-const cursor = document.getElementById('cursor');
-let tx = -100, ty = -100, cx = -100, cy = -100;
+(() => {
+  const cursor = document.getElementById('cursor');
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  const pointer = matchMedia('(hover: hover) and (pointer: fine)');
+  if (!cursor || !pointer.matches || reduceMotion.matches) return;
+  cursor.setAttribute('aria-hidden', 'true');
+  let tx = 0, ty = 0, cx = 0, cy = 0;
+  let animationFrame = null;
 
-document.addEventListener('mousemove', e => {
-  tx = e.clientX; ty = e.clientY;
-});
+  const stop = () => {
+    if (animationFrame !== null) cancelAnimationFrame(animationFrame);
+    animationFrame = null;
+    cursor.classList.remove('is-active', 'hover-state');
+  };
+  const animate = () => {
+    cx += (tx - cx) * 0.15;
+    cy += (ty - cy) * 0.15;
+    const moving = Math.abs(tx - cx) + Math.abs(ty - cy) > 0.1;
+    if (!moving) { cx = tx; cy = ty; }
+    cursor.style.transform = `translate3d(${cx}px, ${cy}px, 0) translate(-50%, -50%)`;
+    animationFrame = moving ? requestAnimationFrame(animate) : null;
+  };
 
-(function animateCursor() {
-  cx += (tx - cx) * 0.15;
-  cy += (ty - cy) * 0.15;
-  cursor.style.left = cx + 'px';
-  cursor.style.top  = cy + 'px';
-  requestAnimationFrame(animateCursor);
+  document.addEventListener('pointermove', event => {
+    if (event.pointerType === 'touch' || reduceMotion.matches || !pointer.matches) return;
+    tx = event.clientX;
+    ty = event.clientY;
+    if (!cursor.classList.contains('is-active')) {
+      cx = tx;
+      cy = ty;
+      cursor.classList.add('is-active');
+    }
+    cursor.classList.toggle('hover-state', Boolean(event.target.closest('a, button')));
+    if (animationFrame === null) animationFrame = requestAnimationFrame(animate);
+  }, { passive: true });
+  document.documentElement.addEventListener('pointerleave', stop);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); });
+  reduceMotion.addEventListener('change', stop);
+  pointer.addEventListener('change', stop);
 })();
-
-document.querySelectorAll('a, button').forEach(el => {
-  el.addEventListener('mouseenter', () => cursor.classList.add('hover-state'));
-  el.addEventListener('mouseleave', () => cursor.classList.remove('hover-state'));
-});
 
 /* ── HERO DOT GLINTS ── */
 (() => {
   const field = document.getElementById('heroDotGlints');
-  if (!field) return;
+  if (!field || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
+  const glints = document.createDocumentFragment();
   for (let i = 0; i < 12; i += 1) {
     const glint = document.createElement('span');
     glint.style.setProperty('--x', `${4 + Math.random() * 92}%`);
     glint.style.setProperty('--y', `${4 + Math.random() * 82}%`);
     glint.style.setProperty('--delay', `${-Math.random() * 7}s`);
     glint.style.setProperty('--speed', `${3.5 + Math.random() * 4}s`);
-    field.appendChild(glint);
+    glints.appendChild(glint);
   }
+  field.appendChild(glints);
 })();
 
 /* ── HALO CARDS ── */
-document.querySelectorAll('.halo-card').forEach(card => {
-  card.addEventListener('mousemove', e => {
-    const r = card.getBoundingClientRect();
-    card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
-    card.style.setProperty('--my', (e.clientY - r.top)  + 'px');
+(() => {
+  const cards = document.querySelectorAll('.halo-card');
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  if (!cards.length || reduceMotion.matches || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  let animationFrame = null;
+  let activeCard;
+  let x, y;
+  cards.forEach(card => {
+    card.addEventListener('pointermove', event => {
+      if (event.pointerType === 'touch' || reduceMotion.matches) return;
+      activeCard = card;
+      x = event.clientX;
+      y = event.clientY;
+      if (animationFrame !== null) return;
+      animationFrame = requestAnimationFrame(() => {
+        const rect = activeCard.getBoundingClientRect();
+        activeCard.style.setProperty('--mx', `${x - rect.left}px`);
+        activeCard.style.setProperty('--my', `${y - rect.top}px`);
+        animationFrame = null;
+      });
+    }, { passive: true });
   });
-});
+})();
 
 /* ── HERO FLUID TRAIL ── */
 (() => {
@@ -126,6 +172,7 @@ document.querySelectorAll('.halo-card').forEach(card => {
   const dotCtx = dotCanvas.getContext('2d', { alpha: true });
   const patternCanvas = document.createElement('canvas');
   const patternCtx = patternCanvas.getContext('2d');
+  if (!ctx || !dotCtx || !patternCtx) return;
   const points = [];
   const fragments = [];
   let lastPoint = null;
@@ -137,6 +184,9 @@ document.querySelectorAll('.halo-card').forEach(card => {
   let animationFrame = null;
   let dotPattern = null;
   let lastImpact = 0;
+  let previousFrame = 0;
+  let pendingPointer = null;
+  let inView = true;
 
   const TRAIL_LIFETIME = 1750;
   const MAX_POINTS = 82;
@@ -160,11 +210,12 @@ document.querySelectorAll('.halo-card').forEach(card => {
     const rect = section.getBoundingClientRect();
     const nextWidth = Math.round(rect.width);
     const nextHeight = Math.round(rect.height);
-    if (nextWidth === width && nextHeight === height) return;
+    const nextDpr = Math.min(window.devicePixelRatio || 1, 2);
+    if (nextWidth === width && nextHeight === height && nextDpr === dpr) return;
 
     width = nextWidth;
     height = nextHeight;
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    dpr = nextDpr;
     canvas.width = Math.round(width * dpr);
     canvas.height = Math.round(height * dpr);
     dotCanvas.width = canvas.width;
@@ -197,7 +248,7 @@ document.querySelectorAll('.halo-card').forEach(card => {
     const dx = x - lastPoint.x;
     const dy = y - lastPoint.y;
     const distance = Math.hypot(dx, dy);
-    const steps = Math.max(1, Math.ceil(distance / 10));
+    const steps = Math.min(MAX_POINTS, Math.max(1, Math.ceil(distance / 10)));
     for (let step = 1; step <= steps; step++) {
       const progress = step / steps;
       points.push({
@@ -244,6 +295,14 @@ document.querySelectorAll('.halo-card').forEach(card => {
   };
 
   const draw = now => {
+    const elapsed = previousFrame ? Math.min(now - previousFrame, 50) : 1000 / 60;
+    const frameRatio = elapsed / (1000 / 60);
+    previousFrame = now;
+    if (pendingPointer) {
+      const rect = section.getBoundingClientRect();
+      targetPoint = { x: pendingPointer.x - rect.left, y: pendingPointer.y - rect.top };
+      pendingPointer = null;
+    }
     ctx.clearRect(0, 0, width, height);
     dotCtx.clearRect(0, 0, width, height);
     const [r, g, b] = accent;
@@ -260,8 +319,9 @@ document.querySelectorAll('.halo-card').forEach(card => {
         const distance = Math.hypot(dx, dy);
 
         if (distance > 0.2) {
-          renderedPoint.x += dx * TRAIL_INERTIA;
-          renderedPoint.y += dy * TRAIL_INERTIA;
+          const inertia = 1 - (1 - TRAIL_INERTIA) ** frameRatio;
+          renderedPoint.x += dx * inertia;
+          renderedPoint.y += dy * inertia;
           const velocityX = renderedPoint.x - previousX;
           const velocityY = renderedPoint.y - previousY;
           addPoint(renderedPoint.x, renderedPoint.y, now);
@@ -293,6 +353,7 @@ document.querySelectorAll('.halo-card').forEach(card => {
     while (points.length && points[0].time < cutoff) points.shift();
     if (!points.length && !fragments.length) {
       animationFrame = null;
+      previousFrame = 0;
       return;
     }
 
@@ -345,11 +406,12 @@ document.querySelectorAll('.halo-card').forEach(card => {
 
     for (let i = fragments.length - 1; i >= 0; i--) {
       const fragment = fragments[i];
-      fragment.vx *= 0.94;
-      fragment.vy = fragment.vy * 0.94 + 0.012;
-      fragment.x += fragment.vx;
-      fragment.y += fragment.vy;
-      fragment.life -= 0.016;
+      const drag = 0.94 ** frameRatio;
+      fragment.vx *= drag;
+      fragment.vy = fragment.vy * drag + 0.012 * frameRatio;
+      fragment.x += fragment.vx * frameRatio;
+      fragment.y += fragment.vy * frameRatio;
+      fragment.life -= elapsed / 1000;
 
       if (fragment.x <= 0 || fragment.x >= width) {
         fragment.x = Math.max(0, Math.min(width, fragment.x));
@@ -374,20 +436,40 @@ document.querySelectorAll('.halo-card').forEach(card => {
   };
 
   section.addEventListener('pointermove', event => {
-    const rect = section.getBoundingClientRect();
+    if (event.pointerType === 'touch' || document.hidden || !inView || reduceMotion.matches || !canHover.matches) return;
     const events = event.getCoalescedEvents ? event.getCoalescedEvents() : [event];
     const pointerEvent = events[events.length - 1] || event;
-    targetPoint = {
-      x: pointerEvent.clientX - rect.left,
-      y: pointerEvent.clientY - rect.top
-    };
+    pendingPointer = { x: pointerEvent.clientX, y: pointerEvent.clientY };
 
-    if (!animationFrame) animationFrame = requestAnimationFrame(draw);
+    if (animationFrame === null) animationFrame = requestAnimationFrame(draw);
   }, { passive: true });
 
   section.addEventListener('pointerleave', () => {
     targetPoint = null;
+    pendingPointer = null;
   });
+  const stop = () => {
+    if (animationFrame !== null) cancelAnimationFrame(animationFrame);
+    animationFrame = null;
+    previousFrame = 0;
+    points.length = 0;
+    fragments.length = 0;
+    lastPoint = null;
+    targetPoint = null;
+    renderedPoint = null;
+    pendingPointer = null;
+    ctx.clearRect(0, 0, width, height);
+    dotCtx.clearRect(0, 0, width, height);
+  };
+  document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); });
+  reduceMotion.addEventListener('change', stop);
+  canHover.addEventListener('change', stop);
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting;
+      if (!inView) stop();
+    }).observe(section);
+  }
   window.addEventListener('resize', resize, { passive: true });
   if ('ResizeObserver' in window) new ResizeObserver(resize).observe(section);
   new MutationObserver(() => { accent = accentRgb(); }).observe(
@@ -397,224 +479,215 @@ document.querySelectorAll('.halo-card').forEach(card => {
   resize();
 })();
 
-// Static pixel and blur layers dissolve in sequence once the thumbnail is ready.
-async function prepareThumbnailReveal(thumb, image) {
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let blurLayer;
-  let pixelLayer;
-  if (!reduceMotion) {
-    blurLayer = image.cloneNode();
-    blurLayer.className = 'cms-card-thumb-image thumb-blur-layer';
-    blurLayer.alt = '';
-    blurLayer.setAttribute('aria-hidden', 'true');
-    thumb.classList.add('has-thumbnail-reveal');
-    thumb.append(blurLayer);
-    pixelLayer = document.createElement('canvas');
-    pixelLayer.className = 'thumb-pixel-layer';
-    pixelLayer.width = 8;
-    pixelLayer.height = 5;
-    pixelLayer.setAttribute('aria-hidden', 'true');
-    const context = pixelLayer.getContext('2d');
-    const palettes = {
-      t1: ['#111624', '#4a4f7a'], t2: ['#230707', '#8f1717'],
-      t3: ['#1a1412', '#6b4a3a'], t4: ['#181318', '#5a3a5a']
-    };
-    const palette = palettes[[...thumb.classList].find(name => palettes[name])] || palettes.t1;
-    const rgb = hex => [1, 3, 5].map(offset => parseInt(hex.slice(offset, offset + 2), 16));
-    const base = rgb(thumb.dataset.pixelBase || palette[0]);
-    const accent = rgb(thumb.dataset.pixelAccent || palette[1]);
-    if (context) {
-      for (let x = 0; x < 8; x++) {
-        for (let y = 0; y < 5; y++) {
-          const mix = Math.random() < .35 ? .6 + Math.random() * .4 : Math.random() * .4;
-          const color = base.map((channel, i) => Math.round(channel + (accent[i] - channel) * mix));
-          context.fillStyle = `rgb(${color.join(',')})`;
-          context.fillRect(x, y, 1, 1);
-        }
-      }
-      thumb.append(pixelLayer);
-    }
-  }
-  try {
-    await image.decode();
-  } catch {
-    blurLayer?.remove();
-    pixelLayer?.remove();
-    image.remove();
-    thumb.classList.remove('has-thumbnail-reveal', 'has-cms-thumbnail');
+/* ── PRERENDERED THUMBNAILS ── */
+(() => {
+  const thumbnails = document.querySelectorAll('[data-project-card] .card-thumb');
+  if (!thumbnails.length) {
+    window.homepageAssetsReady = Promise.resolve();
     return;
   }
-  if (reduceMotion) return;
-  thumb.classList.add('thumbnail-loaded');
-  const observe = () => {
-    const observer = new IntersectionObserver(entries => {
-      if (!entries.some(entry => entry.isIntersecting)) return;
-      observer.disconnect();
-      // Give the blurred layer a painted frame even on a warm-cache return.
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        thumb.classList.add('thumbnail-revealing');
-        setTimeout(() => {
-          blurLayer.remove();
-          pixelLayer.remove();
-          thumb.classList.remove('has-thumbnail-reveal', 'thumbnail-loaded', 'thumbnail-revealing');
-        }, 1900);
-      }));
-    }, { threshold: .12 });
-    observer.observe(thumb);
-  };
-  if (document.documentElement.classList.contains('home-enter-pending') || document.documentElement.classList.contains('intro-pending')) {
-    document.addEventListener('portfolio:ready', observe, { once: true });
-  } else {
-    observe();
-  }
-}
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  const reveals = new Map();
+  const observer = !reduceMotion.matches && 'IntersectionObserver' in window ? new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      observer.unobserve(entry.target);
+      const reveal = reveals.get(entry.target);
+      reveals.delete(entry.target);
+      reveal?.();
+      if (!reveals.size) observer.disconnect();
+    });
+  }, { threshold: .12 }) : null;
+  const entranceReady = document.documentElement.classList.contains('home-enter-pending') ||
+    document.documentElement.classList.contains('intro-pending')
+    ? new Promise(resolve => document.addEventListener('portfolio:ready', resolve, { once: true }))
+    : Promise.resolve();
 
-const homepageCardsReady = Promise.all([...document.querySelectorAll('[data-project-card]')].map(async card => {
-  const slug = card.dataset.projectCard;
-  if (!slug) return;
-
-  try {
-    const response = await fetch(`content/projects/${encodeURIComponent(slug)}.json`, { cache: 'no-store' });
-    if (!response.ok) return;
-    const project = await response.json();
-    const thumb = card.querySelector('.card-thumb');
-    if (!thumb) return;
-
-    const isHex = value => typeof value === 'string' && /^#[0-9a-f]{6}$/i.test(value);
-    if (isHex(project.thumbnailBackground)) thumb.style.background = project.thumbnailBackground;
-    if (isHex(project.thumbnailPixelBase)) thumb.dataset.pixelBase = project.thumbnailPixelBase;
-    if (isHex(project.thumbnailPixelAccent)) thumb.dataset.pixelAccent = project.thumbnailPixelAccent;
-
-    if (project.thumbnail) {
-      const image = document.createElement('img');
-      image.className = 'cms-card-thumb-image';
-      image.src = project.thumbnail;
-      image.alt = project.thumbnailAlt || `${project.title || 'Project'} thumbnail`;
-      const visibleAtEntry = thumb.getBoundingClientRect().top < window.innerHeight;
-      image.loading = visibleAtEntry ? 'eager' : 'lazy';
-      image.decoding = 'async';
-      image.style.objectFit = project.thumbnailFit === 'cover' ? 'cover' : 'contain';
-      thumb.prepend(image);
-      thumb.classList.add('has-cms-thumbnail');
-      const thumbnailReady = prepareThumbnailReveal(thumb, image);
-      if (visibleAtEntry) await thumbnailReady;
-    } else if (project.thumbnailIcon) {
-      const icon = card.querySelector('.thumb-icon');
-      if (icon) {
-        const image = document.createElement('img');
-        image.src = project.thumbnailIcon;
-        image.alt = '';
-        icon.replaceChildren(image);
+  // Progressive enhancement: content and thumbnails already exist in the HTML.
+  async function prepareThumbnailReveal(thumb, image) {
+    let blurLayer;
+    let pixelLayer;
+    if (!reduceMotion.matches) {
+      blurLayer = image.cloneNode();
+      blurLayer.className = 'cms-card-thumb-image thumb-blur-layer';
+      blurLayer.alt = '';
+      blurLayer.setAttribute('aria-hidden', 'true');
+      thumb.classList.add('has-thumbnail-reveal');
+      thumb.append(blurLayer);
+      pixelLayer = document.createElement('canvas');
+      pixelLayer.className = 'thumb-pixel-layer';
+      pixelLayer.width = 8;
+      pixelLayer.height = 5;
+      pixelLayer.setAttribute('aria-hidden', 'true');
+      const context = pixelLayer.getContext('2d');
+      const rgb = hex => [1, 3, 5].map(offset => parseInt(hex.slice(offset, offset + 2), 16));
+      const isHex = value => /^#[0-9a-f]{6}$/i.test(value || '');
+      const base = rgb(isHex(thumb.dataset.pixelBase) ? thumb.dataset.pixelBase : '#230707');
+      const accent = rgb(isHex(thumb.dataset.pixelAccent) ? thumb.dataset.pixelAccent : '#8f1717');
+      if (context) {
+        for (let x = 0; x < 8; x++) {
+          for (let y = 0; y < 5; y++) {
+            const mix = Math.random() < .35 ? .6 + Math.random() * .4 : Math.random() * .4;
+            const color = base.map((channel, i) => Math.round(channel + (accent[i] - channel) * mix));
+            context.fillStyle = `rgb(${color.join(',')})`;
+            context.fillRect(x, y, 1, 1);
+          }
+        }
+        thumb.append(pixelLayer);
       }
     }
-
-    if (Array.isArray(project.homepageTags) && project.homepageTags.length) {
-      const tags = card.querySelector('.card-tags');
-      if (tags) {
-        tags.replaceChildren(...project.homepageTags.slice(0, 3).map(label => {
-          const tag = document.createElement('span');
-          tag.className = 'tag';
-          tag.textContent = label;
-          return tag;
+    try {
+      if (image.decode) await image.decode();
+      else if (!image.complete) await new Promise((resolve, reject) => {
+        image.addEventListener('load', resolve, { once: true });
+        image.addEventListener('error', reject, { once: true });
+      });
+      if (!image.naturalWidth) throw new Error('Thumbnail unavailable');
+    } catch {
+      blurLayer?.remove();
+      pixelLayer?.remove();
+      image.remove();
+      thumb.classList.remove('has-thumbnail-reveal', 'has-cms-thumbnail');
+      return;
+    }
+    if (reduceMotion.matches) {
+      blurLayer?.remove();
+      pixelLayer?.remove();
+      thumb.classList.remove('has-thumbnail-reveal');
+      return;
+    }
+    thumb.classList.add('thumbnail-loaded');
+    entranceReady.then(() => {
+      const reveal = () => {
+        // Give the blurred layer a painted frame even on a warm-cache return.
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          thumb.classList.add('thumbnail-revealing');
+          setTimeout(() => {
+            blurLayer?.remove();
+            pixelLayer?.remove();
+            thumb.classList.remove('has-thumbnail-reveal', 'thumbnail-loaded', 'thumbnail-revealing');
+          }, 1900);
         }));
+      };
+      if (observer) {
+        reveals.set(thumb, reveal);
+        observer.observe(thumb);
+      } else {
+        reveal();
       }
-    }
-  } catch {
-    // Keep the static card artwork as a resilient fallback.
+    });
   }
-}));
 
-// The intro can wait for visible thumbnails to finish decoding.
-window.homepageAssetsReady = homepageCardsReady;
+  const visibleThumbnails = [];
+  thumbnails.forEach(thumb => {
+    const image = thumb.querySelector('.cms-card-thumb-image');
+    if (!image) return;
+    const rect = thumb.getBoundingClientRect();
+    const ready = prepareThumbnailReveal(thumb, image);
+    if (rect.top < innerHeight && rect.bottom > 0) visibleThumbnails.push(ready);
+  });
+  window.homepageAssetsReady = Promise.allSettled(visibleThumbnails);
+})();
 
 /* ── COUNTER ANIMATION ── */
-function animateCounter(el) {
-  const target = +el.dataset.count;
-  const suffix = el.dataset.suffix || '';
-  const duration = 6500;
-  const targetText = String(target);
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  el.textContent = '';
-  el.setAttribute('aria-label', `${target}${suffix}`);
-
-  const number = document.createElement('span');
-  number.className = 'counter-number';
-  number.setAttribute('aria-hidden', 'true');
-
-  [...targetText].forEach((digit, index) => {
-    const place = 10 ** (targetText.length - index - 1);
-    const turns = Math.floor(target / place);
-    const slot = document.createElement('span');
-    const reel = document.createElement('span');
-    slot.className = 'counter-slot';
-    reel.className = 'counter-reel';
-
-    for (let step = 0; step <= turns; step += 1) {
-      const item = document.createElement('span');
-      item.className = 'counter-digit';
-      item.textContent = String(step % 10);
-      reel.appendChild(item);
-    }
-
-    slot.appendChild(reel);
-    number.appendChild(slot);
-
-    if (!reduceMotion && turns > 0) {
-      requestAnimationFrame(() => {
-        reel.animate(
-          [
-            { transform: 'translateY(0)' },
-            { transform: `translateY(-${turns}em)` }
-          ],
-          {
-            duration,
-            easing: 'cubic-bezier(.45, 0, .25, 1)',
-            fill: 'forwards'
-          }
-        );
-      });
-    } else {
-      reel.style.transform = `translateY(-${turns}em)`;
-    }
+(() => {
+  const counters = document.querySelectorAll('.about-stat-num[data-count]');
+  if (!counters.length) return;
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  reduceMotion.addEventListener('change', event => {
+    if (!event.matches) return;
+    counters.forEach(el => {
+      el.getAnimations?.({ subtree: true }).forEach(animation => animation.cancel());
+      animateCounter(el);
+    });
   });
+  function animateCounter(el) {
+    const target = +el.dataset.count;
+    const suffix = el.dataset.suffix || '';
+    const duration = 6500;
+    const targetText = String(target);
+    if (!Number.isSafeInteger(target) || target < 0) return;
+    if (reduceMotion.matches || !el.animate) {
+      el.textContent = `${target}${suffix}`;
+      return;
+    }
 
-  el.appendChild(number);
+    el.textContent = '';
+    el.setAttribute('aria-label', `${target}${suffix}`);
 
-  if (suffix) {
-    const suffixEl = document.createElement('span');
-    suffixEl.className = 'counter-suffix';
-    suffixEl.setAttribute('aria-hidden', 'true');
-    suffixEl.textContent = suffix;
-    el.appendChild(suffixEl);
+    const number = document.createElement('span');
+    number.className = 'counter-number';
+    number.setAttribute('aria-hidden', 'true');
+
+    [...targetText].forEach((digit, index) => {
+      const place = 10 ** (targetText.length - index - 1);
+      const turns = Math.min(Math.floor(target / place), 20 + Number(digit));
+      const slot = document.createElement('span');
+      const reel = document.createElement('span');
+      slot.className = 'counter-slot';
+      reel.className = 'counter-reel';
+
+      for (let step = 0; step <= turns; step += 1) {
+        const item = document.createElement('span');
+        item.className = 'counter-digit';
+        item.textContent = String(step % 10);
+        reel.appendChild(item);
+      }
+
+      slot.appendChild(reel);
+      number.appendChild(slot);
+
+      if (turns > 0) {
+        requestAnimationFrame(() => {
+          const animation = reel.animate(
+            [
+              { transform: 'translateY(0)' },
+              { transform: `translateY(-${turns}em)` }
+            ],
+            {
+              duration,
+              easing: 'cubic-bezier(.45, 0, .25, 1)',
+              fill: 'forwards'
+            }
+          );
+          animation.finished.then(() => {
+            reel.style.transform = `translateY(-${turns}em)`;
+            animation.cancel();
+          }, () => {});
+        });
+      } else {
+        reel.style.transform = `translateY(-${turns}em)`;
+      }
+    });
+
+    el.appendChild(number);
+
+    if (suffix) {
+      const suffixEl = document.createElement('span');
+      suffixEl.className = 'counter-suffix';
+      suffixEl.setAttribute('aria-hidden', 'true');
+      suffixEl.textContent = suffix;
+      el.appendChild(suffixEl);
+    }
   }
-}
 
-const counterObserver = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting && !entry.target.dataset.counted) {
-      entry.target.dataset.counted = 'true';
-      animateCounter(entry.target);
+  const observeCounters = () => {
+    if (reduceMotion.matches || !('IntersectionObserver' in window)) {
+      counters.forEach(animateCounter);
+      return;
     }
-  });
-}, { threshold: 0.5 });
-
-const observeCounters = () => {
-  document.querySelectorAll('.about-stat-num[data-count]').forEach(el => counterObserver.observe(el));
-};
-if (document.documentElement.classList.contains('intro-pending') || document.documentElement.classList.contains('home-enter-pending')) {
-  document.addEventListener('portfolio:ready', observeCounters, { once: true });
-} else {
-  observeCounters();
-}
-
-/* ── SCROLL REVEAL ── */
-const io = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-    }
-  });
-}, { threshold: 0.1 });
-
-document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    const counterObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        counterObserver.unobserve(entry.target);
+        animateCounter(entry.target);
+      });
+    }, { threshold: 0.5 });
+    counters.forEach(el => counterObserver.observe(el));
+  };
+  if (document.documentElement.classList.contains('intro-pending') || document.documentElement.classList.contains('home-enter-pending')) {
+    document.addEventListener('portfolio:ready', observeCounters, { once: true });
+  } else {
+    observeCounters();
+  }
+})();

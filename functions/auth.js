@@ -8,7 +8,18 @@ function randomState() {
     .replace(/=+$/, "");
 }
 
-export async function onRequest({ request, env }) {
+export async function onRequest({ request }) {
+  if (request.method !== "GET") {
+    return new Response("Method not allowed", {
+      status: 405,
+      headers: {
+        Allow: "GET",
+        "Cache-Control": "no-store",
+        "X-Robots-Tag": "noindex, nofollow",
+      },
+    });
+  }
+
   const requestUrl = new URL(request.url);
   const state = randomState();
   const authorizeUrl = new URL("https://github.com/login/oauth/authorize");
@@ -23,6 +34,8 @@ export async function onRequest({ request, env }) {
     headers: {
       Location: authorizeUrl.toString(),
       "Cache-Control": "no-store",
+      "Referrer-Policy": "no-referrer",
+      "X-Robots-Tag": "noindex, nofollow",
       "Set-Cookie": [
         `decap_oauth_state=${state}`,
         "Path=/callback",
