@@ -43,7 +43,7 @@ Dark mode is the default document theme. Light mode remains available through th
 | `--border-2` | `rgba(10,10,8,.18)` | `rgba(255,255,255,.12)` | Strong controls and outlines |
 | `--text-1` | `#111110` | `#F5F4EE` | Primary text |
 | `--text-2` | `#4A4A46` | `#B8B8B1` | Body copy |
-| `--text-3` | `#7A7A73` | `#7A7A73` | Metadata and muted labels |
+| `--text-3` | `#65655E` | `#A3A39A` | Metadata and muted labels |
 | `--accent` | `#1F8F6A` | `#5DCAA5` | Trail, glints, rain, active details |
 | `--nav-bg` | `rgba(245,243,236,.85)` | `rgba(12,12,11,.85)` | Translucent full-width navigation |
 | `--surface-soft` | `rgba(10,10,8,.035)` | `rgba(255,255,255,.04)` | Stat and logo tiles |
@@ -59,19 +59,21 @@ Dark mode is the default document theme. Light mode remains available through th
 
 ### Project case studies
 
-Project pages use a three-column editorial shell on desktop:
+Project pages use the homepage's full-width three-column editorial shell on desktop, with no maximum page width. Above `1180px`, the columns share the same `26 / 48 / 26` proportions and minimum widths as the homepage. The header aligns to this grid.
 
 | Column | Width | Behaviour |
 |---|---:|---|
-| Section navigation | `238px` | Sticky table of contents with active-section tracking |
-| Case study | Flexible | Hero, fixed four-field metadata strip, and CMS-ready content blocks |
-| Next projects | `286px` | Sticky recommendation rail with three project cards |
+| Section navigation | `26%` | Sticky table of contents with active-section tracking |
+| Case study | `48%` | Hero, fixed four-field metadata strip, and CMS-ready content blocks |
+| Reserved column | `26%` | Empty for now; separated from the case study by a vertical rule |
 
-At `960px` the recommendation rail moves below the case study. At `720px` the section navigation becomes a sticky horizontal strip and all content follows a single-column flow. The project metadata remains fixed in structure while the content blocks are intended to become reorderable through Decap CMS.
+The recommendation section follows the case-study content inside the middle column at every size. Its heading reads “More problems I’ve worked on”, using `clamp(26px, 2.4vw, 32px)` Syne 600 with an `18px` desktop inset and generous space above the grid. The three-column grid fills the entire middle column with continuous top and bottom rules that meet the column boundaries. It uses the homepage's square, inset `4 / 3` thumbnails, transparent cards, and shared separators. The three recommendations share one row above `720px`, with spacing inside each card and text that wraps within it. Each thumbnail respects its CMS fit mode and background color, followed by a 17px title and 13px description limited to three lines. At `1180px` the side rails become `210px` and `238px`; at `960px` the empty rail disappears. At `720px` recommendations become a single column with rules spanning the page width, section navigation becomes a sticky horizontal strip, and all content follows a single-column flow. The project metadata remains fixed in structure while the content blocks are intended to become reorderable through Decap CMS.
 
 Project content is stored as JSON in `content/projects`. The build uses `templates/project.html` and `scripts/project-renderer.mjs` to generate complete case-study pages at `/projects/<slug>/`, with section navigation and published recommendations. Browser JavaScript enhances the existing content. Decap CMS is available at `/admin/`; its schema and allowed block types live in `admin/config.yml`.
 
-The project-page header reuses the homepage navigation geometry, typography, link structure, theme control, and mobile `+` menu. Image blocks expose controlled width, alignment, aspect-ratio, fit, focal-point, and caption settings; text-image blocks also expose column proportion and vertical alignment.
+The project-page header matches the homepage header: above `1180px`, the wordmark starts `18px` inside the middle column and the controls end `18px` before its right edge. At `1180px` and below, both headers use a full-width flex row with `28px` side insets; at `620px` and below, both use the same `16px` inset and mobile `+` menu. Image blocks expose controlled width, alignment, aspect-ratio, fit, focal-point, and caption settings; text-image blocks also expose column proportion and vertical alignment.
+
+Timeline dates and roles, education details and courses, location, project-detail labels, recommendation labels, and narrative captions use 13px with comfortable line-height; timeline names, education names, and project detail values use 14px. Muted colors retain readable contrast in both themes. Small decorative glyphs and animation digits are sized independently.
 
 ### Desktop
 
@@ -90,7 +92,7 @@ Vertical borders are structural grid lines. The middle card stack uses a two-col
 | Breakpoint | Behaviour |
 |---|---|
 | `≤1180px` | Two-column hero/work shell; Experience moves below as a full-width section |
-| `≤820px` | Single document flow; work cards stack; sticky columns become normal sections |
+| `≤820px` | Single document flow; work cards stack; sticky columns become normal sections; homepage hero and About title use content-sized heights |
 | `≤620px` | Single-row mobile header with an expanding `+` dropdown sheet, compact profile padding, and simplified card metadata |
 | `(hover: none)` | Custom cursor, trail, and halo effects are disabled |
 
@@ -110,6 +112,7 @@ Vertical borders are structural grid lines. The middle card stack uses a two-col
 - Two-line greeting: “Hey,” followed by the unbroken “I’m Omar!” line.
 - Cairo location includes map, globe, and an Egyptian-flag SVG.
 - Social and resume links use dedicated icons and anchor the bottom-left; location sits opposite them.
+- On mobile, social links wrap into a row and location information follows in a compact row. Hero and work-introduction spacing brings the first project into the initial viewport on a typical phone-sized screen.
 - Dot field, fluid trail, and independent glints share the column without blocking input.
 
 ### Capability ribbon

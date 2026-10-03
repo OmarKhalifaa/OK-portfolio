@@ -283,11 +283,16 @@ export function renderToc(blocks = []) {
 export function renderRecommendations(project, publishedProjects = []) {
   const bySlug = new Map(publishedProjects.map(item => [item.slug, item]));
   const orderedSlugs = [...new Set([...(project.recommendations || []), ...bySlug.keys()])];
-  const themes = ['green', 'orange', 'purple'];
   return orderedSlugs
     .filter(slug => slug !== project.slug)
     .map(slug => bySlug.get(slug))
     .filter(item => item?.showInRecommendations === true)
-    .map((item, index) => `<a class="next-card next-card-${themes[index % themes.length]}" href="/projects/${encodeURIComponent(item.slug)}/" aria-label="${escapeHTML(item.title)} case study"><div class="next-card-copy"><p>${escapeHTML([item.client, item.category].filter(Boolean).join(' · '))}</p><h2>${escapeHTML(item.title)}</h2></div><span class="next-arrow" aria-hidden="true">↗</span></a>`)
+    .map(item => {
+      const background = /^#[a-f0-9]{3,8}$/i.test(item.thumbnailBackground || '') ? ` style="background:${escapeHTML(item.thumbnailBackground)}"` : '';
+      const thumbnail = safeMediaUrl(item.thumbnail)
+        ? renderImage(item.thumbnail, item.thumbnailAlt || `${item.title} project preview`, 'next-card-image')
+        : `<span class="next-card-monogram" aria-hidden="true">${escapeHTML(item.title.charAt(0))}</span>`;
+      return `<a class="next-card" href="/projects/${encodeURIComponent(item.slug)}/" aria-label="${escapeHTML(item.title)} case study"><div class="next-card-thumb next-card-thumb-${option(item.thumbnailFit, ['cover', 'contain'], 'contain')}"${background}>${thumbnail}</div><div class="next-card-copy"><h3>${escapeHTML(item.title)}</h3>${item.deck ? `<p>${escapeHTML(item.deck)}</p>` : ''}</div></a>`;
+    })
     .join('');
 }

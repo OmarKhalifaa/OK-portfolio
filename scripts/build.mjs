@@ -155,6 +155,7 @@ export async function build() {
     $('img').each((_, element) => {
       const relative = localPath($(element).attr('src'));
       if (relative && imageMap.has(`/${relative}`)) $(element).attr(imageMap.get(`/${relative}`));
+      if ($(element).hasClass('next-card-image')) $(element).attr('sizes', '(max-width: 720px) calc(100vw - 22px), (max-width: 960px) calc(33.333vw - 85px), (max-width: 1180px) calc(33.333vw - 171px), calc(16vw - 22px)');
       $(element).attr('decoding', 'async');
     });
     $('link[href]').each((_, element) => {

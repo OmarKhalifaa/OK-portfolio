@@ -66,8 +66,9 @@
 .about-eyebrow,
 .about-profile-heading {
   color: var(--text-3);
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 500;
+  line-height: 1.5;
   letter-spacing: .08em;
   text-transform: uppercase;
 }
@@ -186,8 +187,8 @@
 .software-grid li > div > span {
   margin-top: 7px;
   color: var(--text-3);
-  font-size: 10px;
-  line-height: 1.4;
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 .software-mark {
@@ -322,6 +323,7 @@
 .about-portrait img {
   display: block;
   width: 100%;
+  height: auto;
   aspect-ratio: 1;
   border: 0;
   border-radius: 12px;
@@ -385,9 +387,9 @@
 .education-entry > div > strong,
 .education-entry > div > span,
 .education-entry > div > small { display: block; }
-.education-entry > div > strong { font-size: 11px; font-weight: 500; line-height: 1.35; }
-.education-entry > div > span { margin-top: 4px; color: var(--text-2); font-size: 9px; }
-.education-entry > div > small { margin-top: 2px; color: var(--text-3); font-size: 9px; }
+.education-entry > div > strong { font-size: 14px; font-weight: 500; line-height: 1.4; }
+.education-entry > div > span { margin-top: 4px; color: var(--text-2); font-size: 13px; line-height: 1.5; }
+.education-entry > div > small { margin-top: 2px; color: var(--text-3); font-size: 13px; line-height: 1.5; }
 
 .education-courses {
   margin-top: 14px;
@@ -398,8 +400,9 @@
 .education-courses > p {
   margin-bottom: 5px;
   color: var(--text-3);
-  font-size: 9px;
+  font-size: 13px;
   font-weight: 500;
+  line-height: 1.5;
   letter-spacing: .08em;
   text-transform: uppercase;
 }
@@ -421,8 +424,9 @@
 }
 
 .education-courses li > strong {
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 400;
+  line-height: 1.5;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -459,8 +463,8 @@
   .about-intro {
     position: relative;
     height: auto;
-    min-height: 78svh;
-    padding: 108px 24px 28px;
+    min-height: 0;
+    padding: 96px 24px 28px;
     border-right: 0;
     border-bottom: 1px solid var(--border);
   }
@@ -470,7 +474,7 @@
   .about-story { border-right: 0; }
   .about-story > section,
   .connect-strip { padding: 72px 24px; }
-  .about-lede { padding-top: 84px !important; }
+  .about-lede { padding-top: 44px !important; }
   .about-lede h2 { font-size: clamp(32px, 8vw, 50px); }
   .software-stack { min-height: auto; }
   .software-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
