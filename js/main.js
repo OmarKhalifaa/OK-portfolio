@@ -134,48 +134,6 @@
   field.appendChild(glints);
 })();
 
-/* ── CARD POINTER EFFECTS ── */
-(() => {
-  const cards = document.querySelectorAll('.halo-card');
-  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
-  if (!cards.length || reduceMotion.matches || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
-  let animationFrame = null;
-  let activeCard;
-  let x, y;
-  cards.forEach(card => {
-    const cta = card.querySelector('.card-cta');
-    card.addEventListener('pointermove', event => {
-      if (event.pointerType === 'touch' || reduceMotion.matches) return;
-      activeCard = card;
-      x = event.clientX;
-      y = event.clientY;
-      if (animationFrame !== null) return;
-      animationFrame = requestAnimationFrame(() => {
-        if (!activeCard) { animationFrame = null; return; }
-        const currentCard = activeCard;
-        const rect = currentCard.getBoundingClientRect();
-        const currentCta = currentCard.querySelector('.card-cta');
-        const localX = x - rect.left;
-        const localY = y - rect.top;
-        const pillX = currentCta && Math.max(8, Math.min(localX + 12, rect.width - currentCta.offsetWidth - 8));
-        const pillY = currentCta && Math.max(8, Math.min(localY + 12, rect.height - currentCta.offsetHeight - 8));
-        currentCard.style.setProperty('--mx', `${localX}px`);
-        currentCard.style.setProperty('--my', `${localY}px`);
-        if (currentCta) {
-          currentCard.style.setProperty('--cta-x', `${pillX}px`);
-          currentCard.style.setProperty('--cta-y', `${pillY}px`);
-          currentCard.classList.add('card-pointer-active');
-        }
-        animationFrame = null;
-      });
-    }, { passive: true });
-    if (cta) card.addEventListener('pointerleave', () => {
-      card.classList.remove('card-pointer-active');
-      if (activeCard === card) activeCard = null;
-    });
-  });
-})();
-
 /* ── HERO FLUID TRAIL ── */
 (() => {
   const canvas = document.getElementById('heroTrail');
@@ -515,8 +473,7 @@
       if (!reveals.size) observer.disconnect();
     });
   }, { threshold: .12 }) : null;
-  const entranceReady = document.documentElement.classList.contains('home-enter-pending') ||
-    document.documentElement.classList.contains('intro-pending')
+  const entranceReady = document.documentElement.classList.contains('home-enter-pending')
     ? new Promise(resolve => document.addEventListener('portfolio:ready', resolve, { once: true }))
     : Promise.resolve();
 
@@ -524,7 +481,7 @@
   async function prepareThumbnailReveal(thumb, image) {
     let blurLayer;
     let pixelLayer;
-    if (!reduceMotion.matches) {
+    if (!reduceMotion.matches && !thumb.classList.contains('has-video-thumbnail')) {
       blurLayer = image.cloneNode();
       blurLayer.className = 'cms-card-thumb-image thumb-blur-layer';
       blurLayer.alt = '';
@@ -567,7 +524,7 @@
       thumb.classList.remove('has-thumbnail-reveal', 'has-cms-thumbnail');
       return;
     }
-    if (reduceMotion.matches) {
+    if (reduceMotion.matches || thumb.classList.contains('has-video-thumbnail')) {
       blurLayer?.remove();
       pixelLayer?.remove();
       thumb.classList.remove('has-thumbnail-reveal');
@@ -702,7 +659,7 @@
     }, { threshold: 0.5 });
     counters.forEach(el => counterObserver.observe(el));
   };
-  if (document.documentElement.classList.contains('intro-pending') || document.documentElement.classList.contains('home-enter-pending')) {
+  if (document.documentElement.classList.contains('home-enter-pending')) {
     document.addEventListener('portfolio:ready', observeCounters, { once: true });
   } else {
     observeCounters();

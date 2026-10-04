@@ -8,12 +8,18 @@ import { load } from 'cheerio';
 import sharp from 'sharp';
 import { transform } from 'esbuild';
 import site from '../site.config.mjs';
-import { validateContent } from './validate-content.mjs';
-import { renderBlocks, renderToc, renderRecommendations, escapeHTML } from './project-renderer.mjs';
+import { validateContent, localPrototypePath } from './validate-content.mjs';
+import { renderBlocks, renderToc, renderRecommendations, renderProjectThumbnail, escapeHTML } from './project-renderer.mjs';
 
 const root = path.resolve(fileURLToPath(new URL('..', import.meta.url)));
-const output = path.join(root, 'dist');
 const cache = path.join(root, '.cache/images');
+const previewFlagIndex = process.argv.indexOf('--preview-project');
+const previewSlug = previewFlagIndex === -1 ? null : process.argv[previewFlagIndex + 1];
+if (previewFlagIndex !== -1 && (!previewSlug || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(previewSlug))) {
+  throw new Error('--preview-project requires a valid project slug');
+}
+// Draft review uses a separate, ignored output directory; dist remains deployable.
+const output = previewSlug ? path.join(root, '.cache/project-previews', previewSlug) : path.join(root, 'dist');
 sharp.cache({ memory: 64 });
 sharp.concurrency(2);
 // These are trusted design exports; some full-page screenshots exceed Sharp's default pixel limit.
@@ -74,21 +80,38 @@ export async function build() {
   const projects = validateContent(root);
   const published = projects.filter(project => project.showInRecommendations === true);
   if (!published.length) throw new Error('At least one published case study is required');
-  // Only the fixed build directory can be cleared; source and CMS files are never touched.
-  if (output !== path.join(root, 'dist')) throw new Error('Unsafe output directory');
+  const previewProject = previewSlug ? projects.find(project => project.slug === previewSlug) : null;
+  if (previewSlug && !previewProject) throw new Error(`Unknown preview project: ${previewSlug}`);
+  const renderedProjects = previewProject && !published.includes(previewProject) ? [...published, previewProject] : published;
+  const prototypeDirectories = new Set(renderedProjects.flatMap(project => project.blocks.filter(block => block.type === 'html_prototype').map(block => localPrototypePath(block.url))));
+  // Only these fixed workspace output directories can be cleared.
+  const expectedOutput = previewSlug ? path.join(root, '.cache/project-previews', previewSlug) : path.join(root, 'dist');
+  if (output !== expectedOutput || !output.startsWith(`${root}${path.sep}`)) throw new Error('Unsafe output directory');
   await fs.rm(output, { recursive: true, force: true });
   await fs.mkdir(cache, { recursive: true });
+  const copyPrototype = async relative => {
+    for (const entry of await fs.readdir(sourceFile(relative), { withFileTypes: true })) {
+      const child = `${relative.replace(/\/$/, '')}/${entry.name}`;
+      if (entry.isSymbolicLink()) throw new Error(`Prototype bundles cannot contain symbolic links: ${child}`);
+      if (/\.(?:test|spec)\.[cm]?[jt]sx?$/i.test(entry.name) || ['tests', '__tests__'].includes(entry.name)) continue;
+      if (entry.isDirectory()) await copyPrototype(child);
+      else if (entry.isFile()) await write(child, await fs.readFile(sourceFile(child)));
+    }
+  };
+  for (const relative of prototypeDirectories) await copyPrototype(relative);
   const home = load(await read('index.html'));
   const about = load(await read('about.html'));
+  const directory = load(await read('templates/projects.html'));
   const template = await read('templates/project.html');
   const assets = new Set([
     'favicon.ico', 'favicon-16x16.png', 'favicon-32x32.png', 'apple-touch-icon.png',
-    'android-chrome-192x192.png', 'android-chrome-512x512.png', 'images/omar-khalifa-preview.jpg', 'images/stickers/omar-moods.png',
-    ...imageReferences(home), ...imageReferences(about),
+    'android-chrome-192x192.png', 'android-chrome-512x512.png', 'images/omar-khalifa-preview.jpg',
+    ...imageReferences(home), ...imageReferences(about), ...imageReferences(directory),
   ]);
-  for (const project of published) {
+  for (const project of renderedProjects) {
     imageReferences(load(renderBlocks(project))).forEach(asset => assets.add(asset));
     if (project.thumbnail) assets.add(localPath(project.thumbnail));
+    if (project.thumbnailVideo) assets.add(localPath(project.thumbnailVideo));
     if (project.thumbnailIcon) assets.add(localPath(project.thumbnailIcon));
   }
   const imageMap = new Map();
@@ -97,7 +120,7 @@ export async function build() {
   for (const relative of [...assets].filter(Boolean).sort()) {
     const file = sourceFile(relative);
     const data = await fs.readFile(file);
-    if (/^images\/.*\.(?:png|jpe?g)$/i.test(relative) && !['images/omar-khalifa-preview.jpg', 'images/stickers/omar-moods.png'].includes(relative)) {
+    if (/^images\/.*\.(?:png|jpe?g)$/i.test(relative) && relative !== 'images/omar-khalifa-preview.jpg') {
       originalBytes += data.length;
       const info = await image(data).metadata();
       const widths = [...new Set([640, 1280, 1920].map(width => Math.min(width, info.width)))];
@@ -156,7 +179,13 @@ export async function build() {
       const relative = localPath($(element).attr('src'));
       if (relative && imageMap.has(`/${relative}`)) $(element).attr(imageMap.get(`/${relative}`));
       if ($(element).hasClass('next-card-image')) $(element).attr('sizes', '(max-width: 720px) calc(100vw - 22px), (max-width: 960px) calc(33.333vw - 85px), (max-width: 1180px) calc(33.333vw - 171px), calc(16vw - 22px)');
+      if ($(element).closest('.projects-card').length) $(element).attr('sizes', '(max-width: 820px) calc(100vw - 28px), (max-width: 1180px) calc(31vw - 28px), calc(24vw - 28px)');
       $(element).attr('decoding', 'async');
+    });
+    $('video[poster]').each((_, element) => {
+      const relative = localPath($(element).attr('poster'));
+      const optimized = relative && imageMap.get(`/${relative}`);
+      if (optimized) $(element).attr('poster', optimized.src);
     });
     $('link[href]').each((_, element) => {
       const href = $(element).attr('href');
@@ -172,10 +201,13 @@ export async function build() {
   };
   const person = { '@type': 'Person', '@id': `${site.url}/#person`, name: site.name, jobTitle: site.role, url: `${site.url}/`, sameAs: site.social, email: `mailto:${site.email}`, homeLocation: { '@type': 'Place', name: 'Cairo, Egypt' } };
   const existingCards = new Map(home('[data-project-card]').toArray().map(card => [home(card).attr('data-project-card'), home(card).toString()]));
-  const order = [...existingCards.keys(), ...published.map(project => project.slug)].filter((slug, index, all) => all.indexOf(slug) === index);
+  const draftProject = previewProject && !published.includes(previewProject) ? previewProject : null;
+  const order = [...(draftProject ? [draftProject.slug] : []), ...existingCards.keys(), ...published.map(project => project.slug)].filter((slug, index, all) => all.indexOf(slug) === index);
+  const directoryProjects = [];
+  const directoryCategory = project => /\bmobile\b/i.test(project.category || '') ? 'mobile' : /\bweb\b|\bwebsite\b/i.test(project.category || '') ? 'web' : /\bdesign systems\b/i.test(project.category || '') ? 'systems' : 'other';
   home('.concept-card-stack').empty();
   for (const slug of order) {
-    const project = published.find(candidate => candidate.slug === slug);
+    const project = renderedProjects.find(candidate => candidate.slug === slug);
     if (!project) continue;
     const card = home(existingCards.get(slug) || existingCards.values().next().value);
     card.attr({ href: `/projects/${slug}/`, 'data-project-card': slug });
@@ -183,8 +215,8 @@ export async function build() {
     card.find('.card-desc').text(project.deck);
     if (project.thumbnail) {
       const thumb = card.find('.card-thumb').addClass('has-cms-thumbnail');
-      const thumbnailPath = localPath(project.thumbnail);
-      thumb.empty().append(home('<img>').attr({ class: 'cms-card-thumb-image', src: thumbnailPath ? `/${thumbnailPath}` : project.thumbnail, alt: project.thumbnailAlt || `${project.title} project preview`, loading: 'lazy', style: `object-fit:${project.thumbnailFit === 'cover' ? 'cover' : 'contain'}` }));
+      thumb.empty().append(renderProjectThumbnail(project));
+      thumb.toggleClass('has-video-thumbnail', thumb.find('[data-thumbnail-video]').length > 0);
       if (/^#[a-f0-9]{3,8}$/i.test(project.thumbnailBackground || '')) thumb.css('background', project.thumbnailBackground);
       for (const [field, attribute] of [['thumbnailPixelBase', 'data-pixel-base'], ['thumbnailPixelAccent', 'data-pixel-accent']]) {
         if (/^#[a-f0-9]{3,8}$/i.test(project[field] || '')) thumb.attr(attribute, project[field]);
@@ -196,21 +228,40 @@ export async function build() {
         icon.append(home('<img>').attr({ src: iconPath ? `/${iconPath}` : project.thumbnailIcon, alt: '' }));
       } else icon.text(project.title.charAt(0));
     }
-    home('.concept-card-stack').append(card);
+    directoryProjects.push(project);
+    const directoryThumb = card.find('.card-thumb').clone();
+    directoryThumb.attr('class', `projects-card-image${directoryThumb.find('[data-thumbnail-video]').length ? ' has-video-thumbnail' : ''}`);
+    const directoryThumbnail = directoryThumb.toString();
+    directory('#projectsGrid').append(`<a class="projects-card" data-project-card="${escapeHTML(slug)}" data-project-category="${directoryCategory(project)}" href="/projects/${escapeHTML(slug)}/">${directoryThumbnail}<div class="projects-card-body"><h2 class="projects-card-title">${escapeHTML(project.title)}</h2><p class="projects-card-description">${escapeHTML(project.deck)}</p></div><span class="card-cta" aria-hidden="true">Read case study</span></a>`);
+    if (project.showInRecommendations === true) home('.concept-card-stack').append(card);
   }
+  const directoryCards = directory('#projectsGrid .projects-card').toArray();
+  directoryCards.forEach((element, index) => directory(element).attr({ 'data-grid-column': String(index % 2 + 1), 'data-grid-row': String(Math.floor(index / 2) + 1) }));
+  directory('#projectsGrid').attr({ 'data-has-empty-cell': String(directoryCards.length % 2 === 1), 'data-visible-count': String(directoryCards.length) });
+  for (const [value, label] of [['all', 'All'], ['mobile', 'Mobile'], ['web', 'Web'], ['systems', 'Design systems'], ['other', 'Other']]) {
+    const count = directoryProjects.filter(project => value === 'all' || directoryCategory(project) === value).length;
+    if (!count) continue;
+    directory('#projectsFilters').append(`<button class="project-filter" type="button" data-project-filter="${value}" aria-pressed="${value === 'all'}" aria-controls="projectsGrid">${label}<span class="filter-count" aria-hidden="true">${count}</span></button>`);
+  }
+  directory('#projectsFilterStatus').text(`${directoryProjects.length} projects shown`);
   metadata(home, { title: `${site.name} — ${site.role}`, description: site.description, pathname: '/', square: true, schema: { '@context': 'https://schema.org', '@graph': [person, { '@type': 'WebSite', '@id': `${site.url}/#website`, url: `${site.url}/`, name: `${site.name} Portfolio`, author: { '@id': person['@id'] } }] } });
   await write('index.html', finalize(home));
   metadata(about, { title: `About ${site.name} — ${site.role}`, description: about('meta[name="description"]').attr('content'), pathname: '/about/', square: true, type: 'profile', schema: { '@context': 'https://schema.org', '@type': 'AboutPage', url: `${site.url}/about/`, name: `About ${site.name}`, mainEntity: person } });
   await write('about/index.html', finalize(about));
-  for (const project of published) {
+  const publicDirectoryProjects = directoryProjects.filter(project => project.showInRecommendations === true);
+  const directoryDescription = directory('meta[name="description"]').attr('content');
+  metadata(directory, { title: `Projects — ${site.name}`, description: directoryDescription, pathname: '/projects/', square: true, schema: { '@context': 'https://schema.org', '@graph': [person, { '@type': 'CollectionPage', '@id': `${site.url}/projects/#collection`, url: `${site.url}/projects/`, name: `Projects — ${site.name}`, description: directoryDescription, author: { '@id': person['@id'] }, mainEntity: { '@type': 'ItemList', numberOfItems: publicDirectoryProjects.length, itemListElement: publicDirectoryProjects.map((project, index) => ({ '@type': 'ListItem', position: index + 1, item: { '@type': 'CreativeWork', name: project.title, url: `${site.url}/projects/${project.slug}/` } })) } }] } });
+  await write('projects/index.html', finalize(directory));
+  for (const project of renderedProjects) {
     const $ = load(template);
     $('body').attr('data-project', project.slug);
     $('#projectTitle').html(escapeHTML(project.heroTitle || project.title).replaceAll('\n', '<br>'));
-    for (const [selector, value] of [['#projectKicker', [project.client, project.category, project.year].filter(Boolean).join(' · ')], ['#projectDeck', project.deck], ['#projectIndustry', project.industry], ['#projectRole', project.role], ['#projectTimeline', project.timeline || '']]) $(selector).text(value);
+    for (const [selector, value] of [['#projectDeck', project.deck], ['#projectIndustry', project.industry], ['#projectRole', project.role], ['#projectTimeline', project.timeline || '']]) $(selector).text(value);
     $('#projectTeam').html((project.team || []).map(name => {
       const link = (project.teamLinks || []).find(item => item.name === name && /^https?:\/\//i.test(item.url || ''));
       return link ? `<a href="${escapeHTML(link.url)}" target="_blank" rel="noopener noreferrer">${escapeHTML(name)}</a>` : escapeHTML(name);
     }).join('<br>'));
+    if (!project.team?.length) { $('#projectTeam').parent().remove(); $('.project-meta').addClass('has-no-team'); }
     if (!project.timeline) { $('#projectTimeline').parent().remove(); $('.project-meta').addClass('has-no-timeline'); }
     $('#projectContent').html(renderBlocks(project, { imageAttributes }));
     $('#projectTocLinks').html(renderToc(project.blocks));
@@ -226,6 +277,11 @@ export async function build() {
     const pathname = `/projects/${project.slug}/`;
     const description = project.seoDescription || project.deck;
     metadata($, { title: `${project.title} — ${site.name}`, description, pathname, image: socialImage, square: socialImage === '/images/omar-khalifa-preview.jpg', type: 'article', schema: { '@context': 'https://schema.org', '@graph': [{ '@type': 'CreativeWork', '@id': `${site.url}${pathname}#case-study`, url: `${site.url}${pathname}`, name: project.title, description, image: new URL(socialImage, site.url).href, creator: { '@id': person['@id'] }, inLanguage: 'en' }, person, { '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Home', item: `${site.url}/` }, { '@type': 'ListItem', position: 2, name: project.title, item: `${site.url}${pathname}` }] }] } });
+    if (project.slug === previewSlug) {
+      $('body').attr('data-draft-preview', 'true');
+      $('head').append('<meta name="robots" content="noindex, nofollow">');
+      $('link[rel="canonical"], meta[property="og:url"], script[type="application/ld+json"]').remove();
+    }
     await write(`projects/${project.slug}/index.html`, finalize($));
   }
   for (const file of ['config.yml', 'preview.css']) await write(`admin/${file}`, await read(`admin/${file}`));
@@ -236,12 +292,13 @@ export async function build() {
   await write('site.webmanifest', await read('site.webmanifest'));
   await write('_headers', await read('_headers'));
   await write('_routes.json', JSON.stringify({ version: 1, include: ['/auth', '/auth/', '/callback', '/callback/', '/project', '/project/', '/project.html', '/project.html/'], exclude: [] }, null, 2) + '\n');
-  await write('_redirects', '/about.html /about/ 301\n/about /about/ 301\n/loader-preview.html /?intro=1 301\n');
+  await write('_redirects', '/about.html /about/ 301\n/about /about/ 301\n/projects /projects/ 301\n/loader-preview.html / 301\n');
   await write('404.html', '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Page not found — Omar Khalifa</title></head><body><main><h1>Page not found</h1><p>The page may have moved.</p><a href="/">Return to the portfolio</a></main></body></html>');
-  const urls = ['/', '/about/', ...published.map(project => `/projects/${project.slug}/`)];
+  const urls = ['/', '/about/', '/projects/', ...published.map(project => `/projects/${project.slug}/`)];
   await write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.map(url => `<url><loc>${escapeHTML(new URL(url, site.url).href)}</loc></url>`).join('')}</urlset>\n`);
-  await write('robots.txt', `User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /auth\nDisallow: /callback\n\nSitemap: ${site.url}/sitemap.xml\n`);
+  await write('robots.txt', previewSlug ? 'User-agent: *\nDisallow: /\n' : `User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /auth\nDisallow: /callback\n\nSitemap: ${site.url}/sitemap.xml\n`);
   console.log(`Built ${urls.length} public pages. Image variants: ${(originalBytes / 1048576).toFixed(1)} MiB source → ${(optimizedBytes / 1048576).toFixed(1)} MiB WebP, including all responsive sizes.`);
+  if (previewSlug) console.log(`Local draft preview: ${output}${path.sep}projects${path.sep}${previewSlug}${path.sep}index.html`);
 }
 
 await build();
@@ -255,7 +312,7 @@ if (process.argv.includes('--watch')) {
     try {
       // A fresh process also reloads the renderer and site config after edits.
       await new Promise((resolve, reject) => {
-        const child = spawn(process.execPath, [fileURLToPath(import.meta.url)], { cwd: root, stdio: 'inherit' });
+        const child = spawn(process.execPath, [fileURLToPath(import.meta.url), ...(previewSlug ? ['--preview-project', previewSlug] : [])], { cwd: root, stdio: 'inherit' });
         child.once('error', reject);
         child.once('close', code => code === 0 ? resolve() : reject(new Error(`Build exited with code ${code}`)));
       });

@@ -56,6 +56,11 @@ collections:
         widget: image
         required: false
         hint: 'Used only on the selected-work card outside the case study. Recommended ratio: 4:3.'
+      - label: Project card animation
+        name: thumbnailVideo
+        widget: file
+        required: false
+        hint: 'Optional MP4 or WebM. Autoplays muted while visible; the card image remains the still cover.'
       - label: Homepage card image alternative text
         name: thumbnailAlt
         widget: string
@@ -485,6 +490,58 @@ collections:
               - { label: Video URL, name: url, widget: string, hint: 'YouTube, Vimeo, or an uploaded video path.' }
               - { label: Caption, name: caption, widget: string, required: false }
 
+          - label: Two-image comparison
+            name: image_pair
+            widget: object
+            fields:
+              - { label: Section ID, name: sectionId, widget: string }
+              - { label: Side-menu label, name: navLabel, widget: string, required: false }
+              - { label: Show in side menu, name: showInNav, widget: boolean, default: false }
+              - { label: Heading, name: heading, widget: string, required: false }
+              - { label: Before label, name: beforeLabel, widget: string, default: Before }
+              - { label: After label, name: afterLabel, widget: string, default: After }
+              - { label: Before image, name: beforeImage, widget: image, required: false }
+              - { label: After image, name: afterImage, widget: image, required: false }
+              - { label: Before alternative text, name: beforeAlt, widget: string, required: false }
+              - { label: After alternative text, name: afterAlt, widget: string, required: false }
+              - { label: Before placeholder, name: beforePlaceholder, widget: string, required: false }
+              - { label: After placeholder, name: afterPlaceholder, widget: string, required: false }
+
+          - label: Search display limits
+            name: search_limits
+            widget: object
+            fields:
+              - { label: Section ID, name: sectionId, widget: string }
+              - { label: Side-menu label, name: navLabel, widget: string, required: false }
+              - { label: Show in side menu, name: showInNav, widget: boolean, default: true }
+              - { label: Heading, name: heading, widget: string }
+              - { label: Introduction, name: body, widget: richtext, required: false }
+              - label: Stages
+                name: items
+                widget: list
+                min: 1
+                label_singular: Stage
+                fields:
+                  - { label: Stage, name: stage, widget: string }
+                  - { label: Visible count, name: count, widget: string }
+                  - { label: Reason, name: detail, widget: string, required: false }
+
+          - label: HTML prototype
+            name: html_prototype
+            widget: object
+            fields:
+              - { label: Section ID, name: sectionId, widget: string }
+              - { label: Side-menu label, name: navLabel, widget: string, required: false }
+              - { label: Show in side menu, name: showInNav, widget: boolean, default: true }
+              - { label: Heading, name: heading, widget: string }
+              - { label: Accessible title, name: title, widget: string, default: Interactive search prototype }
+              - { label: Introduction, name: body, widget: richtext, required: false }
+              - label: Prototype path
+                name: url
+                widget: string
+                hint: 'Local prototype bundle path, for example /prototypes/in-app-search/.'
+                pattern: ['^/prototypes/[a-z0-9]+(?:-[a-z0-9]+)*/$', 'Use /prototypes/<slug>/ with lowercase letters, numbers, and hyphens.']
+
           - label: Figma prototype
             name: figma_prototype
             widget: object
@@ -495,7 +552,9 @@ collections:
               - { label: Eyebrow, name: eyebrow, widget: string, required: false }
               - { label: Heading, name: heading, widget: string, required: false }
               - { label: Accessible title, name: title, widget: string, default: Interactive Figma prototype }
-              - { label: Prototype URL, name: url, widget: string, hint: 'Paste the regular figma.com/proto link; it will be converted to the secure embed URL.' }
+              - { label: Introduction or task instructions, name: body, widget: richtext, required: false }
+              - { label: Prototype URL, name: url, widget: string, required: false, hint: 'Paste the regular figma.com/proto link; it will be converted to the secure embed URL.' }
+              - { label: Planned prototype description, name: placeholderLabel, widget: string, required: false, hint: 'Shown as an explicit placeholder while the prototype URL is empty.' }
               - label: Embed height
                 name: height
                 widget: select

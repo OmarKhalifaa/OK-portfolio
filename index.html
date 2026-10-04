@@ -31,11 +31,16 @@
     href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="css/loader-preview.css">
-  <script src="js/loader-preview.js"></script>
+  <link rel="stylesheet" href="css/card-hover.css">
+  <link rel="stylesheet" href="css/thumbnail-video.css">
+  <link rel="stylesheet" href="css/homepage-entrance.css">
+  <script src="js/homepage-entrance.js"></script>
 </head>
 
 <body class="concept-page">
+  <div class="portfolio-loader" id="portfolioLoader" role="status" aria-label="Loading portfolio">
+    <span class="loader-counter" id="loaderCounter" aria-hidden="true">0%</span>
+  </div>
   <div class="cursor" id="cursor"></div>
 
   <nav id="nav" aria-label="Primary navigation">
@@ -111,6 +116,7 @@
 
       <div class="concept-work-heading">
         <h2>Selected work</h2>
+        <a class="all-projects-link" href="/projects/">See all projects <span aria-hidden="true">↗</span></a>
       </div>
 
       <div class="concept-card-stack">
@@ -218,6 +224,8 @@
   </main>
 
   <script src="js/main.js"></script>
+  <script src="js/card-pointer.js"></script>
+  <script src="js/thumbnail-video.js"></script>
 </body>
 
 </html>

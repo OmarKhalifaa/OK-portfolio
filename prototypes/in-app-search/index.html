@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>In-app search — interactive experience</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" type="module"></script>
+</head>
+<body>
+  <main class="stage" aria-label="Interactive in-app search experience">
+    <div class="phone-wrap" id="phoneWrap">
+      <section class="phone" id="phone" aria-label="Vodafone search">
+        <header class="app-header">
+          <div class="status-bar" aria-hidden="true">
+            <img src="assets/8014e.svg" alt="">
+            <div class="status-elements"><img src="assets/59521.svg" alt=""><img src="assets/1389c.svg" alt=""><img src="assets/4ee01.svg" alt=""></div>
+          </div>
+          <form class="search-row" id="searchForm" role="search">
+            <button class="back icon-button" type="button" id="back" aria-label="Back to search home"><img src="assets/ae01e.svg" alt=""></button>
+            <div class="search-box">
+              <button class="submit icon-button" type="submit" aria-label="Search"><img src="assets/820e1.svg" alt=""></button>
+              <input id="searchInput" name="query" type="search" placeholder="Search products & services" aria-label="Search products and services" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-controls="screenContent">
+              <button class="clear-query icon-button" type="button" id="clearQuery" aria-label="Clear search" hidden><img src="assets/294ba.svg" alt=""></button>
+              <div class="search-actions" id="searchActions" aria-hidden="true"><img src="assets/bc610.svg" alt=""><img src="assets/553b3.svg" alt=""></div>
+            </div>
+          </form>
+        </header>
+        <div class="app-tabs" id="tabs" role="tablist" aria-label="Search categories" hidden></div>
+        <div class="screen-content" id="screenContent" tabindex="-1"></div>
+        <div class="keyboard" id="keyboard" aria-label="On-screen keyboard" hidden></div>
+        <div class="home-indicator" aria-hidden="true"></div>
+        <div class="screen-overlay" id="screenOverlay" hidden></div>
+        <div class="sr-only" id="announcement" role="status" aria-live="polite" aria-atomic="true"></div>
+      </section>
+    </div>
+    <noscript>Enable JavaScript to try this search experience.</noscript>
+  </main>
+</body>
+</html>

@@ -1,0 +1,116 @@
+{
+  "slug": "in-app-search",
+  "showInRecommendations": true,
+  "title": "Vodafone Search",
+  "thumbnail": "images/thumbnails/in-app-search-motion-poster-v6.jpg",
+  "thumbnailVideo": "images/thumbnails/in-app-search-motion-intro-v6.mp4",
+  "thumbnailAlt": "Vodafone home screen introducing the redesigned in-app search experience",
+  "thumbnailFit": "contain",
+  "thumbnailBackground": "#ecebe7",
+  "thumbnailPixelBase": "#626262",
+  "thumbnailPixelAccent": "#5dcaa5",
+  "heroTitle": "Vodafone Search",
+  "seoDescription": "Vodafone Search: an in-app search redesign that introduces more categories, especially Shop, responds while typing, and supports personalization.",
+  "client": "Vodafone",
+  "category": "Mobile app · Search",
+  "deck": "Bringing more categories into search, with a response as people type.",
+  "industry": "Telecommunications",
+  "role": "Search experience design",
+  "team": [],
+  "recommendations": [
+    "login-revamp",
+    "digital-store",
+    "accessibility-widget"
+  ],
+  "blocks": [
+    {
+      "type": "rich_text",
+      "sectionId": "brief",
+      "navLabel": "The challenge",
+      "showInNav": true,
+      "heading": "Making room for the shop.",
+      "contentWidth": "wide",
+      "body": "The brief was to improve in-app search and introduce more categories, especially Shop. Customers needed a clear way to explore an expanded set of services and products.\n\nI owned the search placement, category tabs, and the number of suggestions and previews shown at each step. Competitor reviews and familiar search patterns informed those choices.\n\n**Designed and prototyped; not yet shipped.**"
+    },
+    {
+      "type": "rich_text",
+      "sectionId": "search-placement",
+      "navLabel": "Search that responds",
+      "showInNav": true,
+      "heading": "Search that responds.",
+      "contentWidth": "wide",
+      "body": "The previous search was static and did not show results while people searched. The redesign responds with suggestions and relevant results, and supports personalization.\n\nI also moved the search bar to the top, making it the first place to start."
+    },
+    {
+      "type": "image_pair",
+      "sectionId": "placement-comparison",
+      "showInNav": false,
+      "beforeLabel": "Before",
+      "afterLabel": "After",
+      "beforeImage": "images/in-app-search/search-before.png",
+      "afterImage": "images/in-app-search/search-after.png",
+      "beforeAlt": "Ana Vodafone search screen before the redesign.",
+      "afterAlt": "Redesigned Ana Vodafone search screen with recent searches below the top search field.",
+      "beforePlaceholder": "Search screen before",
+      "afterPlaceholder": "Search screen after"
+    },
+    {
+      "type": "search_limits",
+      "sectionId": "visible-limits",
+      "navLabel": "How much to show",
+      "showInNav": true,
+      "heading": "How much is too much?",
+      "body": "I kept each preview short so people can scan it and choose where to explore. These counts are design choices informed by competitor reviews and cognitive-load principles, not measured results.",
+      "items": [
+        {
+          "stage": "Before typing",
+          "count": "5–6",
+          "detail": "Recent and trending searches across no more than two rows."
+        },
+        {
+          "stage": "While typing",
+          "count": "7",
+          "detail": "The preferred suggestion limit while the keyboard is open."
+        },
+        {
+          "stage": "Service results",
+          "count": "Up to 4",
+          "detail": "A short preview, with the full category a tap away."
+        },
+        {
+          "stage": "Shop results",
+          "count": "Up to 6",
+          "detail": "Product previews, with a route to the full list."
+        }
+      ]
+    },
+    {
+      "type": "rich_text",
+      "sectionId": "category-tabs",
+      "navLabel": "Tabs and categories",
+      "showInNav": true,
+      "heading": "Finding the right aisle.",
+      "contentWidth": "wide",
+      "body": "I kept an All view for mixed results and added category tabs for a more focused list. Short previews let people compare groups; “See all” opens the full category."
+    },
+    {
+      "type": "html_prototype",
+      "sectionId": "try-search",
+      "navLabel": "Try the search",
+      "showInNav": true,
+      "heading": "Put search to work.",
+      "title": "Ana Vodafone search prototype",
+      "body": "Try a search, explore the suggestions, and switch between result categories.",
+      "url": "/prototypes/in-app-search/"
+    },
+    {
+      "type": "rich_text",
+      "sectionId": "validation",
+      "navLabel": "What to test",
+      "showInNav": true,
+      "heading": "Can people find it faster?",
+      "contentWidth": "wide",
+      "body": "**Illustrative target: 20% lower median time to reach the right result.** This is a proposed goal, not a measured improvement; there is no baseline yet.\n\nTest service and shopping tasks, measuring completion as well as time."
+    }
+  ]
+}

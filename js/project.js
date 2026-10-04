@@ -6,15 +6,23 @@
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   let isThemeTransitioning = false;
 
+  const syncPrototypeTheme = frame => {
+    const source = frame.getAttribute('src') || '';
+    if (source.trim() !== source || !/^\/prototypes\/[a-z0-9]+(?:-[a-z0-9]+)*\/$/.test(source)) return;
+    frame.contentWindow?.postMessage({ type: 'in-app-search:theme', theme: root.getAttribute('data-theme') || 'dark' }, window.location.origin);
+  };
+
   const applyTheme = theme => {
     if (theme === 'light') root.setAttribute('data-theme', 'light');
     else root.removeAttribute('data-theme');
     try { localStorage.setItem('theme', theme); } catch { /* Keep the theme usable without storage. */ }
     themeButton?.setAttribute('aria-label', theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode');
     themeButton?.setAttribute('aria-pressed', String(theme === 'light'));
+    document.querySelectorAll('iframe[data-html-prototype]').forEach(syncPrototypeTheme);
   };
 
   applyTheme(savedTheme === 'light' ? 'light' : 'dark');
+  document.querySelectorAll('iframe[data-html-prototype]').forEach(frame => frame.addEventListener('load', () => syncPrototypeTheme(frame)));
 
   themeButton?.addEventListener('click', () => {
     if (isThemeTransitioning) return;
@@ -68,39 +76,94 @@
   };
 
   const activateToc = links => {
-    const sections = links.map(link => document.getElementById(link.hash.slice(1))).filter(Boolean);
-    const setActive = id => links.forEach(link => {
-      const active = link.getAttribute('href') === `#${id}`;
-      link.classList.toggle('is-active', active);
-      if (active) link.setAttribute('aria-current', 'location');
-      else link.removeAttribute('aria-current');
+    const items = links.flatMap(link => {
+      const section = document.getElementById(link.hash.slice(1));
+      return section ? [{ link, section }] : [];
     });
+    if (!items.length) return;
+    const toc = items[0].link.closest('.project-toc');
+    const linkList = items[0].link.parentElement;
+    let activeId = '';
+    let pendingFrame = false;
+    let scrollPadding = -1;
+    const isHorizontal = () => getComputedStyle(linkList).flexDirection === 'row';
 
-    const activateHash = () => {
-      const id = window.location.hash.slice(1);
-      if (id && sections.some(section => section.id === id)) setActive(id);
+    const readingOffset = () => {
+      const headerBottom = Math.max(0, nav?.getBoundingClientRect().bottom || 0);
+      const tocHeight = toc && isHorizontal() ? toc.getBoundingClientRect().height : 0;
+      const tocTop = tocHeight ? Math.max(headerBottom, parseFloat(getComputedStyle(toc).top) || 0) : headerBottom;
+      const offset = Math.ceil(tocTop + tocHeight + 24);
+      if (offset !== scrollPadding) {
+        root.style.setProperty('scroll-padding-top', `${offset}px`);
+        scrollPadding = offset;
+      }
+      return offset;
     };
 
-    links.forEach(link => link.addEventListener('click', () => {
-      const id = link.getAttribute('href')?.slice(1);
-      if (id) setActive(id);
+    const revealTab = link => {
+      if (!toc || !isHorizontal() || toc.scrollWidth <= toc.clientWidth) return;
+      const bounds = toc.getBoundingClientRect();
+      const tab = link.getBoundingClientRect();
+      const left = bounds.left + 12;
+      const right = bounds.right - 12;
+      const delta = tab.left < left ? tab.left - left : tab.right > right ? tab.right - right : 0;
+      if (delta) toc.scrollLeft = Math.max(0, Math.min(toc.scrollWidth - toc.clientWidth, toc.scrollLeft + delta));
+    };
+
+    const setActive = (id, forceReveal = false) => {
+      if (id === activeId && !forceReveal) return;
+      activeId = id;
+      items.forEach(({ link, section }) => {
+        const active = section.id === id;
+        link.classList.toggle('is-active', active);
+        if (active) {
+          link.setAttribute('aria-current', 'location');
+          revealTab(link);
+        } else link.removeAttribute('aria-current');
+      });
+    };
+
+    const update = forceReveal => {
+      const offset = readingOffset();
+      const atPageEnd = window.innerHeight + window.scrollY >= root.scrollHeight - 8;
+      let index = 0;
+      if (atPageEnd) index = items.length - 1;
+      else items.forEach(({ section }, candidate) => {
+        if (section.getBoundingClientRect().top <= offset + 1) index = candidate;
+      });
+      setActive(items[index].section.id, forceReveal);
+    };
+
+    const scheduleUpdate = () => {
+      if (pendingFrame) return;
+      pendingFrame = true;
+      window.requestAnimationFrame(() => { pendingFrame = false; update(false); });
+    };
+
+    // Keep native anchors, focus and history; their scroll padding includes both sticky bars.
+    items.forEach(({ link, section }) => link.addEventListener('click', event => {
+      if (event.defaultPrevented || event.button > 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      readingOffset();
+      setActive(section.id, true);
     }));
-
-    window.addEventListener('hashchange', activateHash);
-    window.addEventListener('scroll', () => {
-      const atPageEnd = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 8;
-      if (atPageEnd && sections.length) setActive(sections.at(-1).id);
-    }, { passive: true });
-
-    activateHash();
-    if (!('IntersectionObserver' in window)) return;
-
-    const observer = new IntersectionObserver(entries => {
-      const visible = entries.filter(entry => entry.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-      if (visible[0]) setActive(visible[0].target.id);
-    }, { rootMargin: '-18% 0px -68% 0px', threshold: 0 });
-
-    sections.forEach(section => observer.observe(section));
+    window.addEventListener('scroll', scheduleUpdate, { passive: true });
+    window.addEventListener('hashchange', scheduleUpdate);
+    window.addEventListener('resize', () => update(true), { passive: true });
+    window.addEventListener('load', scheduleUpdate, { once: true });
+    document.fonts?.ready.then(scheduleUpdate);
+    if ('ResizeObserver' in window) {
+      const observer = new ResizeObserver(scheduleUpdate);
+      items.forEach(({ section }) => observer.observe(section));
+      if (toc) observer.observe(toc);
+      if (nav) observer.observe(nav);
+    }
+    update(true);
+    const initialSection = items.find(({ section }) => section.id === window.location.hash.slice(1))?.section;
+    if (initialSection) window.requestAnimationFrame(() => {
+      readingOffset();
+      initialSection.scrollIntoView({ block: 'start', behavior: 'instant' });
+      update(true);
+    });
   };
 
 

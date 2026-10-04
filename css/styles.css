@@ -258,40 +258,6 @@ section {
   transition: border-color 0.3s ease;
 }
 
-/* The fill halo */
-.halo-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 16px;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  background: radial-gradient(500px circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.055), transparent 50%);
-  pointer-events: none;
-  z-index: 1;
-}
-
-.halo-card:hover::before { opacity: 1; }
-
-/* The border halo */
-.halo-card::after {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: 16px;
-  border: 1px solid transparent;
-  background: radial-gradient(300px circle at var(--mx, 50%) var(--my, 50%), rgba(93,202,165,0.25), transparent 60%) border-box;
-  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: destination-out;
-  mask-composite: exclude;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  pointer-events: none;
-  z-index: 2;
-}
-
-.halo-card:hover::after { opacity: 1; }
-
 .card-thumb {
   height: 220px;
   display: flex;
@@ -389,40 +355,6 @@ section {
   color: var(--text-2);
   line-height: 1.6;
   font-weight: 300;
-}
-
-.card-cta {
-  position: absolute;
-  right: 24px;
-  top: 24px;
-  z-index: 8;
-  padding: 8px 12px;
-  border-radius: 999px;
-  background: #F5F3EC;
-  color: #111110;
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 16px;
-  white-space: nowrap;
-  pointer-events: none;
-  opacity: 0;
-  transform: translateY(4px);
-  transition: opacity .2s ease;
-}
-
-.halo-card:hover .card-cta,
-.halo-card:focus-visible .card-cta {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  .halo-card.card-pointer-active .card-cta {
-    top: 0;
-    right: auto;
-    left: 0;
-    transform: translate3d(var(--cta-x), var(--cta-y), 0);
-  }
 }
 
 /* ── FOOTER ── */
@@ -772,6 +704,8 @@ html::-webkit-scrollbar,
   display: flex;
   align-items: end;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
   padding: 10px 18px 12px;
 }
 
@@ -798,6 +732,8 @@ html::-webkit-scrollbar,
 }
 
 .concept-work-heading a:hover { color: var(--accent); }
+.concept-work-heading .all-projects-link { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; text-transform: none; letter-spacing: 0; white-space: nowrap; }
+.concept-work-heading .all-projects-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 
 .concept-card-stack {
   display: grid;

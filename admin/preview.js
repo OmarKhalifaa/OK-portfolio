@@ -4,7 +4,7 @@
     const heading = block.heading ? h('h2', {}, block.heading) : null;
     const eyebrow = block.eyebrow ? h('p', { className: 'preview-eyebrow' }, block.eyebrow) : null;
     const text = value => value ? h('p', { className: 'preview-copy' }, value) : null;
-    const image = (value, className = '', placeholder = '') => value ? h('img', { src: getAsset(value).toString(), alt: '', className }) : placeholder ? h('div', { className: 'preview-placeholder' }, h('small', {}, 'Image placeholder'), h('span', {}, placeholder)) : null;
+    const image = (value, className = '', placeholder = '', alt = '') => value ? h('img', { src: getAsset(value).toString(), alt, className }) : placeholder ? h('div', { className: 'preview-placeholder' }, h('small', {}, 'Image placeholder'), h('span', {}, placeholder)) : null;
 
     switch (block.type) {
       case 'two_column_text':
@@ -36,6 +36,22 @@
             h('span', { className: 'preview-compare-handle', 'aria-hidden': true }, '↔'),
             h('input', { type: 'range', min: 0, max: 100, defaultValue: 50, 'aria-label': `${block.label || 'Design'}: before and after`, onInput: event => event.currentTarget.parentElement.style.setProperty('--position', `${event.currentTarget.value}%`) })
           ), text(block.caption));
+      case 'image_pair':
+        return h('section', { className: 'preview-block', key: index }, heading,
+          h('div', { className: 'preview-image-pair' },
+            h('figure', {}, h('div', { className: 'preview-pair-label' }, block.beforeLabel || 'Before'), image(block.beforeImage, '', block.beforePlaceholder || 'Before image', block.beforeAlt || 'Before search screen')),
+            h('figure', {}, h('div', { className: 'preview-pair-label' }, block.afterLabel || 'After'), image(block.afterImage, '', block.afterPlaceholder || 'After image', block.afterAlt || 'After search screen'))
+          ));
+      case 'search_limits':
+        return h('section', { className: 'preview-block', key: index }, heading, text(block.body),
+          h('div', { className: 'preview-limits' }, ...(block.items || []).map((item, itemIndex) => h('article', { key: itemIndex },
+            h('h3', {}, item.stage), h('strong', {}, item.count), text(item.detail)
+          ))));
+      case 'html_prototype':
+        return h('section', { className: 'preview-block', key: index }, heading, text(block.body),
+          /^\/prototypes\/[a-z0-9]+(?:-[a-z0-9]+)*\/$/.test(block.url || '')
+            ? h('iframe', { className: 'preview-html-prototype', src: block.url, title: block.title || 'Interactive search prototype', loading: 'lazy', sandbox: 'allow-scripts allow-same-origin' })
+            : h('div', { className: 'preview-placeholder' }, 'Add a local prototype path'));
       case 'feature_grid':
         return h('section', { className: 'preview-block', key: index }, eyebrow, heading, h('div', { className: 'preview-cards' }, ...(block.items || []).map((item, itemIndex) => h('article', { key: itemIndex }, h('small', {}, item.number), h('h3', {}, item.title), text(item.body)))));
       case 'stats':
@@ -49,7 +65,7 @@
       case 'screen_slider':
         return h('section', { className: 'preview-block', key: index }, eyebrow, heading, text(block.body), h('div', { className: 'preview-gallery preview-gallery-two' }, ...(block.slides || []).map((slide, slideIndex) => h('div', { key: slideIndex }, image(slide.image), text(slide.caption || slide.label)))));
       case 'figma_prototype':
-        return h('section', { className: 'preview-block', key: index }, eyebrow, heading, h('div', { className: 'preview-video' }, block.url ? 'Interactive Figma prototype' : 'Add a Figma prototype URL'), text(block.caption));
+        return h('section', { className: 'preview-block', key: index }, eyebrow, heading, text(block.body), block.url ? h('div', { className: 'preview-video' }, 'Interactive Figma prototype') : h('div', { className: 'preview-placeholder' }, h('small', {}, 'Prototype placeholder'), h('span', {}, block.placeholderLabel || 'Original Figma prototype planned')), text(block.caption));
       case 'divider':
         return h('div', { className: 'preview-divider', key: index }, block.label || 'Divider');
       default:
@@ -69,10 +85,11 @@
       return h('main', { className: 'cms-project-preview' },
         data.thumbnail ? h('section', { className: 'preview-thumbnail' },
           h('p', { className: 'preview-eyebrow' }, 'Project card thumbnail'),
-          h('img', { src: getAsset(data.thumbnail).toString(), alt: data.thumbnailAlt || '' })
+          data.thumbnailVideo
+            ? h('video', { src: getAsset(data.thumbnailVideo).toString(), poster: getAsset(data.thumbnail).toString(), controls: true, muted: true, playsInline: true, preload: 'none', 'aria-label': data.thumbnailAlt || 'Project card animation', style: { objectFit: data.thumbnailFit === 'cover' ? 'cover' : 'contain' } })
+            : h('img', { src: getAsset(data.thumbnail).toString(), alt: data.thumbnailAlt || '', style: { objectFit: data.thumbnailFit === 'cover' ? 'cover' : 'contain' } })
         ) : null,
         h('header', { className: 'preview-hero' },
-          h('p', { className: 'preview-eyebrow' }, [data.client, data.category, data.year].filter(Boolean).join(' · ')),
           h('h1', {}, data.heroTitle || data.title),
           h('p', { className: 'preview-deck' }, data.deck)
         ),

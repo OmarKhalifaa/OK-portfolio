@@ -84,6 +84,16 @@ const renderImage = (image, alt, className = '', placeholderLabel = '') => {
   return `<img class="${escapeHTML(className)}" src="${src}" alt="${escapeHTML(alt || '')}" loading="lazy">`;
 };
 
+export function renderProjectThumbnail(project, imageClass = 'cms-card-thumb-image') {
+  const poster = safeMediaUrl(project.thumbnail);
+  if (!poster) return '';
+  const fit = option(project.thumbnailFit, ['cover', 'contain'], 'contain');
+  const still = `<img class="${escapeHTML(imageClass)}" src="${poster}" alt="${escapeHTML(project.thumbnailAlt || `${project.title} project preview`)}" loading="lazy" style="object-fit:${fit}">`;
+  const video = safeMediaUrl(project.thumbnailVideo);
+  if (!video) return still;
+  return `${still}<video class="project-thumbnail-video" data-thumbnail-video data-src="${video}" poster="${poster}" autoplay loop muted playsinline preload="none" aria-hidden="true" tabindex="-1" style="object-fit:${fit}"></video>`;
+}
+
 const renderVideo = (urlValue, options = {}) => {
   const value = String(urlValue ?? '').trim();
   const youtube = value.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
@@ -114,6 +124,21 @@ const renderBlock = (block, index) => {
 
     case 'two_column_text':
       return `<section class="content-block content-copy" id="${id}">${heading}<div class="copy-columns"><div class="cms-richtext">${markdown(block.left)}</div><div class="cms-richtext">${markdown(block.right)}</div></div></section>`;
+
+    case 'image_pair': {
+      const panel = (side, label, image, alt, placeholder) => `<div class="cms-image-pair-panel"><span class="cms-image-pair-label">${escapeHTML(label || (side === 'before' ? 'Before' : 'After'))}</span>${renderImage(image, alt || `${side === 'before' ? 'Before' : 'After'} search screen`, '', placeholder)}</div>`;
+      return `<figure class="content-block media-block cms-image-pair-block" id="${id}">${heading}<div class="cms-image-pair">${panel('before', block.beforeLabel, block.beforeImage, block.beforeAlt, block.beforePlaceholder)}${panel('after', block.afterLabel, block.afterImage, block.afterAlt, block.afterPlaceholder)}</div></figure>`;
+    }
+
+    case 'search_limits':
+      return `<section class="content-block cms-search-limits-block" id="${id}">${heading}${block.body ? `<div class="cms-richtext cms-search-limits-intro">${markdown(block.body)}</div>` : ''}<div class="cms-search-limits" role="list">${(block.items || []).map(item => `<article class="cms-search-limit" role="listitem"><h3>${escapeHTML(item.stage)}</h3><strong>${escapeHTML(item.count)}</strong><p>${escapeHTML(item.detail)}</p></article>`).join('')}</div></section>`;
+
+    case 'html_prototype': {
+      const source = /^\/prototypes\/[a-z0-9]+(?:-[a-z0-9]+)*\/$/.test(String(block.url || '')) ? escapeHTML(block.url) : '';
+      const intro = block.body ? `<div class="cms-richtext cms-prototype-intro">${markdown(block.body)}</div>` : '';
+      const prototype = source ? `<iframe data-html-prototype src="${source}" title="${escapeHTML(block.title || block.heading || 'Interactive search prototype')}" loading="lazy" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>` : '<div class="cms-media-placeholder cms-media-planned"><strong>Interactive prototype coming soon</strong></div>';
+      return `<section class="content-block media-block cms-html-prototype-block" id="${id}">${heading}${intro}<div class="cms-html-prototype-frame">${prototype}</div></section>`;
+    }
 
     case 'before_after': {
       const label = block.label || 'Design comparison';
@@ -208,10 +233,11 @@ const renderBlock = (block, index) => {
       const title = escapeHTML(block.title || block.heading || 'Interactive Figma prototype');
       const height = option(block.height, ['standard', 'tall'], 'tall');
       const topCrop = option(block.topCrop, ['none', 'small', 'medium', 'large'], 'none');
+      const intro = block.body ? `<div class="cms-richtext cms-prototype-intro">${markdown(block.body)}</div>` : '';
       const prototype = source
         ? `<iframe src="${source}" title="${title}" loading="lazy" allowfullscreen allow="fullscreen" referrerpolicy="strict-origin-when-cross-origin"></iframe>`
-        : '<div class="cms-media-placeholder">Add a Figma prototype URL in the CMS</div>';
-      return `<figure class="content-block media-block cms-prototype-block" id="${id}">${heading}<div class="cms-prototype-frame cms-prototype-${height} cms-prototype-crop-${topCrop}">${prototype}</div><figcaption>${block.caption ? escapeHTML(block.caption) : 'Interactive prototype'}</figcaption></figure>`;
+        : `<div class="cms-media-placeholder cms-media-planned"><span>Prototype placeholder</span><strong>${escapeHTML(block.placeholderLabel || 'Original Figma prototype planned')}</strong></div>`;
+      return `<figure class="content-block media-block cms-prototype-block" id="${id}">${heading}${intro}<div class="cms-prototype-frame cms-prototype-${height} cms-prototype-crop-${topCrop}">${prototype}</div><figcaption>${block.caption ? escapeHTML(block.caption) : 'Interactive prototype'}</figcaption></figure>`;
     }
 
     case 'feature_grid':
@@ -283,16 +309,15 @@ export function renderToc(blocks = []) {
 export function renderRecommendations(project, publishedProjects = []) {
   const bySlug = new Map(publishedProjects.map(item => [item.slug, item]));
   const orderedSlugs = [...new Set([...(project.recommendations || []), ...bySlug.keys()])];
-  return orderedSlugs
+  const cards = orderedSlugs
     .filter(slug => slug !== project.slug)
     .map(slug => bySlug.get(slug))
     .filter(item => item?.showInRecommendations === true)
     .map(item => {
       const background = /^#[a-f0-9]{3,8}$/i.test(item.thumbnailBackground || '') ? ` style="background:${escapeHTML(item.thumbnailBackground)}"` : '';
-      const thumbnail = safeMediaUrl(item.thumbnail)
-        ? renderImage(item.thumbnail, item.thumbnailAlt || `${item.title} project preview`, 'next-card-image')
-        : `<span class="next-card-monogram" aria-hidden="true">${escapeHTML(item.title.charAt(0))}</span>`;
-      return `<a class="next-card" href="/projects/${encodeURIComponent(item.slug)}/" aria-label="${escapeHTML(item.title)} case study"><div class="next-card-thumb next-card-thumb-${option(item.thumbnailFit, ['cover', 'contain'], 'contain')}"${background}>${thumbnail}</div><div class="next-card-copy"><h3>${escapeHTML(item.title)}</h3>${item.deck ? `<p>${escapeHTML(item.deck)}</p>` : ''}</div></a>`;
-    })
-    .join('');
+      const thumbnail = renderProjectThumbnail(item, 'next-card-image') || `<span class="next-card-monogram" aria-hidden="true">${escapeHTML(item.title.charAt(0))}</span>`;
+      const videoClass = safeMediaUrl(item.thumbnail) && safeMediaUrl(item.thumbnailVideo) ? ' has-video-thumbnail' : '';
+      return `<a class="next-card" href="/projects/${encodeURIComponent(item.slug)}/" aria-label="${escapeHTML(item.title)} case study"><div class="next-card-thumb next-card-thumb-${option(item.thumbnailFit, ['cover', 'contain'], 'contain')}${videoClass}"${background}>${thumbnail}</div><div class="next-card-copy"><h3>${escapeHTML(item.title)}</h3>${item.deck ? `<p>${escapeHTML(item.deck)}</p>` : ''}</div></a>`;
+    });
+  return Array.from({ length: Math.ceil(cards.length / 3) }, (_, row) => `<div class="next-project-row">${cards.slice(row * 3, row * 3 + 3).join('')}</div>`).join('');
 }

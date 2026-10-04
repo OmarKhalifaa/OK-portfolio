@@ -3,6 +3,13 @@ import path from 'node:path';
 import * as yaml from 'js-yaml';
 import { fileURLToPath } from 'node:url';
 
+export function localPrototypePath(url) {
+  if (typeof url !== 'string' || url.trim() !== url || !/^\/prototypes\/[a-z0-9]+(?:-[a-z0-9]+)*\/$/.test(url)) {
+    throw new Error('HTML prototype URL must use /prototypes/<slug>/');
+  }
+  return url.slice(1);
+}
+
 export function validateContent(root = path.resolve(fileURLToPath(new URL('..', import.meta.url)))) {
   const projectDirectory = path.join(root, 'content/projects');
   const files = fs.readdirSync(projectDirectory).filter(file => file.endsWith('.json'));
@@ -24,7 +31,7 @@ export function validateContent(root = path.resolve(fileURLToPath(new URL('..', 
 
   const allowedBlocks = new Set([
     'rich_text', 'two_column_text', 'image_full', 'text_image', 'gallery',
-    'video', 'screen_slider', 'before_after', 'figma_prototype', 'feature_grid', 'feature_catalog', 'motion_showcase', 'widget_showcase', 'stats', 'quote', 'process', 'divider'
+    'video', 'screen_slider', 'before_after', 'image_pair', 'search_limits', 'figma_prototype', 'html_prototype', 'feature_grid', 'feature_catalog', 'motion_showcase', 'widget_showcase', 'stats', 'quote', 'process', 'divider'
   ]);
 
   for (const project of projects) {
@@ -34,6 +41,20 @@ export function validateContent(root = path.resolve(fileURLToPath(new URL('..', 
     const sectionIds = new Set();
     for (const block of project.blocks) {
       if (!allowedBlocks.has(block.type)) throw new Error(`${project.slug}: unsupported block type "${block.type}"`);
+      if (block.type === 'html_prototype') {
+        let relative;
+        try { relative = localPrototypePath(block.url); }
+        catch (error) { throw new Error(`${project.slug}: ${error.message}`); }
+        const prototype = path.join(root, relative);
+        const index = path.join(prototype, 'index.html');
+        const prototypeRoot = path.join(root, 'prototypes');
+        if (!fs.existsSync(prototypeRoot) || !fs.lstatSync(prototypeRoot).isDirectory() || !fs.existsSync(prototype) || !fs.lstatSync(prototype).isDirectory()) throw new Error(`${project.slug}: missing or invalid prototype directory at "${block.url}"`);
+        if (!fs.existsSync(index) || !fs.lstatSync(index).isFile()) throw new Error(`${project.slug}: missing prototype index.html at "${block.url}"`);
+        if (!fs.realpathSync(prototype).startsWith(`${fs.realpathSync(prototypeRoot)}${path.sep}`)) throw new Error(`${project.slug}: prototype directory must stay inside prototypes/`);
+      }
+      if (block.type === 'search_limits' && (!Array.isArray(block.items) || !block.items.length || block.items.some(item => !item.stage || !item.count))) {
+        throw new Error(`${project.slug}: search limits need stages and counts`);
+      }
       const sectionId = String(block.sectionId || block.navLabel || `section-${sectionIds.size + 1}`).toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
       if (sectionIds.has(sectionId)) throw new Error(`${project.slug}: duplicate section ID "${sectionId}"`);
       sectionIds.add(sectionId);
