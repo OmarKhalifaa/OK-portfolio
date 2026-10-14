@@ -18,7 +18,9 @@ Analytics was deployed to Cloudflare Pages in commit `e6cb2d5`; 57 regression te
 
 Open the signed-in [Portfolio Reports snapshot](https://analytics.google.com/analytics/web/#/a412052751p559016306/reports/reportinghub?params=_u..nav%3Dmaui%26_u.dateOption%3DthisMonth%26_u.comparisonOption%3Ddisabled). The final browser view used **This month**, including 14 October; older trailing ranges may exclude today's activity.
 
-Production URL: `https://ok-portfolio.pages.dev`. The dashboard belongs inside the signed-in GA4 property.
+Production URL: `https://omarkhalifaa.com`. The dashboard belongs inside the signed-in GA4 property.
+
+The initial deployment used `ok-portfolio.pages.dev` as its canonical hostname. Commit `39c1e0f` was deployed and changes the public canonical domain to `omarkhalifaa.com` for SEO URLs and analytics; the `.pages.dev` host is excluded by the exact-host runtime guard. All 57 tests, the build, and site validation passed again. The existing GA4 web stream URL is saved as `https://omarkhalifaa.com`, with the same property, stream, measurement ID, and dashboard. A live custom-domain browser check confirmed the correct canonical URL and analytics hostname, no Google script before consent, and the correct tag after acceptance. The `.pages.dev` browser check confirmed no analytics notice or Google script. Actual GA4 event receipt remains unverified. Stream configuration evidence is saved at `.cache/analytics-custom-domain.png`. The CMS OAuth configuration continues to use its existing `.pages.dev` origin.
 
 ## Connect the web stream
 
