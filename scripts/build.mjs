@@ -10,6 +10,7 @@ import { transform } from 'esbuild';
 import site from '../site.config.mjs';
 import { validateContent, localPrototypePath } from './validate-content.mjs';
 import { renderBlocks, renderToc, renderRecommendations, renderProjectThumbnail, escapeHTML } from './project-renderer.mjs';
+import { injectAnalytics } from './analytics.mjs';
 
 const root = path.resolve(fileURLToPath(new URL('..', import.meta.url)));
 const cache = path.join(root, '.cache/images');
@@ -170,6 +171,11 @@ export async function build() {
     }
   }
   const finalize = $ => {
+    injectAnalytics($, {
+      measurementId: site.analytics?.measurementId,
+      canonicalUrl: site.url,
+      preview: Boolean(previewSlug),
+    });
     $('link[rel="stylesheet"], script[src]').each((_, element) => {
       const attribute = element.name === 'link' ? 'href' : 'src';
       const relative = localPath($(element).attr(attribute));

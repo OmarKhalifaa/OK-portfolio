@@ -23,8 +23,22 @@ for (const file of [...publicPages, 'admin/index.html', '404.html']) {
   assert.equal(new Set(ids).size, ids.length, `${file}: duplicate HTML IDs`);
   if (!publicPages.includes(file)) {
     assert.match($('meta[name="robots"]').attr('content') || '', /noindex/, `${file}: utility pages must not be indexed`);
+    assert.equal($('#portfolio-analytics-config, [data-portfolio-analytics]').length, 0, `${file}: utility pages must not include analytics`);
     continue;
   }
+  const analyticsEnabled = /^G-[A-Z0-9]+$/.test(site.analytics?.measurementId || '');
+  if (analyticsEnabled) {
+    assert.equal($('#portfolio-analytics-config').length, 1, `${file}: missing analytics configuration`);
+    const analytics = JSON.parse($('#portfolio-analytics-config').text());
+    assert.equal(analytics.measurementId, site.analytics.measurementId, `${file}: incorrect analytics property`);
+    assert.equal(analytics.hostname, new URL(site.url).hostname, `${file}: incorrect analytics hostname`);
+    assert.equal($('script[data-portfolio-analytics="script"][defer]').length, 1, `${file}: missing deferred analytics script`);
+    assert.match($('script[data-portfolio-analytics="script"]').attr('src'), /^\/assets\/analytics\.[a-f0-9]+\.js$/, `${file}: analytics script must be fingerprinted`);
+    assert.equal($('link[data-portfolio-analytics="stylesheet"]').length, 1, `${file}: missing consent styles`);
+  } else {
+    assert.equal($('#portfolio-analytics-config, [data-portfolio-analytics]').length, 0, `${file}: disabled analytics must not inject a tag`);
+  }
+  assert.equal($('script[src*="googletagmanager"], script[src*="google-analytics"]').length, 0, `${file}: Google must load only after visitor consent`);
   assert.equal($('h1').length, 1, `${file}: expected exactly one H1`);
   const title = $('title').text();
   assert.ok(title && !titles.has(title), `${file}: missing or duplicate title`);

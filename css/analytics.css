@@ -1,0 +1,100 @@
+.analytics-notice {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 240;
+  width: min(420px, calc(100vw - 48px));
+  padding: 22px;
+  border: 1px solid var(--border-2);
+  border-radius: 16px;
+  background: var(--bg-2);
+  color: var(--text-1);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, .22);
+  text-align: left;
+}
+.analytics-notice[hidden] { display: none; }
+.analytics-notice-title {
+  margin: 0 28px 8px 0;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -.01em;
+}
+.analytics-notice-description {
+  margin: 0 0 10px;
+  color: var(--text-2);
+  font-size: 13px;
+  line-height: 1.65;
+}
+.analytics-notice-privacy {
+  color: var(--text-2);
+  font-size: 12px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.analytics-notice-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+.analytics-choice {
+  flex: 1;
+  min-height: 42px;
+  padding: 9px 12px;
+  border: 1px solid var(--border-2);
+  border-radius: 8px;
+  background: var(--bg-3);
+  color: var(--text-1);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.analytics-choice:hover { border-color: var(--text-3); }
+.analytics-notice-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-2);
+  font: inherit;
+  font-size: 23px;
+  line-height: 1;
+  cursor: pointer;
+}
+.analytics-notice-close:hover { background: var(--bg-3); color: var(--text-1); }
+.analytics-settings {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px max(24px, calc((100% - 1920px) / 2));
+}
+.analytics-settings-button {
+  padding: 4px 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-3);
+  font: inherit;
+  font-size: 11px;
+  line-height: 1.5;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.analytics-settings-button:hover { color: var(--text-1); }
+.analytics-notice button:focus-visible,
+.analytics-notice a:focus-visible,
+.analytics-settings-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+@media (max-width: 520px) {
+  .analytics-notice { right: 12px; bottom: 12px; width: calc(100vw - 24px); padding: 20px; }
+}
