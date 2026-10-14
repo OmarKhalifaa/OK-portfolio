@@ -6,11 +6,12 @@ import { load } from 'cheerio';
 import { injectAnalytics } from '../scripts/analytics.mjs';
 
 const source = await fs.readFile(new URL('../js/analytics.js', import.meta.url), 'utf8');
-const production = 'https://ok-portfolio.pages.dev';
+const production = 'https://omarkhalifaa.com';
+const productionHostname = new URL(production).hostname;
 const measurementId = 'G-TEST12345';
 const consentKey = 'portfolio.analytics-consent.v1';
 
-function fixture({ url = `${production}/projects/login-revamp/?email=private@example.com#private`, project = 'login-revamp', config = { measurementId, hostname: 'ok-portfolio.pages.dev' }, stored = null, referrer = '', storageFails = false, visible = true, focused = true, cookie = '' } = {}) {
+function fixture({ url = `${production}/projects/login-revamp/?email=private@example.com#private`, project = 'login-revamp', config = { measurementId, hostname: productionHostname }, stored = null, referrer = '', storageFails = false, visible = true, focused = true, cookie = '' } = {}) {
   let time = 1800000000000;
   let sequence = 0;
   let currentCookie = cookie;
@@ -115,7 +116,7 @@ test('build helper injects deferred first-party assets and JSON only on configur
   assert.equal(injectAnalytics($, { measurementId, canonicalUrl: production }), true);
   assert.equal($('script[src="/js/analytics.js"][defer]').length, 1);
   assert.equal($('link[href="/css/analytics.css"]').length, 1);
-  assert.deepEqual(JSON.parse($('#portfolio-analytics-config').text()), { measurementId, hostname: 'ok-portfolio.pages.dev' });
+  assert.deepEqual(JSON.parse($('#portfolio-analytics-config').text()), { measurementId, hostname: productionHostname });
   injectAnalytics($, { measurementId, canonicalUrl: production });
   assert.equal($('#portfolio-analytics-config').length, 1);
   assert.equal(injectAnalytics($, { measurementId, canonicalUrl: production, preview: true }), false);
@@ -129,16 +130,16 @@ test('build helper excludes admin, prototypes, unknown hosts and invalid configu
   }
   const $ = load(`<link rel="canonical" href="${production}/">`);
   for (const id of ['', 'UA-123', 'G-lowercase', 'G-TEST<script>', null]) assert.equal(injectAnalytics($, { measurementId: id, canonicalUrl: production }), false);
-  for (const canonicalUrl of ['http://ok-portfolio.pages.dev', 'https://localhost', 'https://127.0.0.1', 'invalid', 'https://example.com']) assert.equal(injectAnalytics($, { measurementId, canonicalUrl }), false);
+  for (const canonicalUrl of ['http://omarkhalifaa.com', 'https://localhost', 'https://127.0.0.1', 'invalid', 'https://example.com']) assert.equal(injectAnalytics($, { measurementId, canonicalUrl }), false);
 });
 
 test('runtime never loads tracking or consent UI on local, preview, admin or prototype routes', () => {
-  for (const url of ['http://localhost:4173/', 'https://preview.ok-portfolio.pages.dev/', `${production}:4173/`, `${production}/admin/`, `${production}/prototypes/in-app-search/`, `${production}/callback`, 'https://example.com/']) {
+  for (const url of ['http://localhost:4173/', 'https://ok-portfolio.pages.dev/', 'https://ok-portfolio.pages.dev/projects/login-revamp/', 'https://preview.ok-portfolio.pages.dev/', `${production}:4173/`, `${production}/admin/`, `${production}/prototypes/in-app-search/`, `${production}/callback`, 'https://example.com/']) {
     const page = fixture({ url });
     assert.equal(page.scripts().length, 0, url);
     assert.equal(page.notice(), undefined, url);
   }
-  for (const config of [null, 'null', '42', '{broken', { measurementId: 'G-invalid', hostname: 'ok-portfolio.pages.dev' }]) {
+  for (const config of [null, 'null', '42', '{broken', { measurementId: 'G-invalid', hostname: productionHostname }]) {
     assert.equal(fixture({ config }).notice(), undefined);
   }
 });

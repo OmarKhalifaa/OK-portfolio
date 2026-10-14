@@ -1,5 +1,5 @@
 export default {
-  url: 'https://ok-portfolio.pages.dev',
+  url: 'https://omarkhalifaa.com',
   name: 'Omar Khalifa',
   role: 'Senior Product Designer',
   description: 'Omar Khalifa — Senior product designer in Cairo, Egypt, working across design systems, enterprise products, accessibility, and mobile experiences.',
