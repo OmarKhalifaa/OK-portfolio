@@ -1,10 +1,10 @@
 # Portfolio analytics
 
-Setup recipe checked against the implementation and official Google documentation on 14 October 2026. This file describes the configuration to apply in GA4; it is not an importable dashboard or evidence that reports already exist.
+Implementation and GA4 configuration record for 14 October 2026. The saved dashboard uses a standard GA4 overview report and Reports snapshot; linked Google documentation explains the measurement fields and report workflow. This file is not an importable dashboard.
 
 ## Current status
 
-The local tracking implementation is configured with the real web-stream ID; 57 regression tests, the full build, and site validation passed. The following Google Analytics account and stream were created, with Egypt reporting time zone and EGP currency. Enhanced measurement is off. The **Project** and **Page type** custom dimensions are saved. Remaining definitions, live deployment, received events, and the Portfolio Overview report still need the completion checks below.
+Analytics was deployed to Cloudflare Pages in commit `e6cb2d5`; 57 regression tests, the full build, and site validation passed. Enhanced measurement is off, all five custom dimensions are saved, and `contact_click` is registered as a key event with no monetary value and once-per-session counting. The live browser check confirmed no Google script before consent or after declining, and the correct Google tag after acceptance. **Portfolio Overview** is saved as the default **Reports snapshot**, with both project summary cards and dedicated project reports in the published **Portfolio → Projects** collection. The final snapshot and Realtime card still showed zero data; actual event receipt remains unverified.
 
 | Configuration | Value |
 | --- | --- |
@@ -12,10 +12,13 @@ The local tracking implementation is configured with the real web-stream ID; 57 
 | Property | Omar Khalifa — Portfolio — `559016306` |
 | Web stream | `16129945318` |
 | Measurement ID | `G-QJ74NPRNS1` |
+| Portfolio Overview report | `16130088759` |
+| Project views detail report | `16130071117` |
+| Project 30-second engagement detail report | `16130088782` |
 
-Open the signed-in [GA4 property](https://analytics.google.com/analytics/web/#/a412052751p559016306/reports/intelligenthome).
+Open the signed-in [Portfolio Reports snapshot](https://analytics.google.com/analytics/web/#/a412052751p559016306/reports/reportinghub?params=_u..nav%3Dmaui%26_u.dateOption%3DthisMonth%26_u.comparisonOption%3Ddisabled). The final browser view used **This month**, including 14 October; older trailing ranges may exclude today's activity.
 
-Production URL: `https://ok-portfolio.pages.dev`. The dashboard belongs inside the signed-in GA4 property; publishing a report collection makes it available to property users, rather than publishing it on the portfolio.
+Production URL: `https://ok-portfolio.pages.dev`. The dashboard belongs inside the signed-in GA4 property.
 
 ## Connect the web stream
 
@@ -51,9 +54,9 @@ For campaign attribution, `utm_source`, `utm_medium`, and `utm_campaign` are cop
 
 `project_engaged` is a threshold count, not an exact reading-time measurement or proof that the case study was read. `active_time_msec` avoids overwriting Google's own engagement timing; the overview uses event counts rather than this parameter as a custom metric. Contact and social clicks indicate intent; they do not prove an email was sent, an inquiry arrived, or a hiring conversation began. Reports represent visitors who accepted analytics and were measurable.
 
-## Register dimensions and the contact key event
+## Saved dimensions and contact key event
 
-In **Admin → Data display → Custom definitions**, create these five **Event** scoped custom dimensions. Enter the event parameter exactly as shown. Google explains registration in [Create event-scoped custom dimensions](https://support.google.com/analytics/answer/14239696?hl=en).
+These five **Event** scoped dimensions are saved in **Admin → Data display → Custom definitions**. Keep the parameter names exact if recreating them. [Create event-scoped custom dimensions](https://support.google.com/analytics/answer/14239696?hl=en)
 
 | Dimension name | Event parameter | Description |
 | --- | --- | --- |
@@ -65,49 +68,41 @@ In **Admin → Data display → Custom definitions**, create these five **Event*
 
 Use built-in page, device, source, and engagement fields instead of registering duplicate custom dimensions. Allow 24–48 hours after registration and receipt of data for custom dimensions to be available in reporting. [Custom dimensions and metrics](https://support.google.com/analytics/answer/14240153?hl=en)
 
-Mark **`contact_click`** as a key event in **Admin → Data display → Events**. If it has not arrived yet, choose **Create event → Create with code**, name it `contact_click`, and enable **Mark as key event**. Use **Once per session**, with no monetary value. Do not create a derived duplicate of the event already sent by the site. Leave `project_view`, `project_engaged`, and `social_click` as ordinary events. [Mark events as key events](https://support.google.com/analytics/answer/13128484?hl=en), [Create or modify key events](https://support.google.com/analytics/answer/12844695?hl=en)
+**`contact_click`** is registered under **Admin → Data display → Events** as a key event, with **Once per session** counting and no monetary value. Its ordinary **Event count** still counts every tracked click. `project_view`, `project_engaged`, and `social_click` remain ordinary events. [Mark events as key events](https://support.google.com/analytics/answer/13128484?hl=en)
 
-**Session key event rate for contact_click** means sessions with a contact click divided by all measured sessions. Do not divide click count by users, or filter the entire traffic report to `contact_click`: either would change the meaning of the denominator. When selecting key-event metrics, select `contact_click` rather than All events.
+The overview shows contact intent through **Key events** and the **Event count by Event name** card. It has no saved contact-rate card. A stock rate card was removed after its visible filter proved to be `Event name exactly matches 'purchase'`; it was unsuitable for this portfolio.
 
-## Build Portfolio Overview
+## Saved Portfolio Overview
 
-With Editor or Administrator access, create the following detail reports in **Reports → Library**. Start from the corresponding standard report or a blank detail report, set the dimensions/metrics and saved filter below, then save under the specified name. For event reports, sort by Event count descending. For traffic/device reports, sort by Sessions descending. [Customize detail reports](https://support.google.com/analytics/answer/10445879?hl=en)
+Four top metrics: **Active users**, **Sessions**, **Views**, and **Key events**. Eight saved cards:
 
-| Detail report name | Default dimension; optional picker dimensions | Metrics | Saved filter |
-| --- | --- | --- | --- |
-| Portfolio Traffic | Session source / medium; Session default channel group, Session campaign | Sessions, Total users, Engaged sessions, Engagement rate, Key events, Session key event rate | None; select `contact_click` for key-event metrics |
-| Project Views | Project; Page path and screen class | Event count, Total users | Event name exactly `project_view` |
-| Project Engagement 30s | Project; Page path and screen class | Event count, Total users | Event name exactly `project_engaged` |
-| Contact Clicks | Link placement; Contact method, Page type, Project | Event count, Total users | Event name exactly `contact_click` |
-| LinkedIn Clicks | Link placement; Social platform, Page type, Project | Event count, Total users | Event name exactly `social_click` |
-| Portfolio Devices | Device category; Browser | Sessions, Total users, Engagement rate, Session key event rate | None; select `contact_click` for key-event rate |
-
-If event values or custom dimensions have not populated, finish that report after the first accepted live visit and processing delay. An empty report is not verification of tracking failure or success.
-
-For each detail report, use **Customize report → Summary cards → Create new card**. Configure these overview cards; add the event filter to the event card itself as well as its detail report. [Create a summary card](https://support.google.com/analytics/answer/13819308?hl=en)
-
-| Card title | Source report | Chart/data |
+| Card | Display | Filter or interpretation |
 | --- | --- | --- |
-| Traffic trend | Portfolio Traffic | Line chart over the selected date range; Sessions and Total users |
-| Visitor sources | Portfolio Traffic | Table: Session source / medium, Sessions |
-| Most viewed projects | Project Views | Bar chart: Project, Event count; `project_view` filter |
-| Projects explored for 30s | Project Engagement 30s | Bar chart: Project, Event count; `project_engaged` filter |
-| Email contact clicks | Contact Clicks | Table: Link placement, Event count; `contact_click` filter |
-| LinkedIn clicks | LinkedIn Clicks | Table: Link placement, Event count; `social_click` filter |
-| Devices | Portfolio Devices | Bar chart: Device category, Sessions |
-| Sessions with a contact click | Portfolio Traffic | Table: Session source / medium, Session key event rate with `contact_click` selected |
+| Engagement overview | Engagement-time trend and engaged-session metrics | Google's standard engagement metrics |
+| Event count by Event name | Table | All received events, including contact/social clicks |
+| Sessions by Session source / medium | Table | Acquisition sources |
+| Views by Page title and screen class | Table | Popular pages |
+| Active users by Device category | Donut | Device mix measured by active users |
+| Realtime | Active users in the last 30 minutes | Live traffic indicator |
+| Event count by Project — engagement | Table; links to Project 30-second engagement | Event name **contains** `project_engaged` |
+| Event count by Project — views | Bar chart; links to Project views | Event name **contains** `project_view` |
 
-Create a blank collection named **Portfolio**, with one topic named **Overview**, and add the six detail reports to it. Save it first so their custom summary cards can be selected. Then create an overview report named **Portfolio Overview**, add the eight cards in the order above, save, and add it to the Overview topic. Publish the collection from its menu in Library. Optionally set Portfolio Overview as **Reports snapshot**. Use **Last 28 days**, compared with the preceding period, during review; the viewer selects the date range. [Create an overview report](https://support.google.com/analytics/answer/13823841?hl=en), [Customize report navigation](https://support.google.com/analytics/answer/10460557?hl=en), [Customize Reports snapshot](https://support.google.com/analytics/answer/10659091?hl=en)
+Both dedicated project detail reports use **Project** as the default dimension, with **Event count** and **Total users**, sorted by Event count descending. Their summary cards apply the same event filters. The free-text **contains** operator allowed saving before any recent event values were available. Do not introduce other event names containing these strings without updating the filters.
 
-This configuration deliberately shows project views and threshold engagement as separate counts. It does not claim a strict project completion funnel or a ratio of unique readers.
+For changes, open **Reports → Library → report menu → Edit**. Standard detail reports expose **Summary cards → Create new card**. Add them to a saved collection; publish that collection, then use **Add cards to this report** in the overview editor. Save changes to the existing report. Portfolio Overview remains the property's default Reports snapshot. [Create a summary card](https://support.google.com/analytics/answer/13819308?hl=en), [Customize report navigation](https://support.google.com/analytics/answer/10460557?hl=en), [Customize Reports snapshot](https://support.google.com/analytics/answer/10659091?hl=en)
 
-## Verify collection and reporting
+The newer **Create dashboard** builder did not persist saves in this session. The working standard overview workflow completed the dashboard. A fresh bar summary card made project views separately selectable alongside the engagement table. Business objectives and Data import were unpublished to simplify this new property's sidebar; their reports were not deleted. **User** remains available for technology and audience reporting.
 
-1. Run `node --test tests/analytics.test.mjs` and `npm run check`. The analytics regression tests cover consent, URL cleaning, campaign value validation, automatic-event context, page/project events, focused engagement timing, click payloads, revocation, and excluded hosts/routes. The full suite passed 57 tests, build, and site validation during implementation. These checks exercise the local implementation; they do not establish that Google received an event.
-2. After deploying the real ID, inspect the built production HTML for `portfolio-analytics-config`. Visit the actual production site in a clean browser session. Before allowing analytics, verify no Google tag or measurement requests. Decline and confirm that remains true.
-3. Allow analytics, open a case study, keep it visible and focused for 30 seconds, and click email/LinkedIn links. Inspect outgoing requests for the correct stream ID, one manual `page_view`, `project_view`, `project_engaged`, `contact_click`, and `social_click`. Verify page/referrer URLs have no query strings or fragments, custom click payloads have no email destinations or profile URLs, and only validated campaign labels are forwarded. Check GA4 Realtime for actual arrival.
-4. Revoke consent and confirm later interactions send no events. Verify a preview hostname and `/admin/` do not initialize analytics.
-5. After processing, confirm Project rows, campaign labels, and event filters in the saved reports. Confirm contact click rate against measured sessions, including sessions without contact clicks.
+The project charts show views and threshold engagement separately; they do not imply a completion funnel or exact reading time. Use native **Session campaign** when investigating validated campaign labels.
+
+## Verification and troubleshooting
+
+- **No analytics notice:** Check the deployed `portfolio-analytics-config`, measurement ID, exact HTTPS production hostname, and saved consent choice. Local/preview/admin routes intentionally do not initialize it.
+- **No Google tag:** Accept analytics in a clean session and check extensions/network blocking. Before consent and after declining, no tag is the expected result; that behavior passed the live browser check.
+- **No project engagement:** Keep a case study visible and focused for 30 seconds after acceptance. Hidden and unfocused time does not count.
+- **No report data:** Check GA4 Realtime for actual event arrival. Loading the tag alone does not establish receipt. Custom dimensions can take 24–48 hours after registration and receipt of data. Verify chart event filters and date range.
+- **Contact counts differ:** Ordinary Event count counts every click; the configured Key events count is once per session. Neither means an inquiry was received.
+- **Regression checks:** `node --test tests/analytics.test.mjs` and `npm run check` cover consent, clean URLs, campaign validation, event context, engagement timing, revocation, and excluded routes. The full suite passed 57 tests, build, and site validation.
 
 For an authenticated GA4 Data API check, use `properties/559016306:runReport` with these dimensions/metrics and **the same** date range (for example `28daysAgo` through `yesterday`). Custom dimensions require registration first. [Google Data API schema](https://developers.google.com/analytics/devguides/reporting/data/v1/api-schema)
 
@@ -116,20 +111,22 @@ For an authenticated GA4 Data API check, use `properties/559016306:runReport` wi
 | Project views | `customEvent:project_slug` | `eventCount`, `totalUsers` | `eventName` exactly `project_view` |
 | Project 30s engagements | `customEvent:project_slug` | `eventCount`, `totalUsers` | `eventName` exactly `project_engaged` |
 | Contact clicks | `customEvent:link_placement` | `eventCount`, `totalUsers` | `eventName` exactly `contact_click` |
-| Contact session rate | `sessionSourceMedium` | `sessions`, `sessionKeyEventRate:contact_click` | None |
 | Device sessions | `deviceCategory` | `sessions`, `totalUsers` | None |
 
-The API contact rate is returned as a fraction; format it as a percentage. These queries are verification instructions, not executed results.
+These queries are verification instructions, not executed results.
 
 ## Completion record
 
 - [x] Web stream created; account/property/stream IDs and measurement ID recorded.
 - [x] Enhanced measurement disabled.
-- [x] Project and Page type custom dimensions registered.
-- [ ] Contact method, Social platform, and Link placement custom dimensions registered.
+- [x] All five custom dimensions registered.
 - [x] 57 regression tests, full build, and site validation passed.
-- [ ] `contact_click` designated as a key event.
-- [ ] Production build configured and deployed with the real measurement ID.
+- [x] `contact_click` registered as a key event; no monetary value, once-per-session key-event counting.
+- [x] Production build configured and deployed with the real measurement ID in `e6cb2d5`.
+- [x] Live consent check: no Google script before consent or after decline; correct Google tag after acceptance.
 - [ ] Accepted production events observed in GA4 Realtime.
-- [ ] Portfolio Overview and Portfolio collection saved and visible in GA4.
+- [x] Portfolio Overview saved as Reports snapshot and verified in the actual reporting view.
+- [x] Project views and Project 30-second engagement reports saved; summary cards included in the snapshot.
+- [x] Portfolio collection published and verified in the sidebar.
+- [x] Final month-to-date dashboard screenshot saved at `.cache/portfolio-analytics-dashboard.png`.
 - [ ] Custom project/click data verified after processing.
