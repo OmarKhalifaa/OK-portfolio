@@ -47,6 +47,9 @@ function fixture({ url = `${production}/projects/login-revamp/?email=private@exa
   const head = new Element('head');
   const body = new Element('body');
   body.dataset.project = project;
+  const aboutSettings = new Element('div');
+  aboutSettings.id = 'about-privacy-settings';
+  if (new URL(url).pathname.startsWith('/about/')) body.append(aboutSettings);
   const configNode = config === null ? null : { textContent: typeof config === 'string' ? config : JSON.stringify(config) };
   const document = {
     head, body,
@@ -110,6 +113,22 @@ function fixture({ url = `${production}/projects/login-revamp/?email=private@exa
     crossTabConsent(value) { storage.set(consentKey, JSON.stringify({ choice: value, updatedAt: time })); windowListeners.get('storage')?.({ key: consentKey }); },
   };
 }
+
+test('analytics settings are placed inside About and omitted from other pages', () => {
+  const about = fixture({ url: `${production}/about/`, project: '' });
+  const button = about.button('Analytics settings');
+  assert.equal(button.parentElement.parentElement.id, 'about-privacy-settings');
+  about.button('Decline').click();
+  assert.equal(button.focused, true);
+  button.click();
+  assert.equal(about.notice().hidden, false);
+  assert.equal(about.button('Decline').focused, true);
+  for (const pathname of ['/', '/projects/', '/projects/login-revamp/']) {
+    const page = fixture({ url: `${production}${pathname}` });
+    assert.equal(page.button('Analytics settings').parentElement.parentElement, null);
+    assert.equal(page.notice().parentElement, page.body);
+  }
+});
 
 test('build helper injects deferred first-party assets and JSON only on configured public pages', () => {
   const $ = load(`<html><head><link rel="canonical" href="${production}/projects/login-revamp/"></head><body></body></html>`);

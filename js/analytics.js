@@ -157,12 +157,13 @@
   settings.type = 'button';
   settings.setAttribute('aria-controls', notice.id);
   settingsContainer.append(settings);
-  document.body.append(notice, settingsContainer);
+  document.body.append(notice);
+  if (pageType === 'about') document.getElementById('about-privacy-settings')?.append(settingsContainer);
 
   function hideNotice(restoreFocus = false) {
     notice.hidden = true;
     settings.setAttribute('aria-expanded', 'false');
-    if (restoreFocus) settings.focus({ preventScroll: true });
+    if (restoreFocus && settingsContainer.parentElement) settings.focus({ preventScroll: true });
   }
   function applyChoice(value, persist = false, restoreFocus = false) {
     choice = value;
